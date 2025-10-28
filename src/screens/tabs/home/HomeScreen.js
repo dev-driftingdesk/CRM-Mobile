@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '../../../theme/ThemeContext';
+import { useAppTheme } from '../../../context/ThemeContext';
+
 
 
 const HomeScreen = () => {
-  const { currentTheme } = useTheme();
+  const { currentTheme } = useAppTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>

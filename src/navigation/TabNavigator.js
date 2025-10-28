@@ -1,18 +1,20 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useTheme } from '../theme/ThemeContext'; // global theme context
+
 
 // Import your stacks
 import HomeStack from './stacks/HomeStack';
 import LeadsStack from './stacks/LeadsStack';
 import LeaderboardStack from './stacks/LeaderboardStack';
 import ClientReachStack from './stacks/ClientReachStack';
+import { useTheme } from '@react-navigation/native';
+import { useAppTheme } from '../context/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-  const { currentTheme } = useTheme();
+  const { currentTheme } = useAppTheme();
 
   return (
     <Tab.Navigator

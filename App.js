@@ -1,14 +1,14 @@
 import React from 'react';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator';
-import { NavigationContainer } from '@react-navigation/native';
-
-import { useAppTheme, AppThemeProvider } from './src/theme/ThemeContext';
+import { AppThemeProvider, useAppTheme } from './src/context/ThemeContext';
 
 const AppContent = () => {
   const { theme } = useAppTheme();
+  const navigationTheme = theme === 'dark' ? DarkTheme : DefaultTheme;
 
   return (
-    <NavigationContainer theme={theme}>
+    <NavigationContainer theme={navigationTheme}>
       <RootNavigator />
     </NavigationContainer>
   );

@@ -1,18 +1,30 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { useTheme } from '@react-navigation/native';
-import { useAppTheme } from '../../theme/ThemeContext';
+import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import { useAppTheme } from '../../context/ThemeContext';
+import Logo from '../../components/logo/Logo';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../theme/colors';
+// import { useAppTheme } from '../context/ThemeContext';
+
 
 const LoginScreen = () => {
-  const { colors } = useTheme();
-  const { toggleTheme } = useAppTheme();
+  const { theme } = useAppTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.text, { color: colors.text }]}>Login Screen</Text>
+    <ImageBackground
+      source={require('../../assets/images/backgrounds/splash-screen.png')}
+      style={{ flex: 1, resizeMode: 'cover' }}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
 
-      <Button title="Toggle Theme" onPress={toggleTheme} />
-    </View>
+        <View>
+          <Logo />
+        </View>
+        <View style={[styles.container, { backgroundColor: theme.colors.white }]}>
+          <Text style={[styles.text, { color: theme.colors.text }]}>Login</Text>
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
@@ -23,8 +35,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontSize: 22,
-    fontWeight: '600',
+    fontSize: 18,
   },
 });
 
