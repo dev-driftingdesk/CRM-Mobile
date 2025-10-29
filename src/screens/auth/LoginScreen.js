@@ -85,10 +85,10 @@ const LoginScreen = () => {
 
               <View style={[styles.container]}>
                 <Text style={[theme.typography.title2, { color: theme.colors.white }]}>
-                  Let’s get your account setup
+                  Welcome Back!
                 </Text>
                 <Text style={[theme.typography.BodyLargeMedium, { color: theme.colors.white, marginTop: 10 }]}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                  Log in to manage your leads, track sales, and boost performance.
                 </Text>
               </View>
             </View>

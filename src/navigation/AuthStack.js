@@ -12,12 +12,12 @@ const AuthStack = () => {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        animation: 'slide_from_right',
+        animation: 'default',
       }}
     >
-      <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
     </Stack.Navigator>
   );

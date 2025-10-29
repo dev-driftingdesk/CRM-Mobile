@@ -10,6 +10,7 @@ import axios from "axios";
 import MainButton from '../../components/buttons/mainbutton/MainButton';
 import UnderlineTextButton from '../../components/buttons/underlineButton/UnderlineTextButton';
 import { useNavigation } from '@react-navigation/native';
+import Iconify from 'react-native-iconify';
 
 
 
@@ -26,8 +27,8 @@ const SignupScreen = () => {
   });
 
 
-  const goToForgotPasswordPage = () => {
-    nav.navigate('ForgotPassword');
+  const goToLoginPage = () => {
+    nav.navigate('Login');
   }
 
   const [loading, setLoading] = useState(false);
@@ -125,7 +126,7 @@ const SignupScreen = () => {
 
               <View>
 
-                <View style={{ marginBottom: 24 }}>
+                <View style={{ marginBottom: theme.spacings.spacing1 }}>
                   <View style={[styles.inputContainer, {}]}>
                     <InputBox
                       label="First Name"
@@ -187,7 +188,7 @@ const SignupScreen = () => {
 
                 <View style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
                   <Text style={[theme.typography.BodyMedium]}>Already have an account?</Text>
-                  <UnderlineTextButton title={"Sign in"} func={goToForgotPasswordPage} />
+                  <UnderlineTextButton title={"Sign in"} func={goToLoginPage} />
                 </View>
 
               </View>

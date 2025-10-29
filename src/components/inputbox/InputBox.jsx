@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { useAppTheme } from "../../context/ThemeContext";
+import Iconify from "react-native-iconify";
 
 
 const InputBox = ({
@@ -15,7 +16,7 @@ const InputBox = ({
 }) => {
   const [secure, setSecure] = useState(type === "password");
 
-  const {theme} = useAppTheme();
+  const { theme } = useAppTheme();
 
   const getKeyboardType = () => {
     switch (type) {
@@ -32,7 +33,7 @@ const InputBox = ({
 
   return (
     <View style={styles.wrapper}>
-      {label && <Text style={[theme.typography.BodySmallMedium,{marginBottom:12, color:theme.colors.davysgrey}]}>{label}</Text>}
+      {label && <Text style={[theme.typography.BodySmallMedium, { marginBottom: 12, color: theme.colors.davysgrey }]}>{label}</Text>}
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -42,19 +43,24 @@ const InputBox = ({
           secureTextEntry={secure}
           autoCapitalize={type === "email" ? "none" : "sentences"}
           keyboardType={getKeyboardType()}
-          style={[styles.input, style, theme.typography.BodyLargeMedium, {color: theme.colors.night}]}
+          style={[styles.input, style, theme.typography.BodyLargeMedium, { color: theme.colors.night }]}
           {...rest}
         />
 
         {type === "password" && (
           <TouchableOpacity onPress={() => setSecure(!secure)}>
-         
+            <Iconify icon={secure ? 'mdi:eye-off-outline' : 'iconoir:eye'} size={16} color={theme.colors.timberwolf} />
           </TouchableOpacity>
         )}
-      </View>
-
-      {error && <Text style={styles.error}>{error}</Text>}
+        {type === "email" && (
+          <View>
+          <Iconify icon={'iconoir:mail'} size={16} color={theme.colors.timberwolf} />
+          </View>
+        )}
     </View>
+
+      { error && <Text style={styles.error}>{error}</Text> }
+    </View >
   );
 };
 

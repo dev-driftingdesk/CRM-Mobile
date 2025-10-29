@@ -29,7 +29,7 @@ export const typography = StyleSheet.create({
         fontFamily: 'Inter-Regular', // fallback for light
         fontSize: 28,
         // letterSpacing: 0.12 * 40, // 120% of font size
-        lineHeight: 0 * 40, // or adjust if needed
+        // lineHeight: 0 * 40, // or adjust if needed
     },
     title3Bold: {
         fontFamily: 'Inter-Bold',
@@ -58,7 +58,7 @@ export const typography = StyleSheet.create({
         fontSize: 16,
     },
     BodyLargeMedium: {
-        fontFamily: 'Inter-Medium',
+        fontFamily: 'Inter-Regular',
         fontSize: 16,
     },
     BodyBold: {
