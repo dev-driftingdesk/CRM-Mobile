@@ -13,7 +13,7 @@ const MainButton = ({ name, functions }) => {
             onPress={functions}
             style={{ backgroundColor: theme.theme.colors.midnightgreen, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8, marginTop: 28 }}>
             <View style={{}}>
-                <Text style={{ color: theme.theme.colors.white, textAlign: 'center' }}>{name}</Text>
+                <Text style={[{ color: theme.theme.colors.white, textAlign: 'center' }, theme.theme.typography.BodyMedium]}>{name}</Text>
             </View>
         </TouchableOpacity>
     )

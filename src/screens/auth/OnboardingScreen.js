@@ -28,8 +28,11 @@ const OnboardingScreen = () => {
             <ScrollView>
                 <SafeAreaView>
                     <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
-                        <View style={{ justifyContent: 'center', alignItems: 'center' }}><Logo /></View>
-                        <Image source={require('../../assets/images/frame.png')} />
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}><Logo tint={"white"} /></View>
+
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={require('../../assets/images/frame.png')} />
+                        </View>
                         <View style={{ marginTop: 20 }}>
                             <Text
                                 style={[{
