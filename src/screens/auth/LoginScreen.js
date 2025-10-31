@@ -137,7 +137,8 @@ const LoginScreen = () => {
               <View style={{ marginTop: 20 }}>
                 {loading
                   ? <ActivityIndicator size="large" color={theme.colors.midnightgreen} />
-                  : <MainButton name={"Login"} functions={handleLogin} />
+                  : 
+                  <MainButton name={"Login"} functions={handleLogin} />
                 }
               </View>
 

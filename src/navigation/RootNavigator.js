@@ -6,7 +6,7 @@ import { View, ActivityIndicator } from 'react-native';
 
 const RootNavigator = () => {
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -31,6 +31,7 @@ const RootNavigator = () => {
   }
 
   return isAuthenticated ? <AppStack /> : <AuthStack />;
+  // return isAuthenticated ? <AuthStack />  : <AppStack />;
 };
 
 export default RootNavigator;

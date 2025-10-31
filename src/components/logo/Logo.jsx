@@ -6,6 +6,7 @@ const Logo = ({tint}) => {
   return (
     <View style={{}}>
       <Image source={require('../../assets/images/logo/logo.png')} style={[styles.logo,{tintColor:tint}]} />
+      {/* <Image source={require('../../assets/images/logo/paperpike-logo.png')} style={[styles.logo,{tintColor:tint}]} /> */}
     </View>
   )
 }

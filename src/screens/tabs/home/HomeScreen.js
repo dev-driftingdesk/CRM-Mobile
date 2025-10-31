@@ -5,18 +5,12 @@ import { useAppTheme } from '../../../context/ThemeContext';
 
 
 const HomeScreen = () => {
-  const { currentTheme } = useAppTheme();
+  const { theme } = useAppTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: currentTheme.colors.background }]}>
-      <Text
-        style={{
-          color: currentTheme.colors.text,
-          fontFamily: currentTheme.fonts.bold,
-          fontSize: currentTheme.fontSizes.large,
-        }}
-      >
-        🏠 Home Screen
+    <View style={[styles.container, { }]}>
+      <Text style={{  }}>
+        Home Screen
       </Text>
     </View>
   );
