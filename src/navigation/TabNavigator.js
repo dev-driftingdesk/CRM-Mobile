@@ -8,49 +8,50 @@ import HomeStack from './stacks/HomeStack';
 import LeadsStack from './stacks/LeadsStack';
 import LeaderboardStack from './stacks/LeaderboardStack';
 import ClientReachStack from './stacks/ClientReachStack';
-import { useTheme } from '@react-navigation/native';
+
+import Iconify from 'react-native-iconify';
 import { useAppTheme } from '../context/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-  const { currentTheme } = useAppTheme();
+  const { theme } = useAppTheme();
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: currentTheme.colors.primary,
-        tabBarInactiveTintColor: currentTheme.colors.inactive,
+        tabBarActiveTintColor: theme.colors.midnightgreen,
+        tabBarInactiveTintColor: theme.colors.inactive,
         tabBarStyle: {
-          backgroundColor: currentTheme.colors.tabBar,
+          backgroundColor: theme.colors.white,
           borderTopWidth: 0,
           height: 60,
           paddingBottom: 5,
         },
         tabBarLabelStyle: {
-          fontFamily: currentTheme.fonts.medium,
-          fontSize: currentTheme.fontSizes.regular - 2,
+          fontFamily: theme.typography.BodyMedium,
+
         },
         tabBarIcon: ({ color, size }) => {
           let iconName;
           switch (route.name) {
             case 'HomeTab':
-              iconName = 'home-outline';
+              iconName = 'mdi:map-marker';
               break;
             case 'LeadsTab':
-              iconName = 'people-outline';
+              iconName = 'mdi:account-outline';
               break;
             case 'LeaderboardTab':
-              iconName = 'trophy-outline';
+              iconName = 'mdi:map-marker';
               break;
             case 'ClientReachTab':
-              iconName = 'person-circle-outline';
+              iconName = 'mdi:email-outline';
               break;
             default:
-              iconName = 'ellipse-outline';
+              iconName = 'mdi:account-box';
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Iconify icon={iconName} size={size} color={color} />;
         },
       })}
     >
