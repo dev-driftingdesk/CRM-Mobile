@@ -2,7 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-  baseURL: 'https://your-api-base-url.com/api',
+  baseURL:
+    'https://ceedpodservice.wittycliff-5b88c7b4.westus2.azurecontainerapps.io/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -14,6 +15,7 @@ const api = axios.create({
 api.interceptors.request.use(
   async config => {
     try {
+      console.log(config);
       // Get token from AsyncStorage
       const token = await AsyncStorage.getItem('authToken');
 
