@@ -32,8 +32,8 @@ const RootNavigator = () => {
     );
   }
 
-  // return isAuthenticated ? <AppStack /> : <AuthStack />;
-  return isAuthenticated ? <AuthStack />  : <AppStack />;
+  return isAuthenticated ? <AppStack /> : <AuthStack />;
+  // return isAuthenticated ? <AuthStack />  : <AppStack />;
 };
 
 export default RootNavigator;

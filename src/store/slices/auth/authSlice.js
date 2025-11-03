@@ -2,9 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { loginUser } from './thunk';
 
 const initialState = {
-  user: {
-    email: null,
-  },
+  user: null,
+  userEmail: null,
   accessToken: null,
   refreshToken: null,
   isAuthenticated: false,
@@ -39,7 +38,7 @@ const authSlice = createSlice({
     builder.addCase(loginUser.fulfilled, (state, action) => {
       state.loading = false;
       state.isAuthenticated = true;
-      state.user.email = action.payload.email;
+      state.userEmail = action.payload.email;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
       state.error = null;
