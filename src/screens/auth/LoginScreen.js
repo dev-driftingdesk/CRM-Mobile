@@ -51,8 +51,11 @@ const LoginScreen = () => {
     if (error) dispatch(clearError());
   };
 
+  // const goToForgotPasswordPage = () => {
+  //   nav.navigate('ForgotPassword');
+  // };
   const goToForgotPasswordPage = () => {
-    nav.navigate('ForgotPassword');
+    nav.navigate('Signup');
   };
 
   const handleLogin = async () => {
@@ -67,13 +70,13 @@ const LoginScreen = () => {
     console.log('Login result:', result);
 
     if (loginUser.fulfilled.match(result)) {
-      // Save user data to AsyncStorage
       try {
         await AsyncStorage.setItem('ACCESS_TOKEN', result.payload.accessToken);
-
-        // Force a re-render by setting a flag that RootNavigator can check
-        // The RootNavigator will automatically switch to AppStack
         console.log('Login successful, tokens saved');
+
+        // nav.navigate('HomeStack', {
+        //   screen: 'HomeScreen',
+        // });
       } catch (err) {
         console.log('Error saving tokens:', err);
         setErrorMsg('Error saving login information');
