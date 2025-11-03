@@ -3,7 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
   baseURL:
-    'https://ceedpodservice.wittycliff-5b88c7b4.westus2.azurecontainerapps.io/api/v1',
+    // 'https://ceedpodservice.wittycliff-5b88c7b4.westus2.azurecontainerapps.io/api/v1',
+    'https://api.teamhandle.com/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
