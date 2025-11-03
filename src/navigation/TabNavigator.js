@@ -1,63 +1,95 @@
+// import React from 'react';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
+
+
+// // Import your stacks
+// import HomeStack from './stacks/HomeStack';
+// import LeadsStack from './stacks/LeadsStack';
+// import LeaderboardStack from './stacks/LeaderboardStack';
+// import ClientReachStack from './stacks/ClientReachStack';
+
+// import Iconify from 'react-native-iconify';
+// import { useAppTheme } from '../context/ThemeContext';
+
+// const Tab = createBottomTabNavigator();
+
+// const TabNavigator = () => {
+//   const { theme } = useAppTheme();
+
+//   return (
+//     <Tab.Navigator
+//       screenOptions={({ route }) => ({
+//         headerShown: false,
+//         tabBarActiveTintColor: theme.colors.midnightgreen,
+//         tabBarInactiveTintColor: theme.colors.inactive,
+//         tabBarStyle: {
+//           backgroundColor: theme.colors.white,
+//           borderTopWidth: 0,
+//           height: 60,
+//           paddingBottom: 5,
+//         },
+//         tabBarLabelStyle: {
+//           fontFamily: theme.typography.BodyMedium,
+
+//         },
+//         tabBarIcon: ({ color, size }) => {
+//           let iconName;
+//           switch (route.name) {
+//             case 'HomeTab':
+//               iconName = 'mdi:map-marker';
+//               break;
+//             case 'LeadsTab':
+//               iconName = 'mdi:account-outline';
+//               break;
+//             case 'LeaderboardTab':
+//               iconName = 'mdi:map-marker';
+//               break;
+//             case 'ClientReachTab':
+//               iconName = 'mdi:email-outline';
+//               break;
+//             default:
+//               iconName = 'mdi:account-box';
+//           }
+//           return <Iconify icon={iconName} size={size} color={color} />;
+//         },
+//       })}
+//     >
+//       <Tab.Screen name="HomeTab" component={HomeStack} options={{ title: 'Home' }} />
+//       <Tab.Screen name="LeadsTab" component={LeadsStack} options={{ title: 'Leads' }} />
+//       <Tab.Screen name="LeaderboardTab" component={LeaderboardStack} options={{ title: 'Leaderboard' }} />
+//       <Tab.Screen name="ClientReachTab" component={ClientReachStack} options={{ title: 'Profile' }} />
+//     </Tab.Navigator>
+//   );
+// };
+
+// export default TabNavigator;
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
-
-// Import your stacks
 import HomeStack from './stacks/HomeStack';
 import LeadsStack from './stacks/LeadsStack';
 import LeaderboardStack from './stacks/LeaderboardStack';
 import ClientReachStack from './stacks/ClientReachStack';
-import { useTheme } from '@react-navigation/native';
-import { useAppTheme } from '../context/ThemeContext';
+
+import CustomTabBar from './CustomTabBar';
+import ScheduleStack from './stacks/ScheduleStack';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-  const { currentTheme } = useAppTheme();
-
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: currentTheme.colors.primary,
-        tabBarInactiveTintColor: currentTheme.colors.inactive,
-        tabBarStyle: {
-          backgroundColor: currentTheme.colors.tabBar,
-          borderTopWidth: 0,
-          height: 60,
-          paddingBottom: 5,
-        },
-        tabBarLabelStyle: {
-          fontFamily: currentTheme.fonts.medium,
-          fontSize: currentTheme.fontSizes.regular - 2,
-        },
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-          switch (route.name) {
-            case 'HomeTab':
-              iconName = 'home-outline';
-              break;
-            case 'LeadsTab':
-              iconName = 'people-outline';
-              break;
-            case 'LeaderboardTab':
-              iconName = 'trophy-outline';
-              break;
-            case 'ClientReachTab':
-              iconName = 'person-circle-outline';
-              break;
-            default:
-              iconName = 'ellipse-outline';
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
+      }}
+      tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen name="HomeTab" component={HomeStack} options={{ title: 'Home' }} />
       <Tab.Screen name="LeadsTab" component={LeadsStack} options={{ title: 'Leads' }} />
-      <Tab.Screen name="LeaderboardTab" component={LeaderboardStack} options={{ title: 'Leaderboard' }} />
-      <Tab.Screen name="ClientReachTab" component={ClientReachStack} options={{ title: 'Profile' }} />
+      {/* <Tab.Screen name="LeaderboardTab" component={LeaderboardStack} options={{ title: 'Leaderboard' }} /> */}
+      <Tab.Screen name="ScheduleTab" component={ScheduleStack} options={{ title: 'Schedule' }} />
+      <Tab.Screen name="ClientReachTab" component={ClientReachStack} options={{ title: 'Client Reach' }} />
     </Tab.Navigator>
   );
 };
