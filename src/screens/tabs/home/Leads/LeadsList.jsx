@@ -8,25 +8,9 @@ import {
 import { useAppTheme } from '../../../../context/ThemeContext';
 import CustomIcon from '../../../../assets/icons/CustomIcon';
 
-/**
- * LeadsList Component
- *
- * Displays a list of leads with company name, contact name, and deal count.
- * Features stacked card design with avatar initials.
- *
- * @param {Array} leads - Array of lead objects { id, companyName, contactName, dealCount }
- * @param {Function} onShowAll - Callback when "Show all" button is pressed
- * @param {Function} onLeadPress - Callback when a lead card is pressed
- */
 const LeadsList = ({ leads = [], onShowAll, onLeadPress }) => {
   const { theme } = useAppTheme();
 
-  /**
-   * Generate initials from company name
-   * Takes first letter of first two words, or first two letters of single word
-   * @param {string} companyName - Company name string
-   * @returns {string} Two-letter initials in uppercase
-   */
   const getInitials = (companyName) => {
     if (!companyName) return 'LD'; // Lead Default
 
@@ -202,11 +186,11 @@ const styles = StyleSheet.create({
   card: {
     padding: 16,
     borderWidth: 1,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    // elevation: 2,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 1 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 2,
   },
   cardContent: {
     flexDirection: 'row',

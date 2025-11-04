@@ -14,8 +14,8 @@ const ActionItemWidgets = ({ type }) => {
         horizontal={true}
         style={{paddingBottom:15}}
       >
-        <ActionItemWidget type={'action_item'}></ActionItemWidget>
-        <ActionItemWidget type={'leads'}></ActionItemWidget>
+        <ActionItemWidget type={'action_item'} />
+        <ActionItemWidget type={'leads'} />
         {/* <ActionItemWidget></ActionItemWidget> */}
       </ScrollView>
     </View>

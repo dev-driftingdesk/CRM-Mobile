@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Pressable,
 } from 'react-native';
 import { useAppTheme } from '../../../../context/ThemeContext';
@@ -95,7 +94,7 @@ const ActionItemsList = ({ items = [], onShowAll, onItemPress }) => {
 
     const isFirst = index === 0;
     const isLast = index === total - 1;
-
+    
     return (
       <Pressable
         key={item.id}
@@ -192,9 +191,9 @@ const ActionItemsList = ({ items = [], onShowAll, onItemPress }) => {
       </View>
 
       {/* Action Items List */}
-      <View style={styles.listContainer}>
+      <View>
         {filteredItems.length > 0 ? (
-          filteredItems.map(item => renderActionItem(item))
+          filteredItems.map((item, index) => renderActionItem(item, index, filteredItems.length))
         ) : (
           <View style={styles.emptyState}>
             <Text style={[theme.typography.BodyMedium, { color: theme.colors.davysgrey }]}>
@@ -256,9 +255,6 @@ const styles = StyleSheet.create({
   filterTextInactive: {
     color: '#0F1010',
   },
-  // listContainer: {
-  //   gap: 12,
-  // },
   card: {
     padding: 16,
     elevation: 2,

@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useAppTheme } from '../../../context/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
 import HomeHeader from './HomeHeader/HomeHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ActionItemWidgets from './ActionItemWidget/ActionItemWidgets';
-import ActionItemWidget from './ActionItemWidget/ActionItemWidget';
 import ActionItemsList from './ActionItems/ActionItemsList';
 import { sampleActionItems } from './ActionItems/sampleData';
 import LeadsList from './Leads/LeadsList';
@@ -12,12 +12,11 @@ import { sampleLeads } from './Leads/sampleData';
 
 const HomeScreen = () => {
   const { theme } = useAppTheme();
+  const navigation = useNavigation();
 
   // Handler for "Show all" button
   const handleShowAll = () => {
-    console.log('Navigate to all action items');
-    // TODO: Implement navigation to full action items screen
-    // navigation.navigate('AllActionItems');
+    navigation.navigate('AllActionItems');
   };
 
   // Handler for item press

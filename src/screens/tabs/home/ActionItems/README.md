@@ -1,64 +1,185 @@
-# ActionItemsList Component
+# Action Items Module
 
-A production-ready React Native component for displaying filterable action items with priority badges, designed for the CRMBuild mobile application.
+This module provides comprehensive action items management functionality for the CRMBuild mobile application.
 
 ## Overview
 
-The ActionItemsList component displays a list of action items (calls, proposals, follow-ups, meetings) with filtering capabilities and priority indicators. It matches the design specifications from the reference image `src/ref_images/action-items.png`.
+The Action Items module consists of two main components:
+1. **ActionItemsList** - Widget component for displaying action items on the HomeScreen
+2. **AllActionItemsScreen** - Full-page view with search and filter capabilities
 
-## Features
+## Component Architecture
 
-- **Dynamic Data Support**: Accepts array of action items via props
-- **Filter Pills**: Today/Overdue/Upcoming categories with active state management
-- **Priority Badges**: Color-coded badges (Critical=red, High=orange, Low=green)
-- **"Show all" Button**: Navigation-ready callback
-- **Theme Integration**: Full theme system support (light/dark mode)
-- **Text Truncation**: Long descriptions automatically truncate with ellipsis
-- **Responsive Design**: Proper padding, margins, and touch targets
-- **Pressable Cards**: Interactive feedback on card press
-- **Empty States**: Graceful handling of no items
-
-## Installation
-
-The component is already integrated into the HomeScreen. Files included:
+### Directory Structure
 
 ```
-src/screens/tabs/home/ActionItems/
-├── ActionItemsList.jsx    # Main component
-├── sampleData.js          # Sample data and helper functions
-└── README.md              # This file
+ActionItems/
+├── ActionItemsList.jsx          # Widget component (stacked cards)
+├── AllActionItemsScreen.jsx     # Full page component (individual cards)
+├── components/
+│   ├── ActionItemCard.jsx       # Reusable action item card
+│   ├── SearchBar.jsx            # Search input component
+│   └── FilterButton.jsx         # Filter button component
+├── sampleData.js                # Sample action items data
+└── README.md                    # This file
 ```
 
-## Usage
+## Components
 
-### Basic Implementation
+### 1. AllActionItemsScreen
 
+**Purpose**: Full-page view for displaying all action items with filtering and search.
+
+**Features**:
+- Navigation header with back button
+- Filter pills (Today, Overdue, Upcoming)
+- Search functionality (contact name, description, keywords)
+- Filter button (ready for modal/bottom sheet)
+- Scrollable list of individual action item cards
+- Empty state when no results
+
+**Usage**:
+```javascript
+// Navigation from HomeScreen
+navigation.navigate('AllActionItems');
+
+// Component is auto-registered in HomeStack.js
+```
+
+**Props**: None (uses React Navigation hooks internally)
+
+**State Management**:
+- `activeFilter` - Currently selected filter category ('today', 'overdue', 'upcoming')
+- `searchQuery` - Current search query string
+
+---
+
+### 2. ActionItemCard
+
+**Purpose**: Reusable card component for displaying individual action items.
+
+**Usage**:
+```javascript
+import ActionItemCard from './components/ActionItemCard';
+
+<ActionItemCard
+  item={actionItem}
+  onPress={handleItemPress}
+/>
+```
+
+**Props**:
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | Object | Yes | Action item data object |
+| `item.id` | string | Yes | Unique identifier |
+| `item.type` | string | Yes | Action type ('call', 'proposal', 'follow-up', 'schedule') |
+| `item.contactName` | string | Yes | Contact name (displayed in bold) |
+| `item.description` | string | Yes | Task description |
+| `item.time` | string | Yes | Time in format "HH:MMAM/PM" |
+| `item.priority` | string | Yes | Priority level ('Critical', 'High', 'Low') |
+| `item.category` | string | Yes | Category ('today', 'overdue', 'upcoming') |
+| `onPress` | Function | No | Callback when card is pressed |
+
+**Styling**:
+- Individual card (NOT stacked)
+- White background with border
+- Border radius: 12px (theme.radius.radius3)
+- Shadow/elevation for depth
+- Margin: 16px horizontal, 12px bottom (gap between cards)
+
+**Priority Colors**:
+- Critical: `#FF6B6B` (Coral/Red)
+- High: `#FFA500` (Orange)
+- Low: `#4ECB71` (Green)
+
+---
+
+### 3. SearchBar
+
+**Purpose**: Search input component with search icon for filtering action items.
+
+**Usage**:
+```javascript
+import SearchBar from './components/SearchBar';
+
+<SearchBar
+  value={searchQuery}
+  onChangeText={setSearchQuery}
+  placeholder="Search by keywords, names"
+/>
+```
+
+**Props**:
+
+| Prop | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `value` | string | Yes | - | Current search query value |
+| `onChangeText` | Function | Yes | - | Callback when text changes |
+| `placeholder` | string | No | "Search by keywords, names" | Placeholder text |
+
+**Features**:
+- Search icon (magnifying glass) on left
+- Themed styling
+- Auto-capitalization disabled
+- Search return key type
+- Height: 48px
+
+---
+
+### 4. FilterButton
+
+**Purpose**: Square filter/sort button for opening filter modal/bottom sheet.
+
+**Usage**:
+```javascript
+import FilterButton from './components/FilterButton';
+
+<FilterButton onPress={handleFilterPress} />
+```
+
+**Props**:
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `onPress` | Function | Yes | Callback when button is pressed |
+
+**Features**:
+- Square button (48×48px)
+- Filter icon (horizontal lines)
+- Themed border and background
+- Ready for modal/bottom sheet integration
+
+---
+
+### 5. ActionItemsList (Widget)
+
+**Purpose**: Widget component for displaying action items on HomeScreen with stacked card styling.
+
+**Usage**:
 ```javascript
 import ActionItemsList from './ActionItems/ActionItemsList';
 import { sampleActionItems } from './ActionItems/sampleData';
 
-const HomeScreen = () => {
-  const handleShowAll = () => {
-    // Navigate to full action items screen
-    navigation.navigate('AllActionItems');
-  };
-
-  const handleItemPress = (item) => {
-    // Navigate to item details
-    navigation.navigate('ActionItemDetails', { itemId: item.id });
-  };
-
-  return (
-    <View>
-      <ActionItemsList
-        items={sampleActionItems}
-        onShowAll={handleShowAll}
-        onItemPress={handleItemPress}
-      />
-    </View>
-  );
-};
+<ActionItemsList
+  items={sampleActionItems}
+  onShowAll={handleShowAll}
+  onItemPress={handleItemPress}
+/>
 ```
+
+**Props**:
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | Array | Yes | Array of action item objects |
+| `onShowAll` | Function | No | Callback for "Show all" button |
+| `onItemPress` | Function | No | Callback when item is pressed |
+
+**Styling Difference**:
+- **Widget (ActionItemsList)**: Stacked cards with rounded first/last only
+- **Full Page (AllActionItemsScreen)**: Individual cards with 12px gaps and all corners rounded
 
 ## Data Structure
 
@@ -66,324 +187,237 @@ const HomeScreen = () => {
 
 ```javascript
 {
-  id: string,              // Unique identifier
-  type: string,            // 'call' | 'proposal' | 'follow-up' | 'schedule'
-  contactName: string,     // Contact person name (appears bold)
-  description: string,     // Task description
-  time: string,            // Display time (e.g., "10:00AM")
-  priority: string,        // 'Critical' | 'High' | 'Low'
-  category: string         // 'today' | 'overdue' | 'upcoming'
+  id: '1',                          // Unique identifier
+  type: 'call',                     // Action type: 'call' | 'proposal' | 'follow-up' | 'schedule'
+  contactName: 'John Smith',        // Contact name (displayed in bold)
+  description: 'follow up on...',   // Task description
+  time: '10:00AM',                  // Time in format "HH:MMAM/PM"
+  priority: 'Critical',             // Priority: 'Critical' | 'High' | 'Low'
+  category: 'today'                 // Category: 'today' | 'overdue' | 'upcoming'
 }
 ```
 
-### Example
+### Sample Data
+
+Sample action items are provided in `sampleData.js`:
 
 ```javascript
-const actionItem = {
-  id: '1',
-  type: 'call',
-  contactName: 'John Smith',
-  description: 'follow up on pricing discussion',
-  time: '10:00AM',
-  priority: 'Critical',
-  category: 'today'
-};
-```
+import { sampleActionItems } from './sampleData';
 
-## Props
-
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `items` | Array | No | Array of action item objects (defaults to empty array) |
-| `onShowAll` | Function | No | Callback when "Show all" button is pressed |
-| `onItemPress` | Function | No | Callback when an action item card is pressed |
-
-## Component Features
-
-### Filter System
-
-Three filter categories are available:
-- **Today**: Current day tasks
-- **Overdue**: Past due items
-- **Upcoming**: Future scheduled items
-
-Filter state is managed internally with `useState`. Active filter is indicated by:
-- Black background with white text
-- Inactive filters have white background with black text
-
-### Priority Badges
-
-Priority badges are color-coded based on urgency:
-
-| Priority | Color | Hex Code |
-|----------|-------|----------|
-| Critical | Red | `#FF6B6B` |
-| High | Orange | `#FFA500` |
-| Low | Green | `#4ECB71` |
-
-### Task Description Formatting
-
-The component automatically formats task descriptions based on type:
-
-| Type | Prefix |
-|------|--------|
-| call | "Call " |
-| proposal | "Send proposal to " |
-| follow-up | "Follow back with " |
-| schedule | "Schedule call with " |
-
-Contact names are rendered in bold, followed by the description.
-
-Example output: "Call **John Smith** - follow up on pricing di..."
-
-## Styling
-
-### Theme Integration
-
-The component uses the app's centralized theme system:
-
-```javascript
-const { theme } = useAppTheme();
-
-// Colors
-theme.colors.white      // Card background
-theme.colors.night      // Text color
-theme.colors.davysgrey  // Secondary text
-theme.colors.isabelline // Background
-
-// Typography
-theme.typography.heading2Bold    // Header title
-theme.typography.BodyMedium      // Body text
-theme.typography.BodyBold        // Bold text
-theme.typography.BodySmallMedium // Time text
-
-// Spacing
-theme.spacings.spacing4  // 16px
-theme.spacings.spacing5  // 20px
-
-// Border Radius
-theme.radius.radius2     // 8px (badges)
-theme.radius.radius3     // 12px (cards)
-theme.radius.radius10    // 40px (pills)
-```
-
-### Responsive Design
-
-- **Horizontal padding**: 16px on container
-- **Card margin**: 8px vertical spacing between cards
-- **Card padding**: 16px internal padding
-- **Filter gap**: 8px between filter pills
-- **Shadow**: Subtle elevation (iOS/Android compatible)
-
-## Sample Data
-
-Sample data is provided in `sampleData.js`:
-
-```javascript
-import { sampleActionItems } from './ActionItems/sampleData';
-
-// Use all sample data
-<ActionItemsList items={sampleActionItems} />
-
-// Or use helper functions
-import { getItemsByCategory, getItemsByPriority } from './ActionItems/sampleData';
+// Helper functions
+import { getItemsByCategory, getItemsByPriority } from './sampleData';
 
 const todayItems = getItemsByCategory('today');
 const criticalItems = getItemsByPriority('Critical');
 ```
 
-## Customization
+## Navigation Integration
 
-### Changing Priority Colors
+### HomeStack Registration
 
-Modify the `getPriorityColor` function in `ActionItemsList.jsx`:
-
-```javascript
-const getPriorityColor = (priority) => {
-  switch (priority) {
-    case 'Critical':
-      return '#FF6B6B'; // Change to your color
-    case 'High':
-      return '#FFA500'; // Change to your color
-    case 'Low':
-      return '#4ECB71'; // Change to your color
-    default:
-      return theme.colors.davysgrey;
-  }
-};
-```
-
-### Adding More Filter Categories
-
-1. Add new category to filter data
-2. Update `renderFilterPill` calls
-3. Ensure items have matching category values
-
-### Customizing Description Format
-
-Modify the `formatDescription` function to add new types or change formatting:
+The AllActionItemsScreen is registered in `src/navigation/stacks/HomeStack.js`:
 
 ```javascript
-const formatDescription = (item) => {
-  const { type, contactName, description } = item;
+import AllActionItemsScreen from '../../screens/tabs/home/ActionItems/AllActionItemsScreen';
 
-  let prefix = '';
-  switch (type) {
-    case 'meeting':
-      prefix = 'Meeting with ';
-      break;
-    // Add more types...
-  }
-
-  return { prefix, contactName, description };
-};
+<Stack.Screen
+  name="AllActionItems"
+  component={AllActionItemsScreen}
+  options={{ headerShown: false }}
+/>
 ```
 
-## Integration with Navigation
-
-To connect the component with React Navigation:
+### Navigation from HomeScreen
 
 ```javascript
 import { useNavigation } from '@react-navigation/native';
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
+const navigation = useNavigation();
 
-  const handleShowAll = () => {
-    navigation.navigate('AllActionItems');
-  };
-
-  const handleItemPress = (item) => {
-    navigation.navigate('ActionItemDetails', {
-      itemId: item.id,
-      item: item
-    });
-  };
-
-  return (
-    <ActionItemsList
-      items={actionItems}
-      onShowAll={handleShowAll}
-      onItemPress={handleItemPress}
-    />
-  );
+const handleShowAll = () => {
+  navigation.navigate('AllActionItems');
 };
 ```
 
-## Accessibility
+## Filtering & Search Logic
 
-The component includes basic accessibility features:
+### Filter Logic
 
-- Pressable components with active opacity feedback
-- Clear visual hierarchy with proper contrast
-- Touch target sizes meet minimum requirements (44x44 points)
-- Semantic HTML-like structure with proper text hierarchy
-
-### Future Accessibility Enhancements
-
-Consider adding:
-- `accessibilityLabel` props for screen readers
-- `accessibilityRole` for better semantic understanding
-- `accessibilityHint` for action descriptions
-
-## Performance Considerations
-
-- **Efficient Filtering**: Items are filtered on demand, not pre-computed
-- **Memoization**: Consider using `useMemo` for large item lists
-- **FlatList**: For very large lists (100+ items), consider replacing ScrollView with FlatList
-
-Example with FlatList:
+Items are filtered by category (today, overdue, upcoming):
 
 ```javascript
-import { FlatList } from 'react-native';
-
-<FlatList
-  data={filteredItems}
-  renderItem={({ item }) => renderActionItem(item)}
-  keyExtractor={item => item.id}
-  contentContainerStyle={styles.listContainer}
-/>
+const filteredItems = items.filter(item => item.category === activeFilter);
 ```
 
-## Testing
+### Search Logic
 
-### Manual Testing Checklist
+Search filters by contact name, description, and type:
 
-- [ ] Component renders with sample data
-- [ ] Filter pills change active state on press
-- [ ] Each category shows correct filtered items
-- [ ] Priority badges display correct colors
-- [ ] Text truncation works for long descriptions
-- [ ] "Show all" button triggers callback
-- [ ] Card press triggers callback with item data
-- [ ] Empty state displays when no items match filter
-- [ ] Theme changes apply correctly (light/dark mode)
-- [ ] Component is responsive on different screen sizes
-
-### Unit Testing (Future)
-
-Consider adding tests for:
-- Filter state management
-- Priority color mapping
-- Description formatting logic
-- Empty state handling
-- Callback prop invocation
-
-## Troubleshooting
-
-### Icons Not Displaying
-
-Ensure CustomIcon component has the required icon:
 ```javascript
-// Check src/assets/icons/CustomIcon.jsx
-icons['nav-arrow-right'] // Should exist
+const query = searchQuery.toLowerCase();
+items = items.filter(item => {
+  const contactName = item.contactName.toLowerCase();
+  const description = item.description.toLowerCase();
+  const typePrefix = item.type.toLowerCase();
+  return (
+    contactName.includes(query) ||
+    description.includes(query) ||
+    typePrefix.includes(query)
+  );
+});
 ```
 
-### Theme Not Applied
+### Combined Filtering
 
-Verify ThemeContext is properly provided:
+Filtering and search are combined using `useMemo` for performance:
+
 ```javascript
-import { AppThemeProvider } from './context/ThemeContext';
+const filteredItems = useMemo(() => {
+  let items = sampleActionItems.filter(item => item.category === activeFilter);
 
-<AppThemeProvider>
-  <App />
-</AppThemeProvider>
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    items = items.filter(item => {
+      // Search logic here
+    });
+  }
+
+  return items;
+}, [activeFilter, searchQuery]);
 ```
 
-### Cards Not Pressable
+## Theme Integration
 
-Check that `onItemPress` callback is provided:
+All components use the app's theme system:
+
 ```javascript
-<ActionItemsList
-  items={items}
-  onItemPress={(item) => console.log(item)} // Must be provided
-/>
+import { useAppTheme } from '../../../../context/ThemeContext';
+
+const { theme } = useAppTheme();
+
+// Access theme properties
+theme.colors.night
+theme.colors.white
+theme.typography.BodyMedium
+theme.radius.radius3
 ```
 
 ## Future Enhancements
 
-Potential improvements:
+### Recommended Features:
 
-1. **Search Functionality**: Add search bar to filter items by keyword
-2. **Sort Options**: Sort by time, priority, or contact name
-3. **Batch Actions**: Select multiple items for bulk operations
-4. **Swipe Actions**: Swipe to complete, delete, or snooze items
-5. **Time Formatting**: Dynamic time display (e.g., "2 hours ago")
-6. **Real-time Updates**: WebSocket integration for live updates
-7. **Pull to Refresh**: Refresh data on pull down gesture
-8. **Animations**: Smooth transitions between filters and states
+1. **Filter Modal/Bottom Sheet**
+   - Sort options (by time, priority, contact)
+   - Advanced filtering (date range, multiple priorities)
+   - Custom views
 
-## Contributing
+2. **Performance Optimizations**
+   - Replace ScrollView with FlatList for large datasets
+   - Implement virtual scrolling
+   - Debounce search input
 
-When modifying this component:
+3. **User Interactions**
+   - Pull-to-refresh functionality
+   - Swipe actions (complete, delete, snooze)
+   - Batch selection and actions
 
-1. Maintain theme system integration
-2. Follow existing code style and patterns
-3. Update this README with any changes
-4. Test on both iOS and Android
-5. Verify light and dark mode compatibility
-6. Ensure accessibility standards are maintained
+4. **Data Integration**
+   - API integration for real data
+   - Loading states with skeleton screens
+   - Error handling and retry logic
+   - Offline support with local storage
 
-## License
+5. **Enhanced Search**
+   - Search history
+   - Search suggestions
+   - Advanced search filters
 
-Part of the CRMBuild mobile application.
+6. **Animations**
+   - Smooth transitions between screens
+   - Card animations on filter/search
+   - Loading animations
+
+7. **Accessibility**
+   - Screen reader support
+   - High contrast mode
+   - Font scaling support
+
+## Testing
+
+### Component Testing
+
+```javascript
+// Example test structure
+describe('AllActionItemsScreen', () => {
+  it('renders correctly', () => {});
+  it('filters items by category', () => {});
+  it('searches items by query', () => {});
+  it('shows empty state when no results', () => {});
+  it('navigates back on back button press', () => {});
+});
+```
+
+### Manual Testing Checklist
+
+- [ ] Navigation from HomeScreen works
+- [ ] Back button returns to HomeScreen
+- [ ] Filter pills switch categories correctly
+- [ ] Search filters items in real-time
+- [ ] Empty state displays when no results
+- [ ] Cards are pressable with visual feedback
+- [ ] Filter button is pressable
+- [ ] Scrolling works smoothly
+- [ ] Theme integration works correctly
+- [ ] Priority badges show correct colors
+
+## Maintenance Notes
+
+### When to Update Components:
+
+1. **ActionItemCard**: When action item data structure changes
+2. **SearchBar**: When search functionality requirements change
+3. **FilterButton**: When filter modal/bottom sheet is implemented
+4. **AllActionItemsScreen**: When new features are added (sorting, batch actions, etc.)
+
+### Code Quality Standards:
+
+- All components use functional components with hooks
+- PropTypes or TypeScript for type checking
+- Consistent naming conventions
+- Comprehensive JSDoc comments
+- Theme integration throughout
+- Responsive design principles
+
+## Troubleshooting
+
+### Common Issues:
+
+**Issue**: Navigation not working
+- **Solution**: Ensure HomeStack.js has AllActionItemsScreen registered
+- **Solution**: Check navigation prop is available in HomeScreen
+
+**Issue**: Search not filtering
+- **Solution**: Check searchQuery state is updating
+- **Solution**: Verify filter logic matches data structure
+
+**Issue**: Cards not displaying
+- **Solution**: Verify sampleData.js is imported correctly
+- **Solution**: Check activeFilter matches data categories
+
+**Issue**: Theme not applying
+- **Solution**: Ensure useAppTheme hook is called
+- **Solution**: Verify ThemeContext provider wraps app
+
+## Support
+
+For questions or issues related to the Action Items module, please refer to:
+- Project documentation in `/docs`
+- React Native documentation
+- React Navigation documentation
+- Theme system documentation in `/src/theme`
+
+---
+
+**Last Updated**: 2025-11-04
+**Version**: 1.0.0
+**Maintained by**: CRMBuild Development Team
