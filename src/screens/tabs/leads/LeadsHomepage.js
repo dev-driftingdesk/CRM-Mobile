@@ -35,7 +35,7 @@ import { sampleLeads } from '../../tabs/home/Leads/sampleData';
  * - Only leads list scrolls
  * - Stacked cards with conditional border radius
  */
-const LeadsHomepage = () => {
+const LeadsHomepage = ({ navigation }) => {
   const { theme } = useAppTheme();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -91,11 +91,10 @@ const LeadsHomepage = () => {
 
   /**
    * Handle create new lead button press
-   * TODO: Navigate to create lead screen
+   * Navigates to CreateLeadStep1 screen
    */
   const handleCreateNewLead = () => {
-    console.log('Create new lead pressed');
-    // Future: navigation.navigate('CreateLead');
+    navigation.navigate('CreateLeadStep1');
   };
 
   /**
