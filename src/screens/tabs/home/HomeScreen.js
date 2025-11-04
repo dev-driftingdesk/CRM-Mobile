@@ -28,9 +28,7 @@ const HomeScreen = () => {
 
   // Handler for leads "Show all" button
   const handleShowAllLeads = () => {
-    console.log('Navigate to all leads');
-    // TODO: Implement navigation to full leads screen
-    // navigation.navigate('AllLeads');
+    navigation.navigate('AllLeads');
   };
 
   // Handler for lead card press
@@ -50,7 +48,7 @@ const HomeScreen = () => {
           <View style={[{ paddingLeft: 16, marginVertical: theme.spacings.spacing7 }]}>
             <ActionItemWidgets />
           </View>
-          <View style={[{ paddingHorizontal: 16, marginTop: theme.spacings.spacing5 }]}>
+          <View style={[{ paddingHorizontal: 16,  }]}>
             <ActionItemsList
               items={sampleActionItems}
               onShowAll={handleShowAll}

@@ -23,7 +23,7 @@ const SearchBar = ({ value, onChangeText, placeholder = 'Search by keywords, nam
         styles.container,
         {
           backgroundColor: theme.colors.white,
-          borderColor: theme.colors.night10,
+          borderColor: theme.colors.night,
           borderRadius: theme.radius.radius3,
         },
       ]}
@@ -33,7 +33,7 @@ const SearchBar = ({ value, onChangeText, placeholder = 'Search by keywords, nam
         name="search"
         width={20}
         height={20}
-        tintColour={theme.colors.davysgrey}
+        tintColour={theme.colors.night}
         style={styles.icon}
       />
 

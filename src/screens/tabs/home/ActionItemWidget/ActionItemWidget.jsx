@@ -55,10 +55,13 @@ const ActionItemWidget = ({ type }) => {
           </View>
 
           <View style={[{ backgroundColor: theme.colors.night10, borderRadius: theme.spacings.spacing3, padding: theme.spacings.spacing3, marginTop: theme.spacings.spacing4 }]}>
-            <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.night }]}>Critical Action Items</Text>
+            <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.night }]}>Emma Rodriguez</Text>
             <View style={[{ marginTop: theme.spacings.spacing2, flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
-              <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.night, flex: 5 }]} numberOfLines={2}>Call John Smith – follow up on pricing discussion</Text>
-              <TouchableOpacity style={{ backgroundColor: theme.colors.night, width: 30, height: 30, borderRadius: 100, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ flex: 5 }}>
+                <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.night,  }]} numberOfLines={2}>Creative Pixel</Text>
+                <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.night,  }]} numberOfLines={2}>Agency</Text>
+              </View>
+              <TouchableOpacity style={{ backgroundColor: theme.colors.night, width: 30, height: 30, borderRadius: 100,  justifyContent: 'center', alignItems: 'center' }}>
                 <IconComponent name={'phone'} width={13} height={13} color={theme.colors.white} tintColour={theme.colors.white} />
 
               </TouchableOpacity>
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
     height: 208,
     borderRadius: 16,
     padding: 16,
-    marginRight:8,
+    marginRight: 8,
   },
   primaryText: {
     color: '#fff',

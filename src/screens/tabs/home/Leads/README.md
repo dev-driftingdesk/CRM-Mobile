@@ -1,17 +1,102 @@
-# Leads Section Component
+# Leads Feature Documentation
 
-This directory contains the Leads section component for the HomeScreen, displaying lead cards with company information, contact details, and deal counts.
+## Overview
 
-## Files
+The Leads feature provides a comprehensive lead management interface with both widget and full-page views. It follows a stacked card design pattern for visual consistency and efficient space usage.
 
-- **LeadsList.jsx** - Main component displaying leads in stacked card layout
-- **sampleData.js** - Mock data for testing (8 sample leads)
-- **README.md** - This documentation file
+## File Structure
 
-## Component API
+```
+src/screens/tabs/home/Leads/
+├── LeadsList.jsx           # Widget component for HomeScreen
+├── AllLeadsScreen.jsx      # Full-page leads view
+├── components/
+│   └── LeadCard.jsx        # Reusable lead card component
+├── sampleData.js           # Sample leads data
+└── README.md               # This file
+```
 
-### LeadsList
+## Components
 
+### 1. AllLeadsScreen.jsx
+
+**Full-page lead management view**
+
+**Features:**
+- Navigation header with back button
+- Search functionality (company name + contact name)
+- Filter button (ready for modal implementation)
+- Scrollable list of stacked lead cards
+- Empty state with helpful messages
+- Real-time search filtering
+
+**Props:**
+- Uses React Navigation's `navigation` and `route` props automatically
+
+**State:**
+- `searchQuery` (string): Current search query for filtering
+
+**Usage:**
+```javascript
+// In HomeStack.js
+import AllLeadsScreen from '../screens/tabs/home/Leads/AllLeadsScreen';
+
+<Stack.Screen
+  name="AllLeads"
+  component={AllLeadsScreen}
+  options={{ headerShown: false }}
+/>
+
+// Navigate from HomeScreen
+navigation.navigate('AllLeads');
+```
+
+### 2. LeadCard.jsx
+
+**Reusable lead card component**
+
+**Features:**
+- Avatar circle with company initials
+- Company name (bold, 16px)
+- Contact person name (gray, 14px)
+- Deal count with briefcase icon
+- Pressable with touch feedback
+- Conditional border radius for stacked design
+
+**Props:**
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead` | Object | Yes | Lead data object |
+| `lead.id` | string | Yes | Unique identifier |
+| `lead.companyName` | string | Yes | Company name |
+| `lead.contactName` | string | Yes | Contact person name |
+| `lead.dealCount` | number | Yes | Number of deals |
+| `onPress` | Function | No | Callback when card pressed |
+| `isFirst` | boolean | No | First card (rounded top) |
+| `isLast` | boolean | No | Last card (rounded bottom) |
+
+**Avatar Initials Logic:**
+- Two+ words: First letter of first two words (e.g., "Creative Pixel" → "CP")
+- One word (2+ chars): First two letters (e.g., "Microsoft" → "MI")
+- Fallback: "LD" (Lead Default)
+
+**Usage:**
+```javascript
+import LeadCard from './components/LeadCard';
+
+<LeadCard
+  lead={lead}
+  onPress={handleLeadPress}
+  isFirst={index === 0}
+  isLast={index === leads.length - 1}
+/>
+```
+
+### 3. LeadsList.jsx
+
+**Widget component for HomeScreen**
+
+**Usage:**
 ```jsx
 <LeadsList
   leads={leadsData}

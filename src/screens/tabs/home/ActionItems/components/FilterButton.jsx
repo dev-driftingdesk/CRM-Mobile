@@ -21,7 +21,7 @@ const FilterButton = ({ onPress }) => {
         styles.button,
         {
           backgroundColor: theme.colors.white,
-          borderColor: theme.colors.night10,
+          borderColor: theme.colors.night,
           borderRadius: theme.radius.radius3,
         },
       ]}
