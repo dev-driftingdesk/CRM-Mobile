@@ -359,7 +359,7 @@ const SalesRepSelectorBottomSheet = ({
         <View style={[styles.header, { borderBottomColor: '#E0E0E0' }]}>
           <Text
             style={[
-              theme.typography.heading2Medium,
+              theme.typography.BodyLargeMedium,
               { color: theme.colors.night, textAlign: 'center', flex: 1 },
             ]}
           >

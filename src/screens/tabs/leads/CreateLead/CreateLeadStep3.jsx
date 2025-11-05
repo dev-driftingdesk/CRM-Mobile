@@ -16,6 +16,7 @@ import SalesRepCard from './components/SalesRepCard';
 import ProductCard from './components/ProductCard';
 import FormInput from './components/FormInput';
 import SalesRepSelectorBottomSheet from './components/SalesRepSelectorBottomSheet';
+import ProductSelectorBottomSheet from './components/ProductSelectorBottomSheet';
 
 /**
  * CreateLeadStep3 - Deal Creation Screen
@@ -78,6 +79,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
 
   // Modal visibility state
   const [showSalesRepModal, setShowSalesRepModal] = useState(false);
+  const [showProductModal, setShowProductModal] = useState(false);
 
   /**
    * Handle back button press
@@ -116,12 +118,18 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   };
 
   /**
-   * Add product (placeholder)
+   * Add product - Open selection modal
    */
   const handleAddProduct = () => {
-    console.log('Add product - TODO: Open picker/modal');
-    // Future: Open modal to select from available products
-    Alert.alert('Add Product', 'Product selection modal coming soon!');
+    setShowProductModal(true);
+  };
+
+  /**
+   * Handle product selection confirmation
+   */
+  const handleConfirmProducts = (newProducts) => {
+    setProducts(newProducts);
+    setShowProductModal(false);
   };
 
   /**
@@ -407,6 +415,14 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         onClose={() => setShowSalesRepModal(false)}
         onConfirm={handleConfirmSalesReps}
         currentSalesReps={salesReps}
+      />
+
+      {/* Product Selector Modal */}
+      <ProductSelectorBottomSheet
+        visible={showProductModal}
+        onClose={() => setShowProductModal(false)}
+        onConfirm={handleConfirmProducts}
+        currentProducts={products}
       />
     </SafeAreaView>
   );
