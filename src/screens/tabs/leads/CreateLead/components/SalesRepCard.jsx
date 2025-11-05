@@ -7,113 +7,143 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * SalesRepCard - Sales representative display component
  *
  * Features:
- * - Card with name and role badge
- * - Role types: Primary (teal), Co-Primary, Consultant
+ * - Stacked card design matching ContactPill wrapper styling
+ * - Name and role badge on same row
+ * - Role types: Primary (teal), Co-Primary (gray), Consultant (text only)
  * - Remove button (X icon)
- * - Conditional badge styling based on role
+ * - Conditional border radius for stacked effect (isFirst/isLast)
  *
  * @param {string} name - Sales rep name
  * @param {string} role - Role type (Primary, Co-Primary, Consultant)
  * @param {function} onRemove - Callback when remove button pressed
+ * @param {boolean} isFirst - Whether this is the first item (rounded top)
+ * @param {boolean} isLast - Whether this is the last item (rounded bottom)
  */
-const SalesRepCard = ({ name, role, onRemove }) => {
+
+
+// const borderColor = useAppTheme().theme.colors.night10;
+
+const SalesRepCard = ({ name, role, onRemove, isFirst = false, isLast = false }) => {
   const { theme } = useAppTheme();
 
-  // Badge background color based on role
-  const getBadgeColor = () => {
-    switch (role) {
-      case 'Primary':
-        return theme.colors.midnightgreen;
-      case 'Co-Primary':
-        return theme.colors.davysgrey;
-      default:
-        return 'transparent';
-    }
-  };
-
-  // Determine if badge should be shown
-  const showBadge = role === 'Primary' || role === 'Co-Primary';
-
-  return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.white,
-          borderColor: theme.colors.night10,
-        },
-      ]}
-    >
-      {/* Left Section: Name and Role */}
-      <View style={styles.leftSection}>
-        <Text
-          style={[
-            theme.typography.BodyMedium,
-            { color: theme.colors.night, marginBottom: 4 },
-          ]}
-        >
-          {name}
-        </Text>
-
-        {showBadge ? (
-          <View style={[styles.badge, { backgroundColor: getBadgeColor() }]}>
-            <Text
-              style={[
-                theme.typography.BodySmallBold,
-                { color: theme.colors.white },
-              ]}
-            >
-              {role}
-            </Text>
-          </View>
-        ) : (
+  // Render role badge or text
+  const renderRoleBadge = () => {
+    if (role === 'Primary') {
+      return (
+        <View style={[styles.badge, { backgroundColor: theme.colors.midnightgreen }]}>
           <Text
             style={[
               theme.typography.BodySmallMedium,
-              { color: theme.colors.davysgrey },
+              { color: theme.colors.white },
+            ]}
+          >
+            Primary
+          </Text>
+        </View>
+      );
+    } else if (role === 'Co-Primary') {
+      return (
+        <View style={[styles.badge, { backgroundColor: theme.colors.isabelline }]}>
+          <Text
+            style={[
+              theme.typography.BodySmallMedium,
+              { color: theme.colors.night },
+            ]}
+          >
+            Co-Primary
+          </Text>
+        </View>
+      );
+    } else {
+      // Consultant - just text
+      return (
+        <View style={[styles.badge, { backgroundColor: theme.colors.isabelline }]}>
+          <Text
+            style={[
+              theme.typography.BodySmallMedium,
+              { color: theme.colors.night },
             ]}
           >
             {role}
           </Text>
-        )}
-      </View>
+        </View>
+      );
+    }
+  };
 
-      {/* Remove Button */}
-      <TouchableOpacity
-        onPress={onRemove}
-        style={styles.removeButton}
-        activeOpacity={0.7}
-      >
-        <CustomIcon
-          name="xmark"
-          width={16}
-          height={16}
-          tintColour={theme.colors.davysgrey}
-        />
-      </TouchableOpacity>
+  return (
+    <View
+      style={[
+        styles.wrapper,
+        {
+          borderColor: theme.colors.night10,
+          borderTopLeftRadius: isFirst ? 24 : 0,
+          borderTopRightRadius: isFirst ? 24 : 0,
+          borderBottomLeftRadius: isLast ? 24 : 0,
+          borderBottomRightRadius: isLast ? 24 : 0,
+          borderBottomWidth: isLast ? 1 : 0,
+        },
+      ]}
+    >
+      <View style={{}}>
+        <View style={styles.contentRow}>
+          {/* Name */}
+          <Text
+            style={[
+              theme.typography.BodyLargeMedium,
+              { color: theme.colors.night, flex: 1 },
+            ]}
+          >
+            {name}
+          </Text>
+
+          <TouchableOpacity
+            onPress={onRemove}
+            style={styles.removeButton}
+            activeOpacity={0.7}
+          >
+            <CustomIcon
+              name="xmark"
+              width={16}
+              height={16}
+              tintColour={theme.colors.davysgrey}
+            />
+          </TouchableOpacity>
+
+
+        </View>
+
+        <View style={styles.rightSection}>
+          {renderRoleBadge()}
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    backgroundColor: '#FFFFFF',
+  },
+  contentRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 12,
   },
-  leftSection: {
-    flex: 1,
+  rightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    // gap: 8,
   },
   badge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
-    alignSelf: 'flex-start',
   },
   removeButton: {
     padding: 4,

@@ -7,129 +7,156 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * ProductCard - Product display component
  *
  * Features:
- * - Card with product name, value, and commission
- * - Optional "Potential upsell" badge (yellow/orange)
- * - Remove button (X icon)
- * - Value and commission display
+ * - Stacked card design matching ContactPill wrapper styling
+ * - Product name with remove button on top row
+ * - Value and commission on second row
+ * - Optional "Potential upsell" badge (orange, bottom right)
+ * - Conditional border radius for stacked effect (isFirst/isLast)
  *
  * @param {string} name - Product name
  * @param {number} value - Product value
  * @param {number} commission - Commission amount
  * @param {boolean} isUpsell - Whether product is marked as upsell
  * @param {function} onRemove - Callback when remove button pressed
+ * @param {boolean} isFirst - Whether this is the first item (rounded top)
+ * @param {boolean} isLast - Whether this is the last item (rounded bottom)
  */
-const ProductCard = ({ name, value, commission, isUpsell, onRemove }) => {
+const ProductCard = ({ name, value, commission, isUpsell, onRemove, isFirst = false, isLast = false }) => {
   const { theme } = useAppTheme();
 
   return (
     <View
       style={[
-        styles.container,
+        styles.wrapper,
         {
-          backgroundColor: theme.colors.white,
           borderColor: theme.colors.night10,
+          borderTopLeftRadius: isFirst ? 24 : 0,
+          borderTopRightRadius: isFirst ? 24 : 0,
+          borderBottomLeftRadius: isLast ? 24 : 0,
+          borderBottomRightRadius: isLast ? 24 : 0,
+          borderBottomWidth: isLast ? 1 : 0,
         },
       ]}
     >
-      {/* Left Section: Product Details */}
-      <View style={styles.leftSection}>
-        {/* Product Name */}
+      {/* Top Row: Product Name and Remove Button */}
+      <View style={styles.topRow}>
         <Text
           style={[
-            theme.typography.BodyMedium,
-            { color: theme.colors.night, marginBottom: 8 },
+            theme.typography.BodyLargeMedium,
+            { color: theme.colors.night, flex: 1, paddingRight: 8 },
           ]}
           numberOfLines={2}
         >
           {name}
         </Text>
-
-        {/* Value and Commission Row */}
-        <View style={styles.detailsRow}>
-          <Text
-            style={[
-              theme.typography.BodySmallMedium,
-              { color: theme.colors.davysgrey },
-            ]}
-          >
-            Value: ${value}
-          </Text>
-          <View style={styles.separator} />
-          <Text
-            style={[
-              theme.typography.BodySmallMedium,
-              { color: theme.colors.davysgrey },
-            ]}
-          >
-            Commission: ${commission}
-          </Text>
-        </View>
-
-        {/* Upsell Badge */}
-        {isUpsell && (
-          <View style={styles.upsellBadge}>
-            <Text
-              style={[
-                theme.typography.BodySmallBold,
-                { color: theme.colors.white },
-              ]}
-            >
-              Potential upsell
-            </Text>
-          </View>
-        )}
+        <TouchableOpacity
+          onPress={onRemove}
+          style={styles.removeButton}
+          activeOpacity={0.7}
+        >
+          <CustomIcon
+            name="xmark"
+            width={16}
+            height={16}
+            tintColour={theme.colors.davysgrey}
+          />
+        </TouchableOpacity>
       </View>
 
-      {/* Remove Button */}
-      <TouchableOpacity
-        onPress={onRemove}
-        style={styles.removeButton}
-        activeOpacity={0.7}
-      >
-        <CustomIcon
-          name="xmark"
-          width={16}
-          height={16}
-          tintColour={theme.colors.davysgrey}
-        />
-      </TouchableOpacity>
+      {/* Value and Commission Row */}
+      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={styles.detailsRow}>
+          <View>
+            <Text
+              style={[
+                theme.typography.BodySmallMedium,
+                { color: theme.colors.davysgrey },
+              ]}
+            >
+              Value
+            </Text>
+            <Text
+              style={[
+                theme.typography.BodyBold,
+                { color: theme.colors.midnightgreen, marginTop: 4 },
+              ]}
+            >
+              ${value}
+            </Text>
+          </View>
+          <View style={{ borderLeftWidth: 1, marginLeft: 16, paddingLeft: 16, borderLeftColor: theme.colors.isabelline }}>
+            <Text
+              style={[
+                theme.typography.BodySmallMedium,
+                { color: theme.colors.davysgrey },
+              ]}
+            >
+              Commission
+            </Text>
+            <Text
+              style={[
+                theme.typography.BodyBold,
+                { color: theme.colors.midnightgreen, marginTop: 4 },
+              ]}
+            >
+              ${commission}
+            </Text>
+          </View>
+        </View>
+
+        {/* Upsell Badge - Bottom Right */}
+        {isUpsell && (
+          <View style={styles.upsellContainer}>
+            <View style={[styles.upsellBadge, { backgroundColor: theme.colors.night10 }]}>
+              <Text
+                style={[
+                  theme.typography.BodySmallMedium,
+                  { color: theme.colors.night },
+                ]}
+              >
+                Potential upsell
+              </Text>
+            </View>
+          </View>
+        )}
+
+      </View>
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderRadius: 12,
+  wrapper: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
     borderWidth: 1,
-    marginBottom: 12,
+    borderBottomWidth: 0,
+    backgroundColor: '#FFFFFF',
   },
-  leftSection: {
-    flex: 1,
-    paddingRight: 12,
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
   detailsRow: {
     flexDirection: 'row',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  separator: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#CCCCCC',
-    marginHorizontal: 8,
+  upsellContainer: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    alignContent: 'flex-end',
+    alignSelf: 'flex-end',
+    // marginTop: 8,
   },
   upsellBadge: {
-    backgroundColor: '#FFA500',
+    // backgroundColor: '#FFA500',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
-    alignSelf: 'flex-start',
   },
   removeButton: {
     padding: 4,

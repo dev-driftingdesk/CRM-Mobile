@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  TextInput,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -15,6 +14,7 @@ import { useAppTheme } from '../../../../context/ThemeContext';
 import CustomIcon from '../../../../assets/icons/CustomIcon';
 import SalesRepCard from './components/SalesRepCard';
 import ProductCard from './components/ProductCard';
+import FormInput from './components/FormInput';
 
 /**
  * CreateLeadStep3 - Deal Creation Screen
@@ -61,9 +61,16 @@ const CreateLeadStep3 = ({ navigation, route }) => {
     },
     {
       id: '2',
-      name: 'Advanced Design Patterns',
-      value: 650,
-      commission: 55,
+      name: 'Wireframing & Prototyping in Figma',
+      value: 400,
+      commission: 34,
+      isUpsell: false,
+    },
+    {
+      id: '3',
+      name: 'Usability Testing Bootcamp',
+      value: 400,
+      commission: 34,
       isUpsell: true,
     },
   ]);
@@ -162,7 +169,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.isabelline }]}
+      style={[styles.container, { backgroundColor: theme.colors.white }]}
       edges={['top']}
     >
       {/* Header */}
@@ -170,14 +177,13 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         style={[
           styles.header,
           {
-            backgroundColor: theme.colors.white,
             borderBottomColor: theme.colors.night10,
           },
         ]}
       >
         <TouchableOpacity
           onPress={handleBack}
-          style={styles.backButton}
+          style={[styles.backButton, { borderColor: theme.colors.night10 }]}
           activeOpacity={0.7}
         >
           <CustomIcon
@@ -189,7 +195,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         </TouchableOpacity>
         <Text
           style={[
-            theme.typography.heading2Medium,
+            theme.typography.BodyLargeMedium,
             { color: theme.colors.night },
           ]}
         >
@@ -210,10 +216,10 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           keyboardShouldPersistTaps="handled"
         >
           {/* Deal Information Section */}
-          <View style={styles.section}>
+          <View style={[styles.section, { borderColor: theme.colors.night10, }]}>
             <Text
               style={[
-                theme.typography.heading2Bold,
+                theme.typography.heading2Medium,
                 { color: theme.colors.night, marginBottom: 8 },
               ]}
             >
@@ -228,53 +234,48 @@ const CreateLeadStep3 = ({ navigation, route }) => {
               Name this deal to keep track properly
             </Text>
 
-            {/* Deal Name */}
-            <Text style={[theme.typography.BodyBold, styles.label]}>
-              Deal name
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.colors.white,
-                  borderColor: theme.colors.night10,
-                  color: theme.colors.night,
-                },
-                theme.typography.BodyMedium,
-              ]}
-              placeholder="Enter deal name"
-              placeholderTextColor={theme.colors.davysgrey}
+            <FormInput
+              label="Deal name"
+              placeholder="e.g. UX Team Skill Upgrade Program"
               value={dealName}
               onChangeText={setDealName}
+              required
             />
           </View>
 
           {/* Sales Representatives Section */}
-          <View style={styles.section}>
+          <View style={[styles.section,{borderColor: theme.colors.night10}]}>
             <Text
               style={[
-                theme.typography.heading2Bold,
-                { color: theme.colors.night, marginBottom: 16 },
+                theme.typography.heading2Medium,
+                { 
+                  color: theme.colors.night, 
+                  marginBottom: 16,
+                },
               ]}
             >
               Sales Representatives
             </Text>
 
-            {/* Sales Rep Cards */}
-            {salesReps.map((rep) => (
-              <SalesRepCard
-                key={rep.id}
-                name={rep.name}
-                role={rep.role}
-                onRemove={() => handleRemoveSalesRep(rep.id)}
-              />
-            ))}
+            {/* Sales Rep Cards - Stacked Container */}
+            <View>
+              {salesReps.map((rep, index) => (
+                <SalesRepCard
+                  key={rep.id}
+                  name={rep.name}
+                  role={rep.role}
+                  onRemove={() => handleRemoveSalesRep(rep.id)}
+                  isFirst={index === 0}
+                  isLast={index === salesReps.length - 1}
+                />
+              ))}
+            </View>
 
             {/* Add Sales Rep Button */}
             <TouchableOpacity
               style={[
                 styles.addButton,
-                { borderColor: theme.colors.night10 },
+                { borderColor: theme.colors.night, marginTop: 12 },
               ]}
               onPress={handleAddSalesRep}
               activeOpacity={0.7}
@@ -297,10 +298,10 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           </View>
 
           {/* Products Section */}
-          <View style={styles.section}>
+          <View style={[styles.section,{borderColor: theme.colors.night10}]}>
             <Text
               style={[
-                theme.typography.heading2Bold,
+                theme.typography.heading2Medium,
                 { color: theme.colors.night, marginBottom: 8 },
               ]}
             >
@@ -320,23 +321,27 @@ const CreateLeadStep3 = ({ navigation, route }) => {
               product as an upsell also
             </Text>
 
-            {/* Product Cards */}
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                name={product.name}
-                value={product.value}
-                commission={product.commission}
-                isUpsell={product.isUpsell}
-                onRemove={() => handleRemoveProduct(product.id)}
-              />
-            ))}
+            {/* Product Cards - Stacked Container */}
+            <View>
+              {products.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  name={product.name}
+                  value={product.value}
+                  commission={product.commission}
+                  isUpsell={product.isUpsell}
+                  onRemove={() => handleRemoveProduct(product.id)}
+                  isFirst={index === 0}
+                  isLast={index === products.length - 1}
+                />
+              ))}
+            </View>
 
             {/* Add Product Button */}
             <TouchableOpacity
               style={[
                 styles.addButton,
-                { borderColor: theme.colors.night10 },
+                { borderColor: theme.colors.night10, marginTop: 12 },
               ]}
               onPress={handleAddProduct}
               activeOpacity={0.7}
@@ -396,14 +401,19 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
   },
   backButton: {
     padding: 8,
-    marginLeft: -8,
+    borderRadius: 100,
+    borderWidth: 1,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
   },
   headerSpacer: {
     width: 40,
@@ -419,18 +429,9 @@ const styles = StyleSheet.create({
     paddingTop: 24,
   },
   section: {
-    marginBottom: 32,
-  },
-  label: {
-    marginBottom: 8,
-    color: '#0F1010',
-  },
-  input: {
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    marginBottom: 16,
+    marginBottom: 28,
+    borderBottomWidth: 1,
+    paddingBottom: 22,
   },
   addButton: {
     flexDirection: 'row',
