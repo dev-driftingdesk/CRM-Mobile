@@ -54,6 +54,7 @@ const AddContactCard = ({
         borderTopRightRadius: isFirst ? 24 : 0,
         borderBottomLeftRadius: isLast ? 24 : 0,
         borderBottomRightRadius: isLast ? 24 : 0,
+        borderBottomWidth: isLast ? 1 : 0,
       }
     ]}>
       {/* Platform Selector */}
@@ -133,9 +134,16 @@ const AddContactCard = ({
       {/* Set as Primary Checkbox */}
       <TouchableOpacity
         style={styles.checkboxRow}
-        onPress={onPrimaryToggle}
+        onPress={() => {
+          console.log('Checkbox pressed. canSetPrimary:', canSetPrimary, 'isPrimary:', isPrimary);
+          // Only allow toggling if we can set primary OR we're unchecking
+          if (canSetPrimary || isPrimary) {
+            onPrimaryToggle();
+          } else {
+            console.log('Cannot set primary - limit reached');
+          }
+        }}
         activeOpacity={0.7}
-        disabled={!canSetPrimary && !isPrimary}
       >
         <View
           style={[
@@ -161,14 +169,12 @@ const AddContactCard = ({
           style={[
             theme.typography.BodyMedium,
             {
-              color: canSetPrimary
-                ? theme.colors.davysgrey
-                : theme.colors.inactive,
+              color: theme.colors.davysgrey,
               flex: 1,
             },
           ]}
         >
-          Set as primary, You can only have two primary contact options
+          Set as primary contact
         </Text>
       </TouchableOpacity>
 

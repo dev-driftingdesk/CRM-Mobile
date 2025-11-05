@@ -64,6 +64,7 @@ const ContactPill = ({ type, value, isPrimary, onRemove, isFirst = false, isLast
         borderTopRightRadius: isFirst ? 24 : 0,
         borderBottomLeftRadius: isLast ? 24 : 0,
         borderBottomRightRadius: isLast ? 24 : 0,
+        borderBottomWidth: isLast ? 1 : 0,
       }
     ]}>
       {/* Label Text Above Card */}

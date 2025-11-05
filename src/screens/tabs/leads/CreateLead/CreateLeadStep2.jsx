@@ -61,15 +61,11 @@ const CreateLeadStep2 = ({ navigation, route }) => {
   const handleAddCommunication = () => {
     if (!newContactValue.trim() || !selectedPlatform) return;
 
-    // Check primary contact limit
-    const primaryCount = communications.filter((c) => c.isPrimary).length;
-    const canSetPrimary = primaryCount < 2;
-
     const newComm = {
       id: Date.now().toString(),
       type: selectedPlatform.toLowerCase(),
       value: newContactValue,
-      isPrimary: setAsPrimary && canSetPrimary,
+      isPrimary: setAsPrimary,
     };
 
     setCommunications((prev) => [...prev, newComm]);
@@ -108,9 +104,8 @@ const CreateLeadStep2 = ({ navigation, route }) => {
     }
   };
 
-  // Check primary contact limit
-  const primaryCount = communications.filter((c) => c.isPrimary).length;
-  const canSetPrimary = primaryCount < 2;
+  // No limit on primary contacts
+  const canSetPrimary = true;
 
   return (
     <SafeAreaView
@@ -241,7 +236,10 @@ const CreateLeadStep2 = ({ navigation, route }) => {
                 contactValue={newContactValue}
                 onContactChange={setNewContactValue}
                 isPrimary={setAsPrimary}
-                onPrimaryToggle={() => setSetAsPrimary(!setAsPrimary)}
+                onPrimaryToggle={() => {
+                  console.log('Toggling primary from', setAsPrimary, 'to', !setAsPrimary);
+                  setSetAsPrimary(!setAsPrimary);
+                }}
                 canSetPrimary={canSetPrimary}
                 onAdd={handleAddCommunication}
                 showPicker={showPlatformPicker}
