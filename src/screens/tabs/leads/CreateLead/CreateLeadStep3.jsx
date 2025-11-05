@@ -7,7 +7,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../../context/ThemeContext';
@@ -17,6 +16,7 @@ import ProductCard from './components/ProductCard';
 import FormInput from './components/FormInput';
 import SalesRepSelectorBottomSheet from './components/SalesRepSelectorBottomSheet';
 import ProductSelectorBottomSheet from './components/ProductSelectorBottomSheet';
+import SuccessModal from '../../../../components/modals/SuccessModal';
 
 /**
  * CreateLeadStep3 - Deal Creation Screen
@@ -80,6 +80,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   // Modal visibility state
   const [showSalesRepModal, setShowSalesRepModal] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   /**
    * Handle back button press
@@ -164,25 +165,20 @@ const CreateLeadStep3 = ({ navigation, route }) => {
       // TODO: API call to create lead
       // await createLead(leadData);
 
-      // Show success message
-      Alert.alert(
-        'Success!',
-        'Lead has been created successfully.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // Navigate back to LeadsHomepage with success indicator
-              navigation.navigate('LeadsHomepage', {
-                leadCreated: true,
-                leadData,
-              });
-            },
-          },
-        ],
-        { cancelable: false }
-      );
+      // Show success modal
+      setShowSuccessModal(true);
     }
+  };
+
+  /**
+   * Handle success modal close
+   */
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false);
+    // Navigate back to LeadsHomepage
+    navigation.navigate('LeadsHomepage', {
+      leadCreated: true,
+    });
   };
 
   return (
@@ -402,7 +398,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           activeOpacity={0.8}
         >
           <Text
-            style={[theme.typography.BodyBold, { color: theme.colors.white }]}
+            style={[theme.typography.BodyMedium, { color: theme.colors.white }]}
           >
             Complete lead creation
           </Text>
@@ -423,6 +419,15 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         onClose={() => setShowProductModal(false)}
         onConfirm={handleConfirmProducts}
         currentProducts={products}
+      />
+
+      {/* Success Modal */}
+      <SuccessModal
+        visible={showSuccessModal}
+        title="Lead Created!"
+        message="Your lead has been created successfully and added to your leads list."
+        buttonText="View Leads"
+        onClose={handleSuccessClose}
       />
     </SafeAreaView>
   );

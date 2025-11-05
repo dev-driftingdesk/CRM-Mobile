@@ -87,13 +87,15 @@ const ProductSelectorBottomSheet = ({
   const { theme } = useAppTheme();
 
   // Initialize selected products from current products
-  const [selectedProducts, setSelectedProducts] = useState(() =>
+  const [selectedProducts, setSelectedProducts] = useState(
     currentProducts.map((prod) => ({
       ...prod,
       position: prod.isUpsell ? 'Potential upsell' : 'Primary product',
     }))
   );
   const [searchQuery, setSearchQuery] = useState('');
+
+  console.log('Component render - selectedProducts count:', selectedProducts.length);
 
   // Filter products by search query
   const filteredProducts = useMemo(() => {
@@ -117,13 +119,17 @@ const ProductSelectorBottomSheet = ({
   // Toggle product selection
   const toggleProductSelection = (product) => {
     const isSelected = isProductSelected(product.id);
+    console.log('Toggle product:', product.name, 'isSelected:', isSelected);
     if (isSelected) {
       setSelectedProducts((prev) => prev.filter((p) => p.id !== product.id));
     } else {
-      setSelectedProducts((prev) => [
-        ...prev,
-        { ...product, position: 'Primary product' },
-      ]);
+      const newProduct = { ...product, position: 'Primary product' };
+      console.log('Adding product to selected:', newProduct);
+      setSelectedProducts((prev) => {
+        const updated = [...prev, newProduct];
+        console.log('Updated selectedProducts:', updated);
+        return updated;
+      });
     }
   };
 
@@ -173,23 +179,40 @@ const ProductSelectorBottomSheet = ({
         ? product.name.substring(0, 25) + '...'
         : product.name;
 
+    console.log('Rendering pill for product:', product.name, 'displayName:', displayName);
+
     return (
       <View
         key={product.id}
-        style={[styles.selectedPill, { backgroundColor: '#F5F5F5' }]}
+        style={[
+          styles.selectedPill,
+          {
+            backgroundColor: theme.colors.night10,
+            width:132,
+            minHeight:50
+            // height:54
+            // borderWidth: 1,
+            // borderColor: '#E0E0E0',
+          }
+        ]}
       >
         <Text
           style={[
-            theme.typography.BodySmall,
-            { color: theme.colors.night, flex: 1 },
+            theme.typography.BodySmallMedium,
+            {
+              color: theme.colors.night,
+              flex: 1,
+              // fontSize: 12,
+            },
           ]}
-          numberOfLines={1}
+          numberOfLines={2}
+          ellipsizeMode="tail"
         >
           {displayName}
         </Text>
         <TouchableOpacity
           onPress={() => removeFromSelected(product.id)}
-          style={styles.pillRemoveButton}
+          style={[styles.pillRemoveButton,{backgroundColor:theme.colors.isabelline}]}
           activeOpacity={0.7}
         >
           <CustomIcon
@@ -427,15 +450,27 @@ const ProductSelectorBottomSheet = ({
         </View>
 
         {/* Selected Products Pills */}
-        {selectedProducts.length > 0 && (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.selectedPillsRow}
-            contentContainerStyle={styles.selectedPillsContent}
-          >
-            {selectedProducts.map((product) => renderSelectedPill(product))}
-          </ScrollView>
+        {selectedProducts.length > 0 ? (
+          <View style={styles.selectedSection}>
+            {/* <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginBottom: 12 }]}>
+              Selected ({selectedProducts.length})
+            </Text> */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.selectedPillsRow}
+              contentContainerStyle={styles.selectedPillsContent}
+            >
+              {selectedProducts.map((product) => {
+                console.log('Mapping pill for:', product.name);
+                return renderSelectedPill(product);
+              })}
+            </ScrollView>
+          </View>
+        ) : (
+          <View>
+            <Text style={{ color: theme.colors.davysgrey, opacity:0.5 }}>No products selected</Text>
+          </View>
         )}
 
         {/* Products List */}
@@ -550,8 +585,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
   },
+  selectedSection: {
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    // paddingBottom: 16,
+  },
   selectedPillsRow: {
-    maxHeight: 50,
+    // height: 40,
     marginBottom: 16,
   },
   selectedPillsContent: {
@@ -560,15 +601,22 @@ const styles = StyleSheet.create({
   },
   selectedPill: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    // alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     borderRadius: 8,
     gap: 8,
-    maxWidth: 200,
+    // maxWidth: 200,
+    // height: 32,
+    // minWidth: 100,
   },
   pillRemoveButton: {
     padding: 2,
+    width:16,
+    height:16,
+    borderRadius:8,
+    justifyContent:'center',
+    alignItems:'center'
   },
   productList: {
     flex: 1,

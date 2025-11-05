@@ -34,8 +34,7 @@ const HomeScreen = () => {
   // Handler for lead card press
   const handleLeadPress = (lead) => {
     console.log('Lead pressed:', lead);
-    // TODO: Implement navigation to lead details
-    // navigation.navigate('LeadDetails', { leadId: lead.id });
+    navigation.navigate('LeadDetails', { leadId: lead.id, lead });
   };
 
   return (

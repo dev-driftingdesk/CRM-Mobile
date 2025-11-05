@@ -99,11 +99,13 @@ const LeadsHomepage = ({ navigation }) => {
 
   /**
    * Handle lead card press
-   * TODO: Navigate to lead details screen
+   * Navigate to LeadDetails screen with lead data
    */
   const handleLeadPress = (lead) => {
-    console.log('Lead pressed:', lead);
-    // Future: navigation.navigate('LeadDetails', { leadId: lead.id });
+    navigation.navigate('LeadDetails', {
+      leadId: lead.id,
+      lead: lead,
+    });
   };
 
   return (

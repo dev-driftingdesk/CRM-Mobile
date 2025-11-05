@@ -58,7 +58,7 @@ const AddContactCard = ({
       }
     ]}>
       {/* Platform Selector */}
-      <Text style={[theme.typography.BodyBold, { color: theme.colors.night, marginBottom: 8 }]}>
+      <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginBottom: 8 }]}>
         Platform
       </Text>
       <TouchableOpacity
@@ -112,7 +112,7 @@ const AddContactCard = ({
       )}
 
       {/* Contact Number or Value */}
-      <Text style={[theme.typography.BodyBold, { color: theme.colors.night, marginBottom: 8, marginTop: 16 }]}>
+      <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginBottom: 8, marginTop: 16 }]}>
         Contact number or value
       </Text>
       <TextInput
