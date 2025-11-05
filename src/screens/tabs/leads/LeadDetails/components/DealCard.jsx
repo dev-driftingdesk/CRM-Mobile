@@ -22,6 +22,7 @@ import { useAppTheme } from '../../../../../context/ThemeContext';
  * @param {number} props.totalValue - Total value of the deal in dollars
  * @param {string} props.lastActivity - Description of last activity
  * @param {string} props.timestamp - Timestamp of last activity
+ * @param {Object} props.deal - Full deal object for navigation (optional)
  * @param {Function} props.onPress - Callback when card is pressed
  */
 const DealCard = ({
@@ -30,6 +31,7 @@ const DealCard = ({
   totalValue,
   lastActivity,
   timestamp,
+  deal,
   onPress,
 }) => {
   const { theme } = useAppTheme();
