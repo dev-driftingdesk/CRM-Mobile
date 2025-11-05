@@ -12,6 +12,7 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * - Set as primary checkbox
  * - Add button
  * - Matches ContactPill wrapper styling
+ * - Conditional border radius for stacked effect
  *
  * @param {string} selectedPlatform - Currently selected platform
  * @param {function} onPlatformChange - Platform selection handler
@@ -23,6 +24,8 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * @param {function} onAdd - Add button press handler
  * @param {boolean} showPicker - Whether to show platform options
  * @param {function} onTogglePicker - Toggle picker visibility
+ * @param {boolean} isFirst - Whether this is the first item (rounded top)
+ * @param {boolean} isLast - Whether this is the last item (rounded bottom)
  */
 const AddContactCard = ({
   selectedPlatform,
@@ -35,13 +38,24 @@ const AddContactCard = ({
   onAdd,
   showPicker,
   onTogglePicker,
+  isFirst = false,
+  isLast = true,
 }) => {
   const { theme } = useAppTheme();
 
   const platforms = ['Phone', 'Email', 'WhatsApp', 'Facebook', 'Instagram'];
 
   return (
-    <View style={[styles.wrapper, { borderColor: theme.colors.night10 }]}>
+    <View style={[
+      styles.wrapper,
+      {
+        borderColor: theme.colors.night10,
+        borderTopLeftRadius: isFirst ? 24 : 0,
+        borderTopRightRadius: isFirst ? 24 : 0,
+        borderBottomLeftRadius: isLast ? 24 : 0,
+        borderBottomRightRadius: isLast ? 24 : 0,
+      }
+    ]}>
       {/* Platform Selector */}
       <Text style={[theme.typography.BodyBold, { color: theme.colors.night, marginBottom: 8 }]}>
         Platform
@@ -188,11 +202,9 @@ const AddContactCard = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 12,
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderWidth: 1,
-    borderRadius: 12,
     backgroundColor: '#FFFFFF',
   },
   platformDropdown: {

@@ -216,33 +216,40 @@ const CreateLeadStep2 = ({ navigation, route }) => {
               Communication
             </Text>
 
-            {/* Existing Contacts */}
-            {communications.map((comm) => (
-              <ContactPill
-                key={comm.id}
-                type={comm.type}
-                value={comm.value}
-                isPrimary={comm.isPrimary}
-                onRemove={() => handleRemoveCommunication(comm.id)}
-              />
-            ))}
+            {/* Communication Cards Container - Stacked Effect */}
+            <View>
+              {/* Existing Contacts */}
+              {communications.map((comm, index) => (
+                <ContactPill
+                  key={comm.id}
+                  type={comm.type}
+                  value={comm.value}
+                  isPrimary={comm.isPrimary}
+                  onRemove={() => handleRemoveCommunication(comm.id)}
+                  isFirst={index === 0}
+                  isLast={false}
+                />
+              ))}
 
-            {/* Add Contact Card */}
-            <AddContactCard
-              selectedPlatform={selectedPlatform}
-              onPlatformChange={(platform) => {
-                setSelectedPlatform(platform);
-                setShowPlatformPicker(false);
-              }}
-              contactValue={newContactValue}
-              onContactChange={setNewContactValue}
-              isPrimary={setAsPrimary}
-              onPrimaryToggle={() => setSetAsPrimary(!setAsPrimary)}
-              canSetPrimary={canSetPrimary}
-              onAdd={handleAddCommunication}
-              showPicker={showPlatformPicker}
-              onTogglePicker={() => setShowPlatformPicker(!showPlatformPicker)}
-            />
+              {/* Add Contact Card - Always Last */}
+              <AddContactCard
+                selectedPlatform={selectedPlatform}
+                onPlatformChange={(platform) => {
+                  setSelectedPlatform(platform);
+                  setShowPlatformPicker(false);
+                }}
+                contactValue={newContactValue}
+                onContactChange={setNewContactValue}
+                isPrimary={setAsPrimary}
+                onPrimaryToggle={() => setSetAsPrimary(!setAsPrimary)}
+                canSetPrimary={canSetPrimary}
+                onAdd={handleAddCommunication}
+                showPicker={showPlatformPicker}
+                onTogglePicker={() => setShowPlatformPicker(!showPlatformPicker)}
+                isFirst={communications.length === 0}
+                isLast={true}
+              />
+            </View>
           </View>
 
           {/* Bottom Padding */}

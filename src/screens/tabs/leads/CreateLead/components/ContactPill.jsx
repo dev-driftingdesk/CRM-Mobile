@@ -13,13 +13,16 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * - Remove button (X icon)
  * - Icon support: phone, email, whatsapp
  * - WhatsApp icon in green (#25D366)
+ * - Conditional border radius for stacked effect
  *
  * @param {string} type - Contact type (phone, email, whatsapp)
  * @param {string} value - Contact value (number/email/etc)
  * @param {boolean} isPrimary - Whether this is a primary contact
  * @param {function} onRemove - Callback when remove button pressed
+ * @param {boolean} isFirst - Whether this is the first item (rounded top)
+ * @param {boolean} isLast - Whether this is the last item (rounded bottom)
  */
-const ContactPill = ({ type, value, isPrimary, onRemove }) => {
+const ContactPill = ({ type, value, isPrimary, onRemove, isFirst = false, isLast = false }) => {
   const { theme } = useAppTheme();
 
   // Get label text based on type
@@ -50,10 +53,19 @@ const ContactPill = ({ type, value, isPrimary, onRemove }) => {
   };
 
   // Icon color - WhatsApp green, others null (use original icon color)
-  const iconColor = type === 'whatsapp' ? '#25D366' : null;
+  const iconColor = type === 'whatsapp' ? 'null' : null;
 
   return (
-    <View style={[styles.wrapper,{borderColor:theme.colors.night10}]}>
+    <View style={[
+      styles.wrapper,
+      {
+        borderColor: theme.colors.night10,
+        borderTopLeftRadius: isFirst ? 24 : 0,
+        borderTopRightRadius: isFirst ? 24 : 0,
+        borderBottomLeftRadius: isLast ? 24 : 0,
+        borderBottomRightRadius: isLast ? 24 : 0,
+      }
+    ]}>
       {/* Label Text Above Card */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
 
@@ -138,11 +150,10 @@ const ContactPill = ({ type, value, isPrimary, onRemove }) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 12,
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderWidth: 1,
-    borderRadius: 12,
+    borderBottomWidth: 0,
     backgroundColor: '#FFFFFF',
   },
   container: {
