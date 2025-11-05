@@ -341,7 +341,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
             <TouchableOpacity
               style={[
                 styles.addButton,
-                { borderColor: theme.colors.night10, marginTop: 12 },
+                { borderColor: theme.colors.night, marginTop: 12 },
               ]}
               onPress={handleAddProduct}
               activeOpacity={0.7}
