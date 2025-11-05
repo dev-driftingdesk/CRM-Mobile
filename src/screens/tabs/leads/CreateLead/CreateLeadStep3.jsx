@@ -15,6 +15,7 @@ import CustomIcon from '../../../../assets/icons/CustomIcon';
 import SalesRepCard from './components/SalesRepCard';
 import ProductCard from './components/ProductCard';
 import FormInput from './components/FormInput';
+import SalesRepSelectorBottomSheet from './components/SalesRepSelectorBottomSheet';
 
 /**
  * CreateLeadStep3 - Deal Creation Screen
@@ -75,6 +76,9 @@ const CreateLeadStep3 = ({ navigation, route }) => {
     },
   ]);
 
+  // Modal visibility state
+  const [showSalesRepModal, setShowSalesRepModal] = useState(false);
+
   /**
    * Handle back button press
    */
@@ -90,12 +94,18 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   };
 
   /**
-   * Add sales rep (placeholder)
+   * Add sales rep - Open selection modal
    */
   const handleAddSalesRep = () => {
-    console.log('Add sales rep - TODO: Open picker/modal');
-    // Future: Open modal to select from available sales reps
-    Alert.alert('Add Sales Rep', 'Sales rep selection modal coming soon!');
+    setShowSalesRepModal(true);
+  };
+
+  /**
+   * Handle sales rep selection confirmation
+   */
+  const handleConfirmSalesReps = (newReps) => {
+    setSalesReps(newReps);
+    setShowSalesRepModal(false);
   };
 
   /**
@@ -390,6 +400,14 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Sales Rep Selector Modal */}
+      <SalesRepSelectorBottomSheet
+        visible={showSalesRepModal}
+        onClose={() => setShowSalesRepModal(false)}
+        onConfirm={handleConfirmSalesReps}
+        currentSalesReps={salesReps}
+      />
     </SafeAreaView>
   );
 };
