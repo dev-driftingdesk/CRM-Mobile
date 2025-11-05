@@ -13,6 +13,7 @@ import { useAppTheme } from '../../../../context/ThemeContext';
 import CustomIcon from '../../../../assets/icons/CustomIcon';
 import ContactPill from './components/ContactPill';
 import FormInput from './components/FormInput';
+import AddContactCard from './components/AddContactCard';
 
 const CreateLeadStep2 = ({ navigation, route }) => {
   const { theme } = useAppTheme();
@@ -35,10 +36,10 @@ const CreateLeadStep2 = ({ navigation, route }) => {
     },
     { id: '3', type: 'whatsapp', value: '+65 8234 2119', isPrimary: false },
   ]);
-  const [preferredPlatform, setPreferredPlatform] = useState('');
+  const [selectedPlatform, setSelectedPlatform] = useState('');
   const [newContactValue, setNewContactValue] = useState('');
-  const [newContactType, setNewContactType] = useState('phone');
   const [setAsPrimary, setSetAsPrimary] = useState(false);
+  const [showPlatformPicker, setShowPlatformPicker] = useState(false);
 
   /**
    * Handle back button press
@@ -58,7 +59,7 @@ const CreateLeadStep2 = ({ navigation, route }) => {
    * Add new communication method
    */
   const handleAddCommunication = () => {
-    if (!newContactValue.trim()) return;
+    if (!newContactValue.trim() || !selectedPlatform) return;
 
     // Check primary contact limit
     const primaryCount = communications.filter((c) => c.isPrimary).length;
@@ -66,13 +67,14 @@ const CreateLeadStep2 = ({ navigation, route }) => {
 
     const newComm = {
       id: Date.now().toString(),
-      type: newContactType,
+      type: selectedPlatform.toLowerCase(),
       value: newContactValue,
       isPrimary: setAsPrimary && canSetPrimary,
     };
 
     setCommunications((prev) => [...prev, newComm]);
     setNewContactValue('');
+    setSelectedPlatform('');
     setSetAsPrimary(false);
   };
 
@@ -101,7 +103,7 @@ const CreateLeadStep2 = ({ navigation, route }) => {
           companyWebsite,
         },
         communications,
-        preferredPlatform,
+        preferredPlatform: selectedPlatform,
       });
     }
   };
@@ -225,86 +227,22 @@ const CreateLeadStep2 = ({ navigation, route }) => {
               />
             ))}
 
-            <FormInput
-              label="Platform preference"
-              placeholder="Select where the client prefers to meet"
-              value={preferredPlatform}
-              onChangeText={setPreferredPlatform}
+            {/* Add Contact Card */}
+            <AddContactCard
+              selectedPlatform={selectedPlatform}
+              onPlatformChange={(platform) => {
+                setSelectedPlatform(platform);
+                setShowPlatformPicker(false);
+              }}
+              contactValue={newContactValue}
+              onContactChange={setNewContactValue}
+              isPrimary={setAsPrimary}
+              onPrimaryToggle={() => setSetAsPrimary(!setAsPrimary)}
+              canSetPrimary={canSetPrimary}
+              onAdd={handleAddCommunication}
+              showPicker={showPlatformPicker}
+              onTogglePicker={() => setShowPlatformPicker(!showPlatformPicker)}
             />
-
-            <FormInput
-              label="Add contact"
-              placeholder="Enter the number, email or other"
-              value={newContactValue}
-              onChangeText={setNewContactValue}
-            />
-
-            {/* Set as Primary Checkbox */}
-            <TouchableOpacity
-              style={styles.checkboxRow}
-              onPress={() => setSetAsPrimary(!setAsPrimary)}
-              activeOpacity={0.7}
-              disabled={!canSetPrimary && !setAsPrimary}
-            >
-              <View
-                style={[
-                  styles.checkbox,
-                  {
-                    borderColor: theme.colors.davysgrey,
-                    backgroundColor: setAsPrimary
-                      ? theme.colors.midnightgreen
-                      : 'transparent',
-                  },
-                ]}
-              >
-                {setAsPrimary && (
-                  <CustomIcon
-                    name="check"
-                    width={14}
-                    height={14}
-                    tintColour={theme.colors.white}
-                  />
-                )}
-              </View>
-              <Text
-                style={[
-                  theme.typography.BodyMedium,
-                  {
-                    color: canSetPrimary
-                      ? theme.colors.davysgrey
-                      : theme.colors.inactive,
-                    flex: 1,
-                  },
-                ]}
-              >
-                Set as primary. You can only have two primary contact options
-              </Text>
-            </TouchableOpacity>
-
-            {/* Add Communication Button */}
-            <TouchableOpacity
-              style={[
-                styles.addButton,
-                { borderColor: theme.colors.night10 },
-              ]}
-              onPress={handleAddCommunication}
-              activeOpacity={0.7}
-            >
-              <CustomIcon
-                name="plus"
-                width={16}
-                height={16}
-                tintColour={theme.colors.night}
-              />
-              <Text
-                style={[
-                  theme.typography.BodyMedium,
-                  { color: theme.colors.night },
-                ]}
-              >
-                Add communication method
-              </Text>
-            </TouchableOpacity>
           </View>
 
           {/* Bottom Padding */}
@@ -375,29 +313,6 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 32,
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    gap: 12,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 8,
   },
   bottomButtonContainer: {
     position: 'absolute',
