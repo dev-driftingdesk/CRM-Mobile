@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { useDispatch } from 'react-redux';
+import { clearAuth } from '../../../store/slices/auth/authSlice';
 
 const ClientReachHomepage = ({ navigation }) => {
+  const dispatch = useDispatch();
   const handleLogout = async () => {
-    await AsyncStorage.removeItem('userToken');
-    navigation.replace('Onboarding');
+    dispatch(clearAuth());
   };
 
   return (
@@ -22,8 +24,18 @@ const ClientReachHomepage = ({ navigation }) => {
 export default ClientReachHomepage;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0A0A0A' },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0A0A0A',
+  },
   text: { color: '#00C2FF', fontSize: 20, marginBottom: 20 },
-  button: { backgroundColor: '#FF5555', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8 },
+  button: {
+    backgroundColor: '#FF5555',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
   buttonText: { color: '#fff', fontWeight: '600' },
 });

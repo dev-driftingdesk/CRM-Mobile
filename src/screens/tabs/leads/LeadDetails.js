@@ -1,14 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+/**
+ * LeadDetails
+ *
+ * Re-export of the new LeadDetailsScreen component.
+ * This file maintains backward compatibility with existing navigation setup.
+ */
 
-const LeadDetails = () => {
-  return (
-    <View>
-      <Text>LeadDetails</Text>
-    </View>
-  )
-}
+import LeadDetailsScreen from './LeadDetails/LeadDetailsScreen';
 
-export default LeadDetails
-
-const styles = StyleSheet.create({})
+export default LeadDetailsScreen;
