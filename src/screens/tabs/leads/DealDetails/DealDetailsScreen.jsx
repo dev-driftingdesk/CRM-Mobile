@@ -816,7 +816,7 @@ const styles = StyleSheet.create({
   valueSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'centerh',
+    alignItems: 'center',
     marginHorizontal: 16,
     marginTop: 20,
   },
