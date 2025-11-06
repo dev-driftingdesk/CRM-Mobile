@@ -737,9 +737,9 @@ const getSampleDealData = () => ({
   leadCompany: 'CreativePixel Agency',
   leadContact: 'John Smith',
   salesReps: [
-    { id: '1', name: 'James Nick', avatar: null },
-    { id: '2', name: 'Sarah Johnson', avatar: null },
-    { id: '3', name: 'Mike Davis', avatar: null },
+    { id: '1', name: 'James Nick', avatar: 'https://i.pravatar.cc/150?img=1' },
+    { id: '2', name: 'Sarah Lee', avatar: 'https://i.pravatar.cc/150?img=5' },
+    { id: '3', name: 'Mike Torel', avatar: 'https://i.pravatar.cc/150?img=8' },
   ],
   talkingPoints: {
     fromLastCall: '24th Thursday',
@@ -816,7 +816,7 @@ const styles = StyleSheet.create({
   valueSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'centerh',
     marginHorizontal: 16,
     marginTop: 20,
   },

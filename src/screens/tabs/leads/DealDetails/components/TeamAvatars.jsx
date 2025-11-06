@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { useAppTheme } from '../../../../../context/ThemeContext';
 
 /**
@@ -68,14 +68,22 @@ const TeamAvatars = ({ salesReps = [] }) => {
             style={[
               styles.avatar,
               {
-                backgroundColor: getAvatarColor(rep.id),
+                backgroundColor: rep.avatar ? 'transparent' : getAvatarColor(rep.id),
                 borderColor: theme.colors.white,
               },
             ]}
           >
-            <Text style={[theme.typography.BodyMedium, styles.initials]}>
-              {getInitials(rep.name)}
-            </Text>
+            {rep.avatar ? (
+              <Image
+                source={{ uri: rep.avatar }}
+                style={styles.avatarImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <Text style={[theme.typography.BodyMedium, styles.initials]}>
+                {getInitials(rep.name)}
+              </Text>
+            )}
           </View>
         </View>
       ))}
@@ -126,6 +134,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   initials: {
     color: '#FFFFFF',

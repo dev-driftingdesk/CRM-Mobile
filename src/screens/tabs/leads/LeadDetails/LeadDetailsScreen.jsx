@@ -424,8 +424,8 @@ const getSampleLeadData = () => ({
       leadContact: 'John Smith',
       salesReps: [
         { id: '1', name: 'James Nick', avatar: 'https://i.pravatar.cc/150?img=1' },
-        { id: '2', name: 'Sarah Johnson', avatar: 'https://i.pravatar.cc/150?img=2' },
-        { id: '3', name: 'Mike Davis', avatar: 'https://i.pravatar.cc/150?img=3' },
+        { id: '2', name: 'Sarah Lee', avatar: 'https://i.pravatar.cc/150?img=5' },
+        { id: '3', name: 'Mike Torel', avatar: 'https://i.pravatar.cc/150?img=8' },
       ],
       talkingPoints: {
         fromLastCall: '24th Thursday',
