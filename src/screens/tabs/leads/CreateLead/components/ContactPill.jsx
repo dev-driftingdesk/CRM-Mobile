@@ -10,15 +10,16 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * - Label text above card
  * - Pill-style card with icon, text, badge
  * - Primary badge display (teal)
- * - Remove button (X icon)
- * - Icon support: phone, email, whatsapp
+ * - Remove button (X icon) - only shown if onRemove provided
+ * - Icon support: phone, email, whatsapp, linkedin
  * - WhatsApp icon in green (#25D366)
  * - Conditional border radius for stacked effect
+ * - Read-only mode when onRemove is null
  *
- * @param {string} type - Contact type (phone, email, whatsapp)
- * @param {string} value - Contact value (number/email/etc)
+ * @param {string} type - Contact type (phone, email, whatsapp, linkedin)
+ * @param {string} value - Contact value (number/email/url/etc)
  * @param {boolean} isPrimary - Whether this is a primary contact
- * @param {function} onRemove - Callback when remove button pressed
+ * @param {function|null} onRemove - Callback when remove button pressed (null for read-only)
  * @param {boolean} isFirst - Whether this is the first item (rounded top)
  * @param {boolean} isLast - Whether this is the last item (rounded bottom)
  */
@@ -34,6 +35,8 @@ const ContactPill = ({ type, value, isPrimary, onRemove, isFirst = false, isLast
         return 'Email';
       case 'whatsapp':
         return 'WhatsApp';
+      case 'linkedin':
+        return 'LinkedIn';
       case 'facebook':
         return 'Facebook';
       case 'instagram':
@@ -48,6 +51,7 @@ const ContactPill = ({ type, value, isPrimary, onRemove, isFirst = false, isLast
     phone: 'phone',
     email: 'mail-1',
     whatsapp: 'whatsapp',
+    linkedin: 'linkedin',
     facebook: 'facebook', // Placeholder - use mail icon for now
     instagram: 'instagram', // Placeholder - use mail icon for now
   };
@@ -129,21 +133,21 @@ const ContactPill = ({ type, value, isPrimary, onRemove, isFirst = false, isLast
           {value}
         </Text>
 
-
-
-        {/* Remove Button */}
-        <TouchableOpacity
-          onPress={onRemove}
-          style={styles.removeButton}
-          activeOpacity={0.7}
-        >
-          <CustomIcon
-            name="xmark"
-            width={16}
-            height={16}
-            tintColour={theme.colors.davysgrey}
-          />
-        </TouchableOpacity>
+        {/* Remove Button - Only show if onRemove is provided */}
+        {onRemove && (
+          <TouchableOpacity
+            onPress={onRemove}
+            style={styles.removeButton}
+            activeOpacity={0.7}
+          >
+            <CustomIcon
+              name="xmark"
+              width={16}
+              height={16}
+              tintColour={theme.colors.davysgrey}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
