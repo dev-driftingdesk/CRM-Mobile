@@ -17,6 +17,9 @@ import FormInput from './components/FormInput';
 import SalesRepSelectorBottomSheet from './components/SalesRepSelectorBottomSheet';
 import ProductSelectorBottomSheet from './components/ProductSelectorBottomSheet';
 import SuccessModal from '../../../../components/modals/SuccessModal';
+import leadsService from '../../../../services/lead-service/leadsService';
+import { useDispatch } from 'react-redux';
+import { createLead } from '../../../../store/slices/leads/leadsThunks';
 
 /**
  * CreateLeadStep3 - Deal Creation Screen
@@ -38,12 +41,20 @@ import SuccessModal from '../../../../components/modals/SuccessModal';
  */
 const CreateLeadStep3 = ({ navigation, route }) => {
   const { theme } = useAppTheme();
-  const { origin, leadInfo, communications, preferredPlatform } =
-    route.params || {};
+  // Destructure using backend field names
+  const {
+    originatedFrom,
+    leadName,
+    company,
+    companyAddress,
+    companyWebsite,
+    communication,
+    platform,
+  } = route.params || {};
 
   // Deal Information State
   const [dealName, setDealName] = useState('');
-
+  const dispatch = useDispatch();
   // Sales Representatives State
   const [salesReps, setSalesReps] = useState([
     { id: '1', name: 'James Nick', role: 'Primary' },
@@ -92,8 +103,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Remove sales rep
    */
-  const handleRemoveSalesRep = (id) => {
-    setSalesReps((prev) => prev.filter((rep) => rep.id !== id));
+  const handleRemoveSalesRep = id => {
+    setSalesReps(prev => prev.filter(rep => rep.id !== id));
   };
 
   /**
@@ -106,7 +117,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Handle sales rep selection confirmation
    */
-  const handleConfirmSalesReps = (newReps) => {
+  const handleConfirmSalesReps = newReps => {
     setSalesReps(newReps);
     setShowSalesRepModal(false);
   };
@@ -114,8 +125,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Remove product
    */
-  const handleRemoveProduct = (id) => {
-    setProducts((prev) => prev.filter((product) => product.id !== id));
+  const handleRemoveProduct = id => {
+    setProducts(prev => prev.filter(product => product.id !== id));
   };
 
   /**
@@ -128,7 +139,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Handle product selection confirmation
    */
-  const handleConfirmProducts = (newProducts) => {
+  const handleConfirmProducts = newProducts => {
     setProducts(newProducts);
     setShowProductModal(false);
   };
@@ -137,36 +148,50 @@ const CreateLeadStep3 = ({ navigation, route }) => {
    * Check if form is valid
    */
   const isFormValid = () => {
-    return (
-      dealName.trim() && salesReps.length > 0 && products.length > 0
-    );
+    return dealName.trim() && salesReps.length > 0 && products.length > 0;
   };
 
   /**
    * Handle Complete button press
    * Creates lead and navigates back with success
+   * Data is already in backend format (no mapping needed)
    */
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (isFormValid()) {
-      // Compile complete lead data
-      const leadData = {
-        origin,
-        ...leadInfo,
-        communications,
-        preferredPlatform,
-        dealName,
-        salesReps,
-        products,
-        createdAt: new Date().toISOString(),
-      };
+      // Compile complete lead data in backend format
+      // const leadData = {
+      //   originatedFrom,
+      //   leadName,
+      //   company,
+      //   companyAddress,
+      //   companyWebsite,
+      //   communication,
+      //   platform,
+      //   // Note: dealName, salesReps, products are deal-related
+      //   // These might need to go to a separate deals endpoint
+      //   dealName,
+      //   salesReps,
+      //   products,
+      // };
 
-      console.log('Creating lead:', leadData);
+      const leadData = {
+        originatedFrom,
+        leadName,
+        company,
+        companyAddress,
+        companyWebsite,
+        communication,
+        platform,
+        contactNumber: communication?.phone || '01836554104',
+      };
+      console.log('Creating lead with backend format:', leadData);
 
       // TODO: API call to create lead
-      // await createLead(leadData);
+      const resopnse = await dispatch(createLead(leadData));
+      console.log(resopnse);
 
       // Show success modal
-      setShowSuccessModal(true);
+      // setShowSuccessModal(true);
     }
   };
 
@@ -230,7 +255,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           keyboardShouldPersistTaps="handled"
         >
           {/* Deal Information Section */}
-          <View style={[styles.section, { borderColor: theme.colors.night10, }]}>
+          <View style={[styles.section, { borderColor: theme.colors.night10 }]}>
             <Text
               style={[
                 theme.typography.heading2Medium,
@@ -258,12 +283,12 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           </View>
 
           {/* Sales Representatives Section */}
-          <View style={[styles.section,{borderColor: theme.colors.night10}]}>
+          <View style={[styles.section, { borderColor: theme.colors.night10 }]}>
             <Text
               style={[
                 theme.typography.heading2Medium,
-                { 
-                  color: theme.colors.night, 
+                {
+                  color: theme.colors.night,
                   marginBottom: 16,
                 },
               ]}
@@ -312,7 +337,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           </View>
 
           {/* Products Section */}
-          <View style={[styles.section,{borderColor: theme.colors.night10}]}>
+          <View style={[styles.section, { borderColor: theme.colors.night10 }]}>
             <Text
               style={[
                 theme.typography.heading2Medium,

@@ -20,14 +20,15 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * @param {Object} props
  * @param {Object} props.lead - Lead data object
  * @param {string} props.lead.id - Unique lead identifier
- * @param {string} props.lead.companyName - Company name (used for avatar initials)
- * @param {string} props.lead.contactName - Contact person name
- * @param {number} props.lead.dealCount - Number of deals
+ * @param {string} props.lead.company - Company name (used for avatar initials)
+ * @param {string} props.lead.leadName - Contact person name
+ * @param {string} props.lead.dealId - Deal ID (presence indicates a deal exists)
  * @param {Function} props.onPress - Callback when card is pressed
  * @param {boolean} props.isFirst - Whether this is the first card (for border radius)
  * @param {boolean} props.isLast - Whether this is the last card (for border radius)
  */
 const LeadCard = ({ lead, onPress, isFirst = false, isLast = false }) => {
+  console.log('Rendering LeadCard for:', lead);
   const { theme } = useAppTheme();
 
   /**
@@ -36,10 +37,13 @@ const LeadCard = ({ lead, onPress, isFirst = false, isLast = false }) => {
    * - One word (2+ chars): First two letters (e.g., "Microsoft" → "MI")
    * - Fallback: "LD" for Lead Default
    */
-  const getInitials = (companyName) => {
+  const getInitials = companyName => {
     if (!companyName) return 'LD';
 
-    const words = companyName.trim().split(' ').filter(word => word.length > 0);
+    const words = companyName
+      .trim()
+      .split(' ')
+      .filter(word => word.length > 0);
 
     if (words.length >= 2) {
       return (words[0][0] + words[1][0]).toUpperCase();
@@ -52,7 +56,8 @@ const LeadCard = ({ lead, onPress, isFirst = false, isLast = false }) => {
     return 'LD';
   };
 
-  const initials = getInitials(lead.companyName);
+  const initials = getInitials(lead.company);
+  const dealCount = lead.dealId ? 1 : 0;
 
   return (
     <Pressable
@@ -94,7 +99,7 @@ const LeadCard = ({ lead, onPress, isFirst = false, isLast = false }) => {
             ]}
             numberOfLines={1}
           >
-            {lead.companyName}
+            {lead.company}
           </Text>
 
           {/* Contact Name */}
@@ -108,7 +113,7 @@ const LeadCard = ({ lead, onPress, isFirst = false, isLast = false }) => {
             ]}
             numberOfLines={1}
           >
-            {lead.contactName}
+            {lead.leadName}
           </Text>
 
           {/* Deal Count with Briefcase Icon */}
@@ -128,7 +133,7 @@ const LeadCard = ({ lead, onPress, isFirst = false, isLast = false }) => {
                 },
               ]}
             >
-              {lead.dealCount} {lead.dealCount === 1 ? 'Deal' : 'Deals'}
+              {dealCount} {dealCount === 1 ? 'Deal' : 'Deals'}
             </Text>
           </View>
         </View>
