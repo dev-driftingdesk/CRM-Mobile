@@ -84,8 +84,7 @@ const leadsSlice = createSlice({
     });
     builder.addCase(fetchLeads.fulfilled, (state, action) => {
       state.loading = false;
-      console.log(action.payload);
-      state.leads = action.payload.data;
+      state.leads = action?.payload?.data;
       state.totalCount = action.payload.length;
       state.lastFetch = new Date().toISOString();
       state.error = null;

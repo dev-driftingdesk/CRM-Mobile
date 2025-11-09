@@ -49,34 +49,8 @@ const LeadsHomepage = ({ navigation }) => {
 
   // Redux state
   const { leads, loading, error } = useSelector(state => state.leads);
-  console.log('Leads from Redux:', leads);
+
   // Local state
-
-  // "createdAt": null,
-  // "updatedAt": "2025-11-04 13:59:24",
-  // "createdBy": null,
-  // "updatedBy": "f8041c35-ad1f-45ad-9b53-615484b4275a",
-  // "deleted": false,
-  // "deletedAt": null,
-  // "deletedBy": null,
-  // "id": "0c96e959-cb86-4a54-a76a-70bfd9ce3bce",
-  // "originatedFrom": "facebook",
-  // "leadName": "John Doe - Tech Solutions8",
-  // "company": "Tech Solutions Inc",
-  // "companyAddress": "123 Tech Street, Silicon Valley, CA 94025",
-  // "companyWebsite": "https://techsolutions.example.com",
-  // "communication": [
-  //     {
-  //         "phone": "987987987"
-  //     },
-  //     {
-  //         "email": "john.doe@techsolutions.com"
-  //     }
-  // ],
-  // "platform": "Enterprise",
-  // "contactNumber": "987987987",
-  // "dealId": "1d6e7078-1643-4c1a-8800-5e6ce60e5ac1"
-
   const [searchQuery, setSearchQuery] = useState('');
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState({
@@ -91,7 +65,6 @@ const LeadsHomepage = ({ navigation }) => {
   useEffect(() => {
     // Debug auth storage on mount
     debugAuthStorage();
-
     console.log('🏠 LeadsHomepage mounted - Fetching leads...');
     dispatch(fetchLeads());
   }, [dispatch]);
@@ -168,54 +141,6 @@ const LeadsHomepage = ({ navigation }) => {
     dispatch(fetchLeads());
   };
 
-  /**
-   * Render loading state
-   */
-  if (loading && leads.length === 0) {
-    return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.isabelline }]}
-        edges={['top']}
-      >
-        <View style={styles.titleContainer}>
-          <Text
-            style={[
-              theme.typography.heading1Medium,
-              { color: theme.colors.night },
-            ]}
-          >
-            Leads
-          </Text>
-        </View>
-        <LoadingSpinner message="Loading leads..." fullScreen={false} />
-      </SafeAreaView>
-    );
-  }
-
-  /**
-   * Render error state
-   */
-  if (error && leads.length === 0) {
-    return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.isabelline }]}
-        edges={['top']}
-      >
-        <View style={styles.titleContainer}>
-          <Text
-            style={[
-              theme.typography.heading1Medium,
-              { color: theme.colors.night },
-            ]}
-          >
-            Leads
-          </Text>
-        </View>
-        <ErrorMessage error={error} onRetry={handleRetry} fullScreen={false} />
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.isabelline }]}
@@ -277,47 +202,64 @@ const LeadsHomepage = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Leads List - Scrollable */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {filteredLeads.length > 0 ? (
-          <View style={styles.cardsContainer}>
-            {filteredLeads.map((lead, index) => (
-              <LeadCard
-                key={lead.id}
-                lead={lead}
-                onPress={handleLeadPress}
-                isFirst={index === 0}
-                isLast={index === filteredLeads.length - 1}
+      {/* Content Area - Scrollable */}
+      {loading ? (
+        // Loading State
+        <View style={styles.centerContainer}>
+          <LoadingSpinner message="Loading leads..." fullScreen={false} />
+        </View>
+      ) : error ? (
+        // Error State
+        <View style={styles.centerContainer}>
+          <ErrorMessage
+            error={error}
+            onRetry={handleRetry}
+            fullScreen={false}
+          />
+        </View>
+      ) : (
+        // Data/Empty State
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {filteredLeads.length > 0 ? (
+            <View style={styles.cardsContainer}>
+              {filteredLeads.map((lead, index) => (
+                <LeadCard
+                  key={lead.id}
+                  lead={lead}
+                  onPress={handleLeadPress}
+                  isFirst={index === 0}
+                  isLast={index === filteredLeads.length - 1}
+                />
+              ))}
+            </View>
+          ) : (
+            // Empty State
+            <View style={styles.emptyState}>
+              <CustomIcon
+                name="user"
+                width={48}
+                height={48}
+                tintColour={theme.colors.davysgrey}
+                style={styles.emptyIcon}
               />
-            ))}
-          </View>
-        ) : (
-          // Empty State
-          <View style={styles.emptyState}>
-            <CustomIcon
-              name="user"
-              width={48}
-              height={48}
-              tintColour={theme.colors.davysgrey}
-              style={styles.emptyIcon}
-            />
-            <Text
-              style={[
-                theme.typography.BodyMedium,
-                { color: theme.colors.davysgrey, textAlign: 'center' },
-              ]}
-            >
-              {searchQuery
-                ? `No results found for "${searchQuery}"`
-                : 'No leads available'}
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.davysgrey, textAlign: 'center' },
+                ]}
+              >
+                {searchQuery
+                  ? `No results found for "${searchQuery}"`
+                  : 'No leads available'}
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
 
       {/* Filter Modal */}
       <LeadsFilterBottomSheet
@@ -364,6 +306,11 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

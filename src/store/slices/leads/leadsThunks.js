@@ -15,40 +15,9 @@ import leadsService from '../../../services/lead-service/leadsService';
 export const fetchLeads = createAsyncThunk(
   'leads/fetchAll',
   async (_, { rejectWithValue }) => {
-    try {
-      console.log('📋 Fetching leads from API...');
-      const response = await leadsService.getAllLeads();
-      return response;
-    } catch (error) {
-      // Handle error with proper error message
-      console.error('❌ Error fetching leads:', error);
-
-      if (error.response) {
-        // Server responded with error status
-        console.error('📡 Server error:', {
-          status: error.response.status,
-          data: error.response.data,
-        });
-        return rejectWithValue({
-          message: error.response.data?.message || 'Failed to fetch leads',
-          status: error.response.status,
-        });
-      } else if (error.request) {
-        // Request made but no response
-        console.error('🌐 Network error - No response received');
-        return rejectWithValue({
-          message: 'Network error. Please check your connection.',
-          status: 0,
-        });
-      } else {
-        // Something else happened
-        console.error('⚠️ Unexpected error:', error.message);
-        return rejectWithValue({
-          message: error.message || 'An unexpected error occurred',
-          status: 0,
-        });
-      }
-    }
+    console.log('📋 Fetching leads from API...');
+    const response = await leadsService.getAllLeads();
+    return response;
   },
 );
 

@@ -20,7 +20,11 @@ import SalesRepSelectorBottomSheet from './components/SalesRepSelectorBottomShee
 import ProductSelectorBottomSheet from './components/ProductSelectorBottomSheet';
 import SuccessModal from '../../../../components/modals/SuccessModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { createLead } from '../../../../store/slices/leads/leadsThunks';
+import {
+  createLead,
+  fetchLeads,
+} from '../../../../store/slices/leads/leadsThunks';
+import leadsService from '../../../../services/lead-service/leadsService';
 
 /**
  * CreateLeadStep3 - Deal Creation Screen
@@ -170,7 +174,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         communication,
         platform,
         contactNumber,
-        // dealId: '4c144ac6-9eb1-410d-9b3c-f5853930bbd2',
+        dealId: '4c144ac6-9eb1-410d-9b3c-f5853930bbd2',
       };
       console.log('Creating lead with backend format:', leadData);
       // API call to create lead
@@ -180,6 +184,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         response?.payload?.data?.success
       ) {
         setShowSuccessModal(true);
+        dispatch(fetchLeads());
+        //  Back to LeadsHomepage handled in success modal close
       } else {
         // Show error alert
         const errorMessage =
