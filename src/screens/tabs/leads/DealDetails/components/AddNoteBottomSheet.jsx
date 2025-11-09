@@ -135,7 +135,7 @@ const AddNoteBottomSheet = ({
         <View style={styles.header}>
           <Text
             style={[
-              theme.typography.heading2Medium,
+              theme.typography.BodyLargeMedium,
               {
                 color: theme.colors.night,
                 textAlign: 'center',
@@ -175,7 +175,7 @@ const AddNoteBottomSheet = ({
           <View style={styles.fieldSection}>
             <Text
               style={[
-                theme.typography.BodyBold,
+                theme.typography.BodyMedium,
                 {
                   color: theme.colors.night,
                   marginBottom: 8,
@@ -267,7 +267,7 @@ const AddNoteBottomSheet = ({
           <View style={styles.fieldSection}>
             <Text
               style={[
-                theme.typography.BodyBold,
+                theme.typography.BodyMedium,
                 {
                   color: theme.colors.night,
                   marginBottom: 8,
@@ -361,7 +361,7 @@ const AddNoteBottomSheet = ({
             <View style={styles.noteHeader}>
               <Text
                 style={[
-                  theme.typography.BodyBold,
+                  theme.typography.BodyMedium,
                   {
                     color: theme.colors.night,
                   },
@@ -440,7 +440,7 @@ const AddNoteBottomSheet = ({
           >
             <Text
               style={[
-                theme.typography.BodyBold,
+                theme.typography.BodyMedium,
                 {
                   color: theme.colors.white,
                 },
@@ -464,7 +464,7 @@ const AddNoteBottomSheet = ({
           >
             <Text
               style={[
-                theme.typography.BodyBold,
+                theme.typography.BodyMedium,
                 {
                   color: theme.colors.night,
                 },

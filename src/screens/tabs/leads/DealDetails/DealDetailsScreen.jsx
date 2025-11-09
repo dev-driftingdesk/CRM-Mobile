@@ -16,6 +16,7 @@ import ContactPill from '../CreateLead/components/ContactPill';
 import SalesAgentsBottomSheet from './components/SalesAgentsBottomSheet';
 import AddNoteBottomSheet from './components/AddNoteBottomSheet';
 import ViewNoteBottomSheet from './components/ViewNoteBottomSheet';
+import LeadInfoBottomSheet from './components/LeadInfoBottomSheet';
 
 /**
  * DealDetailsScreen
@@ -65,6 +66,9 @@ const DealDetailsScreen = ({ navigation, route }) => {
   // View note modal state
   const [showViewNoteModal, setShowViewNoteModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
+
+  // Lead info modal state
+  const [showLeadInfoModal, setShowLeadInfoModal] = useState(false);
 
   // Get deal data from navigation params or use sample data
   const dealFromParams = route?.params?.deal;
@@ -125,7 +129,7 @@ const DealDetailsScreen = ({ navigation, route }) => {
 
   const handleLeadPress = () => {
     console.log('Lead section pressed - navigate to lead details:', dealData.leadId);
-    // navigation.navigate('LeadDetails', { leadId: dealData.leadId });
+    setShowLeadInfoModal(true);
   };
 
   const handleDictatePress = () => {
@@ -194,6 +198,27 @@ const DealDetailsScreen = ({ navigation, route }) => {
   const calculateTotalCommission = () => {
     if (!dealData.products || dealData.products.length === 0) return 0;
     return dealData.products.reduce((sum, product) => sum + product.commission, 0);
+  };
+
+  // Lead Info Modal Handlers
+  const handleShowEmails = () => {
+    setShowLeadInfoModal(false);
+    console.log('Show all emails - future: navigate to emails screen');
+  };
+
+  const handleOpenCallLogs = () => {
+    setShowLeadInfoModal(false);
+    console.log('Open call logs - future: navigate to call logs screen');
+  };
+
+  const handleShowActionItems = () => {
+    setShowLeadInfoModal(false);
+    console.log('Show action items - future: navigate to action items screen');
+  };
+
+  const handleShowDeals = () => {
+    setShowLeadInfoModal(false);
+    console.log('Show deals - future: navigate to deals list or LeadDetails');
   };
 
   return (
@@ -1010,7 +1035,7 @@ const DealDetailsScreen = ({ navigation, route }) => {
           )}
 
           {/* Bottom spacing for fixed buttons */}
-          <View style={{ height: 150 }} />
+          <View style={{ height: 20 }} />
         </ScrollView>
       </View>
 
@@ -1132,6 +1157,29 @@ const DealDetailsScreen = ({ navigation, route }) => {
         }}
         note={selectedNote}
         onEdit={handleEditNote}
+      />
+
+      {/* Lead Info Modal */}
+      <LeadInfoBottomSheet
+        visible={showLeadInfoModal}
+        onClose={() => setShowLeadInfoModal(false)}
+        leadData={{
+          companyName: dealData.leadCompany,
+          contactName: dealData.leadContact,
+          dealCount: 8,
+          totalValue: 39000,
+          totalProducts: 25,
+          criticalAction: {
+            text: 'Call **John Smith** – follow up on pricing discussion',
+            time: '10:00AM',
+          },
+          lastEmailDays: 3,
+          lastCallDays: 1,
+        }}
+        onShowEmails={handleShowEmails}
+        onOpenCallLogs={handleOpenCallLogs}
+        onShowActionItems={handleShowActionItems}
+        onShowDeals={handleShowDeals}
       />
     </SafeAreaView>
   );
@@ -1318,10 +1366,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    marginBottom: 84, // Height of bottom buttons (52 + 32 padding)
   },
   scrollContent: {
-    // paddingBottom: 120,
+    paddingBottom: 100,
   },
   productCountRow: {
     flexDirection: 'row',

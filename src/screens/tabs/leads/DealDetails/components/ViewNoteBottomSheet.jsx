@@ -81,10 +81,10 @@ const ViewNoteBottomSheet = ({ visible, onClose, note, onEdit }) => {
         ]}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header,{borderBottomWidth: 1, borderBottomColor: theme.colors.isabelline}]}>
           <Text
             style={[
-              theme.typography.heading2Medium,
+              theme.typography.BodyLargeMedium,
               {
                 color: theme.colors.night,
                 textAlign: 'center',
@@ -283,17 +283,6 @@ const ViewNoteBottomSheet = ({ visible, onClose, note, onEdit }) => {
           )}
         </ScrollView>
 
-        {/* Bottom Indicator */}
-        <View style={styles.bottomIndicatorContainer}>
-          <View
-            style={[
-              styles.bottomIndicator,
-              {
-                backgroundColor: theme.colors.night,
-              },
-            ]}
-          />
-        </View>
       </View>
     </Modal>
   );
