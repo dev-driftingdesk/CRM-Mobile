@@ -128,8 +128,6 @@ const leadsSlice = createSlice({
     });
     builder.addCase(createLead.fulfilled, (state, action) => {
       state.creating = false;
-      state.leads.unshift(action.payload); // Add to beginning of array
-      state.totalCount += 1;
       state.createSuccess = true;
       state.error = null;
     });

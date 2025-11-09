@@ -24,6 +24,7 @@ const CreateLeadStep2 = ({ navigation, route }) => {
   const [company, setCompany] = useState(''); // Backend: company
   const [companyAddress, setCompanyAddress] = useState(''); // Backend: companyAddress
   const [companyWebsite, setCompanyWebsite] = useState(''); // Backend: companyWebsite
+  const [contactNumber, setContactNumber] = useState(''); // Backend: contactNumber
 
   // Communication State (backend: communication array with {phone: "..."} or {email: "..."})
   const [communications, setCommunications] = useState([]);
@@ -93,6 +94,7 @@ const CreateLeadStep2 = ({ navigation, route }) => {
         company,
         companyAddress,
         companyWebsite,
+        contactNumber,
         communication: communications, // Backend field name
         platform: selectedPlatform, // Backend field name
       });
@@ -192,6 +194,14 @@ const CreateLeadStep2 = ({ navigation, route }) => {
               onChangeText={setCompanyWebsite}
               keyboardType="url"
               autoCapitalize="none"
+            />
+
+            <FormInput
+              label="Contact number"
+              placeholder="e.g. +65 8234 2119"
+              value={contactNumber}
+              onChangeText={setContactNumber}
+              keyboardType="phone-pad"
             />
           </View>
 

@@ -7,6 +7,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../../context/ThemeContext';
@@ -17,8 +19,7 @@ import FormInput from './components/FormInput';
 import SalesRepSelectorBottomSheet from './components/SalesRepSelectorBottomSheet';
 import ProductSelectorBottomSheet from './components/ProductSelectorBottomSheet';
 import SuccessModal from '../../../../components/modals/SuccessModal';
-import leadsService from '../../../../services/lead-service/leadsService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createLead } from '../../../../store/slices/leads/leadsThunks';
 
 /**
@@ -41,6 +42,7 @@ import { createLead } from '../../../../store/slices/leads/leadsThunks';
  */
 const CreateLeadStep3 = ({ navigation, route }) => {
   const { theme } = useAppTheme();
+  const { creating } = useSelector(state => state.leads);
   // Destructure using backend field names
   const {
     originatedFrom,
@@ -48,6 +50,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
     company,
     companyAddress,
     companyWebsite,
+    contactNumber,
     communication,
     platform,
   } = route.params || {};
@@ -158,22 +161,6 @@ const CreateLeadStep3 = ({ navigation, route }) => {
    */
   const handleComplete = async () => {
     if (isFormValid()) {
-      // Compile complete lead data in backend format
-      // const leadData = {
-      //   originatedFrom,
-      //   leadName,
-      //   company,
-      //   companyAddress,
-      //   companyWebsite,
-      //   communication,
-      //   platform,
-      //   // Note: dealName, salesReps, products are deal-related
-      //   // These might need to go to a separate deals endpoint
-      //   dealName,
-      //   salesReps,
-      //   products,
-      // };
-
       const leadData = {
         originatedFrom,
         leadName,
@@ -182,16 +169,32 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         companyWebsite,
         communication,
         platform,
-        contactNumber: communication?.phone || '01836554104',
+        contactNumber,
+        // dealId: '4c144ac6-9eb1-410d-9b3c-f5853930bbd2',
       };
       console.log('Creating lead with backend format:', leadData);
+      // API call to create lead
+      const response = await dispatch(createLead(leadData));
+      if (
+        response?.payload?.status === 201 &&
+        response?.payload?.data?.success
+      ) {
+        setShowSuccessModal(true);
+      } else {
+        // Show error alert
+        const errorMessage =
+          response?.payload?.data?.message ||
+          response?.error?.message ||
+          'Failed to create lead. Please try again.';
 
-      // TODO: API call to create lead
-      const resopnse = await dispatch(createLead(leadData));
-      console.log(resopnse);
-
-      // Show success modal
-      // setShowSuccessModal(true);
+        Alert.alert('Error', errorMessage, [
+          {
+            text: 'OK',
+            style: 'default',
+          },
+        ]);
+      }
+      console.log(response);
     }
   };
 
@@ -413,20 +416,38 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           style={[
             styles.completeButton,
             {
-              backgroundColor: isFormValid()
-                ? theme.colors.midnightgreen
-                : theme.colors.davysgrey,
+              backgroundColor:
+                isFormValid() && !creating
+                  ? theme.colors.midnightgreen
+                  : theme.colors.davysgrey,
             },
           ]}
           onPress={handleComplete}
-          disabled={!isFormValid()}
+          disabled={!isFormValid() || creating}
           activeOpacity={0.8}
         >
-          <Text
-            style={[theme.typography.BodyMedium, { color: theme.colors.white }]}
-          >
-            Complete lead creation
-          </Text>
+          {creating ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator color={theme.colors.white} size="small" />
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.white, marginLeft: 8 },
+                ]}
+              >
+                Creating lead...
+              </Text>
+            </View>
+          ) : (
+            <Text
+              style={[
+                theme.typography.BodyMedium,
+                { color: theme.colors.white },
+              ]}
+            >
+              Complete lead creation
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -520,6 +541,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
