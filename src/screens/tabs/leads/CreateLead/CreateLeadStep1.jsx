@@ -63,12 +63,12 @@ const CreateLeadStep1 = ({ navigation }) => {
 
   /**
    * Handle Next button press
-   * Navigates to Step 2 with selected origin
+   * Navigates to Step 2 with selected origin (using backend field name)
    */
   const handleNext = () => {
     if (selectedOrigin) {
       navigation.navigate('CreateLeadStep2', {
-        origin: selectedOrigin,
+        origin: selectedOrigin, // Will be mapped to originatedFrom in Step 2
       });
     }
   };
