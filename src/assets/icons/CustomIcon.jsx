@@ -51,6 +51,10 @@ const icons = {
   'user-badge-check': require('../icons/user-badge-check.png'),
   user: require('../icons/user.png'),
   xmark: require('../icons/xmark.png'),
+  whatsapp: require('../icons/whatsapp.png'),
+  facebook: require('../icons/facebook.png'),
+  linkedin: require('../icons/linkedin.png'),
+  instagram: require('../icons/instagram.png'),
 };
 
 const IconComponent = ({ name, width, height, style, tintColour }) => {
