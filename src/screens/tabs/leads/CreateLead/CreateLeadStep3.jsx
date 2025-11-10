@@ -7,6 +7,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../../context/ThemeContext';
@@ -17,6 +19,12 @@ import FormInput from './components/FormInput';
 import SalesRepSelectorBottomSheet from './components/SalesRepSelectorBottomSheet';
 import ProductSelectorBottomSheet from './components/ProductSelectorBottomSheet';
 import SuccessModal from '../../../../components/modals/SuccessModal';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  createLead,
+  fetchLeads,
+} from '../../../../store/slices/leads/leadsThunks';
+import leadsService from '../../../../services/lead-service/leadsService';
 
 /**
  * CreateLeadStep3 - Deal Creation Screen
@@ -38,12 +46,22 @@ import SuccessModal from '../../../../components/modals/SuccessModal';
  */
 const CreateLeadStep3 = ({ navigation, route }) => {
   const { theme } = useAppTheme();
-  const { origin, leadInfo, communications, preferredPlatform } =
-    route.params || {};
+  const { creating } = useSelector(state => state.leads);
+  // Destructure using backend field names
+  const {
+    originatedFrom,
+    leadName,
+    company,
+    companyAddress,
+    companyWebsite,
+    contactNumber,
+    communication,
+    platform,
+  } = route.params || {};
 
   // Deal Information State
   const [dealName, setDealName] = useState('');
-
+  const dispatch = useDispatch();
   // Sales Representatives State
   const [salesReps, setSalesReps] = useState([
     { id: '1', name: 'James Nick', role: 'Primary' },
@@ -92,8 +110,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Remove sales rep
    */
-  const handleRemoveSalesRep = (id) => {
-    setSalesReps((prev) => prev.filter((rep) => rep.id !== id));
+  const handleRemoveSalesRep = id => {
+    setSalesReps(prev => prev.filter(rep => rep.id !== id));
   };
 
   /**
@@ -106,7 +124,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Handle sales rep selection confirmation
    */
-  const handleConfirmSalesReps = (newReps) => {
+  const handleConfirmSalesReps = newReps => {
     setSalesReps(newReps);
     setShowSalesRepModal(false);
   };
@@ -114,8 +132,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Remove product
    */
-  const handleRemoveProduct = (id) => {
-    setProducts((prev) => prev.filter((product) => product.id !== id));
+  const handleRemoveProduct = id => {
+    setProducts(prev => prev.filter(product => product.id !== id));
   };
 
   /**
@@ -128,7 +146,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   /**
    * Handle product selection confirmation
    */
-  const handleConfirmProducts = (newProducts) => {
+  const handleConfirmProducts = newProducts => {
     setProducts(newProducts);
     setShowProductModal(false);
   };
@@ -137,36 +155,52 @@ const CreateLeadStep3 = ({ navigation, route }) => {
    * Check if form is valid
    */
   const isFormValid = () => {
-    return (
-      dealName.trim() && salesReps.length > 0 && products.length > 0
-    );
+    return dealName.trim() && salesReps.length > 0 && products.length > 0;
   };
 
   /**
    * Handle Complete button press
    * Creates lead and navigates back with success
+   * Data is already in backend format (no mapping needed)
    */
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (isFormValid()) {
-      // Compile complete lead data
       const leadData = {
-        origin,
-        ...leadInfo,
-        communications,
-        preferredPlatform,
-        dealName,
-        salesReps,
-        products,
-        createdAt: new Date().toISOString(),
+        originatedFrom,
+        leadName,
+        company,
+        companyAddress,
+        companyWebsite,
+        communication,
+        platform,
+        contactNumber,
+        dealId: '4c144ac6-9eb1-410d-9b3c-f5853930bbd2',
       };
+      console.log('Creating lead with backend format:', leadData);
+      // API call to create lead
+      const response = await dispatch(createLead(leadData));
+      if (
+        response?.payload?.status === 201 &&
+        response?.payload?.data?.success
+      ) {
+        setShowSuccessModal(true);
+        dispatch(fetchLeads());
+        //  Back to LeadsHomepage handled in success modal close
+      } else {
+        // Show error alert
+        const errorMessage =
+          response?.payload?.data?.message ||
+          response?.error?.message ||
+          'Failed to create lead. Please try again.';
 
-      console.log('Creating lead:', leadData);
-
-      // TODO: API call to create lead
-      // await createLead(leadData);
-
-      // Show success modal
-      setShowSuccessModal(true);
+        Alert.alert('Error', errorMessage, [
+          {
+            text: 'OK',
+            style: 'default',
+          },
+        ]);
+      }
+      console.log(response);
     }
   };
 
@@ -230,7 +264,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           keyboardShouldPersistTaps="handled"
         >
           {/* Deal Information Section */}
-          <View style={[styles.section, { borderColor: theme.colors.night10, }]}>
+          <View style={[styles.section, { borderColor: theme.colors.night10 }]}>
             <Text
               style={[
                 theme.typography.heading2Medium,
@@ -258,12 +292,12 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           </View>
 
           {/* Sales Representatives Section */}
-          <View style={[styles.section,{borderColor: theme.colors.night10}]}>
+          <View style={[styles.section, { borderColor: theme.colors.night10 }]}>
             <Text
               style={[
                 theme.typography.heading2Medium,
-                { 
-                  color: theme.colors.night, 
+                {
+                  color: theme.colors.night,
                   marginBottom: 16,
                 },
               ]}
@@ -312,7 +346,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           </View>
 
           {/* Products Section */}
-          <View style={[styles.section,{borderColor: theme.colors.night10}]}>
+          <View style={[styles.section, { borderColor: theme.colors.night10 }]}>
             <Text
               style={[
                 theme.typography.heading2Medium,
@@ -388,20 +422,38 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           style={[
             styles.completeButton,
             {
-              backgroundColor: isFormValid()
-                ? theme.colors.midnightgreen
-                : theme.colors.davysgrey,
+              backgroundColor:
+                isFormValid() && !creating
+                  ? theme.colors.midnightgreen
+                  : theme.colors.davysgrey,
             },
           ]}
           onPress={handleComplete}
-          disabled={!isFormValid()}
+          disabled={!isFormValid() || creating}
           activeOpacity={0.8}
         >
-          <Text
-            style={[theme.typography.BodyMedium, { color: theme.colors.white }]}
-          >
-            Complete lead creation
-          </Text>
+          {creating ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator color={theme.colors.white} size="small" />
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.white, marginLeft: 8 },
+                ]}
+              >
+                Creating lead...
+              </Text>
+            </View>
+          ) : (
+            <Text
+              style={[
+                theme.typography.BodyMedium,
+                { color: theme.colors.white },
+              ]}
+            >
+              Complete lead creation
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -495,6 +547,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

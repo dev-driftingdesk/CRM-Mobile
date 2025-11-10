@@ -19,27 +19,20 @@ const CreateLeadStep2 = ({ navigation, route }) => {
   const { theme } = useAppTheme();
   const { origin } = route.params || {};
 
-  // Lead Information State
-  const [leadName, setLeadName] = useState('');
-  const [company, setCompany] = useState('');
-  const [companyAddress, setCompanyAddress] = useState('');
-  const [companyWebsite, setCompanyWebsite] = useState('');
+  // Lead Information State (matching backend field names)
+  const [leadName, setLeadName] = useState(''); // Backend: leadName
+  const [company, setCompany] = useState(''); // Backend: company
+  const [companyAddress, setCompanyAddress] = useState(''); // Backend: companyAddress
+  const [companyWebsite, setCompanyWebsite] = useState(''); // Backend: companyWebsite
+  const [contactNumber, setContactNumber] = useState(''); // Backend: contactNumber
 
-  // Communication State
-  const [communications, setCommunications] = useState([
-    { id: '1', type: 'phone', value: '+65 8234 2119', isPrimary: true },
-    {
-      id: '2',
-      type: 'email',
-      value: 'emma.rodriguez@creativepixel.com',
-      isPrimary: true,
-    },
-    { id: '3', type: 'whatsapp', value: '+65 8234 2119', isPrimary: false },
-  ]);
+  // Communication State (backend: communication array with {phone: "..."} or {email: "..."})
+  const [communications, setCommunications] = useState([]);
   const [selectedPlatform, setSelectedPlatform] = useState('');
   const [newContactValue, setNewContactValue] = useState('');
   const [setAsPrimary, setSetAsPrimary] = useState(false);
   const [showPlatformPicker, setShowPlatformPicker] = useState(false);
+  const [platform, setPlatform] = useState(''); // Backend: platform (preferred platform)
 
   /**
    * Handle back button press
@@ -57,15 +50,19 @@ const CreateLeadStep2 = ({ navigation, route }) => {
 
   /**
    * Add new communication method
+   * Backend format: {phone: "value"} or {email: "value"}
    */
   const handleAddCommunication = () => {
     if (!newContactValue.trim() || !selectedPlatform) return;
 
+    const type = selectedPlatform.toLowerCase();
     const newComm = {
       id: Date.now().toString(),
-      type: selectedPlatform.toLowerCase(),
+      type: type,
       value: newContactValue,
       isPrimary: setAsPrimary,
+      // Store in backend format
+      [type]: newContactValue,
     };
 
     setCommunications((prev) => [...prev, newComm]);
@@ -87,19 +84,19 @@ const CreateLeadStep2 = ({ navigation, route }) => {
 
   /**
    * Handle Next button press
+   * Pass data in backend field names (no mapping needed)
    */
   const handleNext = () => {
     if (isFormValid()) {
       navigation.navigate('CreateLeadStep3', {
-        origin,
-        leadInfo: {
-          leadName,
-          company,
-          companyAddress,
-          companyWebsite,
-        },
-        communications,
-        preferredPlatform: selectedPlatform,
+        originatedFrom: origin, // Backend field name
+        leadName,
+        company,
+        companyAddress,
+        companyWebsite,
+        contactNumber,
+        communication: communications, // Backend field name
+        platform: selectedPlatform, // Backend field name
       });
     }
   };
@@ -197,6 +194,14 @@ const CreateLeadStep2 = ({ navigation, route }) => {
               onChangeText={setCompanyWebsite}
               keyboardType="url"
               autoCapitalize="none"
+            />
+
+            <FormInput
+              label="Contact number"
+              placeholder="e.g. +65 8234 2119"
+              value={contactNumber}
+              onChangeText={setContactNumber}
+              keyboardType="phone-pad"
             />
           </View>
 

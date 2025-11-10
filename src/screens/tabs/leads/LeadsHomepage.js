@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,26 +7,34 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
 import { useAppTheme } from '../../../context/ThemeContext';
 import CustomIcon from '../../../assets/icons/CustomIcon';
 import LeadCard from '../../tabs/home/Leads/components/LeadCard';
 import SearchBar from '../../tabs/home/ActionItems/components/SearchBar';
 import FilterButton from '../../tabs/home/ActionItems/components/FilterButton';
 import LeadsFilterBottomSheet from './components/LeadsFilterBottomSheet';
-import { sampleLeads } from '../../tabs/home/Leads/sampleData';
+import LoadingSpinner from '../../../components/common/LoadingSpinner';
+import ErrorMessage from '../../../components/common/ErrorMessage';
+import { fetchLeads } from '../../../store/slices/leads/leadsThunks';
+import { clearError } from '../../../store/slices/leads/leadsSlice';
+import { debugAuthStorage } from '../../../utils/debugAuth';
 
 /**
  * LeadsHomepage - Main Leads Tab Screen
  *
- * Production-ready leads management screen with search, filtering, and lead creation.
- * Matches reference design with fixed header and scrollable list.
+ * Production-ready leads management screen with API integration.
+ * Features Redux state management, loading/error states, and real-time search.
  *
  * Features:
+ * - API integration with Redux
  * - Page title "Leads"
  * - Search bar with real-time filtering
- * - Filter button (ready for future modal)
+ * - Filter button with bottom sheet modal
  * - Create new lead button with icon
  * - Scrollable stacked lead cards
+ * - Loading states with spinner
+ * - Error states with retry functionality
  * - Empty state handling
  * - Theme integration throughout
  *
@@ -37,9 +45,13 @@ import { sampleLeads } from '../../tabs/home/Leads/sampleData';
  */
 const LeadsHomepage = ({ navigation }) => {
   const { theme } = useAppTheme();
-  const [searchQuery, setSearchQuery] = useState('');
+  const dispatch = useDispatch();
 
-  // Filter modal state
+  // Redux state
+  const { leads, loading, error } = useSelector(state => state.leads);
+
+  // Local state
+  const [searchQuery, setSearchQuery] = useState('');
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState({
     product: null,
@@ -48,20 +60,32 @@ const LeadsHomepage = ({ navigation }) => {
   });
 
   /**
+   * Fetch leads on component mount
+   */
+  useEffect(() => {
+    // Debug auth storage on mount
+    debugAuthStorage();
+    console.log('🏠 LeadsHomepage mounted - Fetching leads...');
+    dispatch(fetchLeads());
+  }, [dispatch]);
+
+  /**
    * Filter leads by search query
-   * Searches in both company name and contact name
+   * Searches in both company name and lead name
    * Case-insensitive search
+   * Using backend field names: company, leadName
    */
   const filteredLeads = useMemo(() => {
-    if (!searchQuery.trim()) return sampleLeads;
+    if (!leads || leads.length === 0) return [];
+    if (!searchQuery.trim()) return leads;
 
     const query = searchQuery.toLowerCase();
-    return sampleLeads.filter(lead => {
-      const companyName = lead.companyName.toLowerCase();
-      const contactName = lead.contactName.toLowerCase();
-      return companyName.includes(query) || contactName.includes(query);
+    return leads.filter(lead => {
+      const company = (lead.company || '').toLowerCase();
+      const leadName = (lead.leadName || '').toLowerCase();
+      return company.includes(query) || leadName.includes(query);
     });
-  }, [searchQuery]);
+  }, [leads, searchQuery]);
 
   /**
    * Handle filter button press
@@ -82,7 +106,7 @@ const LeadsHomepage = ({ navigation }) => {
    * Handle applying filters
    * Closes modal and updates applied filters state
    */
-  const handleApplyFilter = (filters) => {
+  const handleApplyFilter = filters => {
     setAppliedFilters(filters);
     setFilterModalVisible(false);
     console.log('Applied leads filters:', filters);
@@ -101,11 +125,20 @@ const LeadsHomepage = ({ navigation }) => {
    * Handle lead card press
    * Navigate to LeadDetails screen with lead data
    */
-  const handleLeadPress = (lead) => {
+  const handleLeadPress = lead => {
     navigation.navigate('LeadDetails', {
       leadId: lead.id,
       lead: lead,
     });
+  };
+
+  /**
+   * Handle retry button press
+   * Clears error and refetches leads
+   */
+  const handleRetry = () => {
+    dispatch(clearError());
+    dispatch(fetchLeads());
   };
 
   return (
@@ -115,7 +148,12 @@ const LeadsHomepage = ({ navigation }) => {
     >
       {/* Page Title - Fixed */}
       <View style={styles.titleContainer}>
-        <Text style={[theme.typography.heading1Medium, { color: theme.colors.night }]}>
+        <Text
+          style={[
+            theme.typography.heading1Medium,
+            { color: theme.colors.night },
+          ]}
+        >
           Leads
         </Text>
       </View>
@@ -164,47 +202,64 @@ const LeadsHomepage = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Leads List - Scrollable */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {filteredLeads.length > 0 ? (
-          <View style={styles.cardsContainer}>
-            {filteredLeads.map((lead, index) => (
-              <LeadCard
-                key={lead.id}
-                lead={lead}
-                onPress={handleLeadPress}
-                isFirst={index === 0}
-                isLast={index === filteredLeads.length - 1}
+      {/* Content Area - Scrollable */}
+      {loading ? (
+        // Loading State
+        <View style={styles.centerContainer}>
+          <LoadingSpinner message="Loading leads..." fullScreen={false} />
+        </View>
+      ) : error ? (
+        // Error State
+        <View style={styles.centerContainer}>
+          <ErrorMessage
+            error={error}
+            onRetry={handleRetry}
+            fullScreen={false}
+          />
+        </View>
+      ) : (
+        // Data/Empty State
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {filteredLeads.length > 0 ? (
+            <View style={styles.cardsContainer}>
+              {filteredLeads.map((lead, index) => (
+                <LeadCard
+                  key={lead.id}
+                  lead={lead}
+                  onPress={handleLeadPress}
+                  isFirst={index === 0}
+                  isLast={index === filteredLeads.length - 1}
+                />
+              ))}
+            </View>
+          ) : (
+            // Empty State
+            <View style={styles.emptyState}>
+              <CustomIcon
+                name="user"
+                width={48}
+                height={48}
+                tintColour={theme.colors.davysgrey}
+                style={styles.emptyIcon}
               />
-            ))}
-          </View>
-        ) : (
-          // Empty State
-          <View style={styles.emptyState}>
-            <CustomIcon
-              name="user"
-              width={48}
-              height={48}
-              tintColour={theme.colors.davysgrey}
-              style={styles.emptyIcon}
-            />
-            <Text
-              style={[
-                theme.typography.BodyMedium,
-                { color: theme.colors.davysgrey, textAlign: 'center' },
-              ]}
-            >
-              {searchQuery
-                ? `No results found for "${searchQuery}"`
-                : 'No leads available'}
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.davysgrey, textAlign: 'center' },
+                ]}
+              >
+                {searchQuery
+                  ? `No results found for "${searchQuery}"`
+                  : 'No leads available'}
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
 
       {/* Filter Modal */}
       <LeadsFilterBottomSheet
@@ -244,13 +299,18 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderRadius: 8,
-    maxHeight:46,
+    maxHeight: 46,
     gap: 12,
   },
   plusIconCircle: {
     width: 24,
     height: 24,
     borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
