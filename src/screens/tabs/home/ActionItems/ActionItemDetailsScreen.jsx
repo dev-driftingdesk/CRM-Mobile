@@ -135,6 +135,17 @@ const ActionItemDetailsScreen = ({ navigation, route }) => {
     );
   };
 
+  // Helper Functions
+  const calculateTotalDealValue = () => {
+    if (!actionItemData.products || actionItemData.products.length === 0) return 0;
+    return actionItemData.products.reduce((sum, product) => sum + product.totalDeal, 0);
+  };
+
+  const calculateTotalCommission = () => {
+    if (!actionItemData.products || actionItemData.products.length === 0) return 0;
+    return actionItemData.products.reduce((sum, product) => sum + product.commission, 0);
+  };
+
   // Event Handlers
   const handleBackPress = () => {
     navigation.goBack();
@@ -768,6 +779,29 @@ const ActionItemDetailsScreen = ({ navigation, route }) => {
                 </Text>
               </View>
 
+              {/* Stats Cards Row */}
+              <View style={styles.productStatsRow}>
+                {/* Total Deal Value Card - Dark */}
+                <View style={[styles.productStatCard, { backgroundColor: theme.colors.night, flex: 1 }]}>
+                  <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.white, marginBottom: 8 }]}>
+                    Total deal value
+                  </Text>
+                  <Text style={[theme.typography.heading1Medium, { color: theme.colors.white, fontSize: 28 }]}>
+                    {formatCurrency(calculateTotalDealValue())}
+                  </Text>
+                </View>
+
+                {/* Total Commission Card - Light */}
+                <View style={[styles.productStatCard, { backgroundColor: theme.colors.white, borderWidth: 1, borderColor: theme.colors.night10, flex: 1 }]}>
+                  <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.night, marginBottom: 8 }]}>
+                    Total commission
+                  </Text>
+                  <Text style={[theme.typography.heading1Medium, { color: theme.colors.night, fontSize: 28 }]}>
+                    {formatCurrency(calculateTotalCommission())}
+                  </Text>
+                </View>
+              </View>
+
               {/* Products List */}
               {actionItemData.products?.map((product) => (
                 <View
@@ -1186,6 +1220,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 2,
+  },
+  productStatsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  productStatCard: {
+    borderRadius: 12,
+    padding: 16,
   },
   productFinancialRow: {
     flexDirection: 'row',
