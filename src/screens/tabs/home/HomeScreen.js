@@ -22,8 +22,7 @@ const HomeScreen = () => {
   // Handler for item press
   const handleItemPress = (item) => {
     console.log('Item pressed:', item);
-    // TODO: Implement navigation to action item details
-    // navigation.navigate('ActionItemDetails', { itemId: item.id });
+    navigation.navigate('ActionItemDetails', { actionItemId: item.id, actionItem: item });
   };
 
   // Handler for leads "Show all" button
