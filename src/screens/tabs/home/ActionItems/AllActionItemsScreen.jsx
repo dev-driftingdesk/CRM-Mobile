@@ -75,8 +75,7 @@ const AllActionItemsScreen = () => {
 
   const handleItemPress = (item) => {
     console.log('Item pressed:', item);
-    // TODO: Navigate to action item details
-    // navigation.navigate('ActionItemDetails', { itemId: item.id });
+    navigation.navigate('ActionItemDetails', { actionItemId: item.id, actionItem: item });
   };
 
   const handleFilterPress = () => {

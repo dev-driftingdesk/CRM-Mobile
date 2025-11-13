@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useAppTheme } from '../../../../../context/ThemeContext';
 
 /**
@@ -22,7 +22,12 @@ const TabBar = ({ tabs, activeTab, onTabChange }) => {
   const { theme } = useAppTheme();
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={styles.scrollContainer}
+      contentContainerStyle={styles.container}
+    >
       {tabs.map((tab) => {
         const isActive = tab === activeTab;
 
@@ -36,6 +41,8 @@ const TabBar = ({ tabs, activeTab, onTabChange }) => {
                   ? theme.colors.night
                   : 'transparent',
                 opacity: pressed ? 0.7 : 1,
+                borderWidth: isActive ? 0 : 1,
+                borderColor: theme.colors.night10,
               },
             ]}
             onPress={() => onTabChange(tab)}
@@ -53,17 +60,20 @@ const TabBar = ({ tabs, activeTab, onTabChange }) => {
           </Pressable>
         );
       })}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    gap: 8,
+  scrollContainer: {
     marginHorizontal: 16,
     marginTop: 24,
     marginBottom: 20,
+  },
+  container: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingRight: 16,
   },
   tab: {
     paddingHorizontal: 16,

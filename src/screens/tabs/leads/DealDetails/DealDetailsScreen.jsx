@@ -12,6 +12,11 @@ import CustomIcon from '../../../../assets/icons/CustomIcon';
 import TeamAvatars from './components/TeamAvatars';
 import TimelineItem from './components/TimelineItem';
 import TabBar from './components/TabBar';
+import ContactPill from '../CreateLead/components/ContactPill';
+import SalesAgentsBottomSheet from './components/SalesAgentsBottomSheet';
+import AddNoteBottomSheet from './components/AddNoteBottomSheet';
+import ViewNoteBottomSheet from './components/ViewNoteBottomSheet';
+import LeadInfoBottomSheet from './components/LeadInfoBottomSheet';
 
 /**
  * DealDetailsScreen
@@ -50,7 +55,20 @@ const DealDetailsScreen = ({ navigation, route }) => {
 
   // Tab state
   const [activeTab, setActiveTab] = useState('Activity timeline');
-  const tabs = ['Activity timeline', 'Lead information', 'Notes'];
+  const tabs = ['Activity timeline', 'Lead information', 'Notes', 'Products'];
+
+  // Sales agents modal state
+  const [showSalesAgentsModal, setShowSalesAgentsModal] = useState(false);
+
+  // Add note modal state
+  const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+
+  // View note modal state
+  const [showViewNoteModal, setShowViewNoteModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
+
+  // Lead info modal state
+  const [showLeadInfoModal, setShowLeadInfoModal] = useState(false);
 
   // Get deal data from navigation params or use sample data
   const dealFromParams = route?.params?.deal;
@@ -111,7 +129,7 @@ const DealDetailsScreen = ({ navigation, route }) => {
 
   const handleLeadPress = () => {
     console.log('Lead section pressed - navigate to lead details:', dealData.leadId);
-    // navigation.navigate('LeadDetails', { leadId: dealData.leadId });
+    setShowLeadInfoModal(true);
   };
 
   const handleDictatePress = () => {
@@ -130,502 +148,896 @@ const DealDetailsScreen = ({ navigation, route }) => {
     console.log('More actions pressed - future: show more options');
   };
 
+  const handleTeamAvatarsPress = () => {
+    setShowSalesAgentsModal(true);
+  };
+
+  const handleManageSalesAgents = () => {
+    setShowSalesAgentsModal(false);
+    console.log('Manage sales agents - future: open sales rep selector');
+    // future: navigate to sales rep management or open SalesRepSelectorBottomSheet
+  };
+
+  const handleNewNote = () => {
+    setShowAddNoteModal(true);
+  };
+
+  const handleSaveNote = (newNote) => {
+    console.log('Saving note:', newNote);
+    // future: add note to dealData.notes array or update backend
+    setShowAddNoteModal(false);
+  };
+
+  const handleNotePress = (note) => {
+    console.log('Note pressed:', note.id, note.title);
+    setSelectedNote(note);
+    setShowViewNoteModal(true);
+  };
+
+  const handleEditNote = (note) => {
+    setShowViewNoteModal(false);
+    console.log('Edit note - future: open AddNoteBottomSheet in edit mode', note);
+    // future: setShowAddNoteModal(true) with note data pre-filled
+  };
+
+  const handleAddProductToDeal = () => {
+    console.log('Add product to deal pressed');
+    // future: open product selector modal
+  };
+
+  const handleProductPress = (product) => {
+    console.log('Product pressed:', product.id, product.name);
+    // future: navigate to product details or edit
+  };
+
+  const calculateTotalDealValue = () => {
+    if (!dealData.products || dealData.products.length === 0) return 0;
+    return dealData.products.reduce((sum, product) => sum + product.totalDeal, 0);
+  };
+
+  const calculateTotalCommission = () => {
+    if (!dealData.products || dealData.products.length === 0) return 0;
+    return dealData.products.reduce((sum, product) => sum + product.commission, 0);
+  };
+
+  // Lead Info Modal Handlers
+  const handleShowEmails = () => {
+    setShowLeadInfoModal(false);
+    console.log('Show all emails - future: navigate to emails screen');
+  };
+
+  const handleOpenCallLogs = () => {
+    setShowLeadInfoModal(false);
+    console.log('Open call logs - future: navigate to call logs screen');
+  };
+
+  const handleShowActionItems = () => {
+    setShowLeadInfoModal(false);
+    console.log('Show action items - future: navigate to action items screen');
+  };
+
+  const handleShowDeals = () => {
+    setShowLeadInfoModal(false);
+    console.log('Show deals - future: navigate to deals list or LeadDetails');
+  };
+
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.white }]}
       edges={['top']}
     >
-      {/* Navigation Header */}
-      <View
-        style={[
-          styles.header,
-          {
-            backgroundColor: theme.colors.white,
-          },
-        ]}
-      >
-        {/* Back Button */}
-        <Pressable
-          style={({ pressed }) => [
-            styles.iconButton,
+      <View style={{ flex: 1 }}>
+        {/* Navigation Header */}
+        <View
+          style={[
+            styles.header,
             {
               backgroundColor: theme.colors.white,
-              borderColor: theme.colors.night10,
-              opacity: pressed ? 0.6 : 1,
-            },
-          ]}
-          onPress={handleBackPress}
-        >
-          <CustomIcon
-            name="nav-arrow-left"
-            width={20}
-            height={20}
-            tintColour={theme.colors.night}
-          />
-        </Pressable>
-
-        {/* Title */}
-        <Text
-          style={[
-            theme.typography.BodyLargeMedium,
-            {
-              color: theme.colors.night,
-              flex: 1,
-              marginLeft: 12,
             },
           ]}
         >
-          Deal
-        </Text>
+          {/* Back Button */}
+          <Pressable
+            style={({ pressed }) => [
+              styles.iconButton,
+              {
+                backgroundColor: theme.colors.white,
+                borderColor: theme.colors.night10,
+                opacity: pressed ? 0.6 : 1,
+              },
+            ]}
+            onPress={handleBackPress}
+          >
+            <CustomIcon
+              name="nav-arrow-left"
+              width={20}
+              height={20}
+              tintColour={theme.colors.night}
+            />
+          </Pressable>
 
-        {/* More Button */}
-        <Pressable
-          style={({ pressed }) => [
-            styles.iconButton,
-            {
-              backgroundColor: theme.colors.white,
-              borderColor: theme.colors.night10,
-              opacity: pressed ? 0.6 : 1,
-            },
-          ]}
-          onPress={handleMorePress}
-        >
-          <CustomIcon
-            name="more-horiz"
-            width={20}
-            height={20}
-            tintColour={theme.colors.night}
-          />
-        </Pressable>
-      </View>
-
-      {/* Scrollable Content */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* Deal Name */}
-        <Text
-          style={[
-            theme.typography.heading2Medium,
-            {
-              color: theme.colors.night,
-              fontSize: 26,
-              marginHorizontal: 16,
-              marginTop: 16,
-            },
-          ]}
-        >
-          {dealData.name}
-        </Text>
-
-        {/* Product Count */}
-        <View style={styles.productCountRow}>
-          <CustomIcon
-            name="info-circle"
-            width={20}
-            height={20}
-            tintColour={theme.colors.davysgrey}
-          />
+          {/* Title */}
           <Text
             style={[
               theme.typography.BodyLargeMedium,
               {
-                color: theme.colors.davysgrey,
-                marginLeft: 6,
+                color: theme.colors.night,
+                flex: 1,
+                marginLeft: 12,
               },
             ]}
           >
-            {dealData.productCount} products
+            Deal
           </Text>
+
+          {/* More Button */}
+          <Pressable
+            style={({ pressed }) => [
+              styles.iconButton,
+              {
+                backgroundColor: theme.colors.white,
+                borderColor: theme.colors.night10,
+                opacity: pressed ? 0.6 : 1,
+              },
+            ]}
+            onPress={handleMorePress}
+          >
+            <CustomIcon
+              name="more-horiz"
+              width={20}
+              height={20}
+              tintColour={theme.colors.night}
+            />
+          </Pressable>
         </View>
 
-        {/* Deal Value Section */}
-        <View style={styles.valueSection}>
-          <View style={styles.valueLeft}>
-            {/* Label */}
+        {/* Scrollable Content */}
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={styles.scrollContent}
+          scrollEnabled={true}
+          nestedScrollEnabled={true}
+        >
+          {/* Deal Name */}
+          <Text
+            style={[
+              theme.typography.heading2Medium,
+              {
+                color: theme.colors.night,
+                fontSize: 26,
+                marginHorizontal: 16,
+                marginTop: 16,
+              },
+            ]}
+          >
+            {dealData.name}
+          </Text>
+
+          {/* Product Count */}
+          <View style={styles.productCountRow}>
+            <CustomIcon
+              name="info-circle"
+              width={20}
+              height={20}
+              tintColour={theme.colors.davysgrey}
+            />
             <Text
               style={[
-                theme.typography.BodySmallMedium,
+                theme.typography.BodyLargeMedium,
                 {
                   color: theme.colors.davysgrey,
-                  marginBottom: 4,
+                  marginLeft: 6,
                 },
               ]}
             >
-              Deal value
-            </Text>
-
-            {/* Amount */}
-            <Text
-              style={[
-                theme.typography.title3,
-                {
-                  color: theme.colors.night,
-                  fontSize: 36,
-                  lineHeight: 42,
-                },
-              ]}
-            >
-              {formatCurrency(dealData.totalValue)}
+              {dealData.productCount} products
             </Text>
           </View>
 
-          {/* Team Avatars */}
-          <View style={styles.valueRight}>
-            <TeamAvatars salesReps={dealData.salesReps || []} />
-          </View>
-        </View>
-
-        {/* Commission Section */}
-        <View style={styles.commissionSection}>
-          {/* Left: Label and Amount */}
-          <View style={styles.commissionLeft}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-
+          {/* Deal Value Section */}
+          <View style={styles.valueSection}>
+            <View style={styles.valueLeft}>
               {/* Label */}
               <Text
                 style={[
                   theme.typography.BodySmallMedium,
                   {
-                    color: theme.colors.night,
+                    color: theme.colors.davysgrey,
+                    marginBottom: 4,
                   },
                 ]}
               >
-                Total Commission
+                Deal value
               </Text>
-              {/* Right: See Breakdown Link */}
-              <Pressable
-                style={({ pressed }) => [
-                  styles.breakdownLink,
-                  { opacity: pressed ? 0.6 : 1 },
+
+              {/* Amount */}
+              <Text
+                style={[
+                  theme.typography.title3,
+                  {
+                    color: theme.colors.night,
+                    fontSize: 36,
+                    lineHeight: 42,
+                  },
                 ]}
-                onPress={handleSeeBreakdown}
               >
+                {formatCurrency(dealData.totalValue)}
+              </Text>
+            </View>
+
+            {/* Team Avatars - Pressable */}
+            <Pressable onPress={handleTeamAvatarsPress} style={styles.valueRight}>
+              <TeamAvatars salesReps={dealData.salesReps || []} />
+            </Pressable>
+          </View>
+
+          {/* Commission Section */}
+          <View style={styles.commissionSection}>
+            {/* Left: Label and Amount */}
+            <View style={styles.commissionLeft}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+
+                {/* Label */}
                 <Text
                   style={[
-                    theme.typography.BodyMedium,
+                    theme.typography.BodySmallMedium,
                     {
                       color: theme.colors.night,
                     },
                   ]}
                 >
-                  See breakdown
+                  Total Commission
                 </Text>
-                <CustomIcon
-                  name="nav-arrow-right"
-                  width={16}
-                  height={16}
-                  tintColour={theme.colors.night}
-                  style={{ marginLeft: 4 }}
-                />
-              </Pressable>
-            </View>
+                {/* Right: See Breakdown Link */}
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.breakdownLink,
+                    { opacity: pressed ? 0.6 : 1 },
+                  ]}
+                  onPress={handleSeeBreakdown}
+                >
+                  <Text
+                    style={[
+                      theme.typography.BodyMedium,
+                      {
+                        color: theme.colors.night,
+                      },
+                    ]}
+                  >
+                    See breakdown
+                  </Text>
+                  <CustomIcon
+                    name="nav-arrow-right"
+                    width={16}
+                    height={16}
+                    tintColour={theme.colors.night}
+                    style={{ marginLeft: 4 }}
+                  />
+                </Pressable>
+              </View>
 
-            {/* Amount */}
-            <Text
-              style={[
-                theme.typography.title2Bold,
-                {
-                  color: theme.colors.midnightgreen,
-                  // lineHeight: 38,
-                },
-              ]}
-            >
-              {formatCurrency(dealData.commission)}  <Text
+              {/* Amount */}
+              <Text
                 style={[
-                  theme.typography.BodySmallMedium,
+                  theme.typography.title2Bold,
                   {
-                    color: theme.colors.davysgrey,
-                    marginTop: 4,
+                    color: theme.colors.midnightgreen,
+                    // lineHeight: 38,
                   },
                 ]}
               >
-                {dealData.commissionPercent}% Of {formatCurrency(dealData.totalValue)}
+                {formatCurrency(dealData.commission)}  <Text
+                  style={[
+                    theme.typography.BodySmallMedium,
+                    {
+                      color: theme.colors.davysgrey,
+                      marginTop: 4,
+                    },
+                  ]}
+                >
+                  {dealData.commissionPercent}% Of {formatCurrency(dealData.totalValue)}
+                </Text>
               </Text>
-            </Text>
 
-            {/* Percentage */}
+              {/* Percentage */}
+
+            </View>
 
           </View>
 
-        </View>
-
-        {/* Lead Section Card */}
-        <Pressable
-          style={({ pressed }) => [
-            styles.leadCard,
-            {
-              backgroundColor: theme.colors.isabelline,
-              opacity: pressed ? 0.8 : 1,
-            },
-          ]}
-          onPress={handleLeadPress}
-        >
-          {/* Label */}
-          <Text
-            style={[
-              theme.typography.BodyBold,
+          {/* Lead Section Card */}
+          <Pressable
+            style={({ pressed }) => [
+              styles.leadCard,
               {
-                color: theme.colors.night,
-                marginBottom: 16,
+                backgroundColor: theme.colors.isabelline,
+                opacity: pressed ? 0.8 : 1,
               },
             ]}
+            onPress={handleLeadPress}
           >
-            Lead
-          </Text>
-
-          {/* Lead Info Row */}
-          <View style={styles.leadInfoRow}>
-            {/* Avatar */}
-            <View style={styles.leadAvatar}>
-              <Text
-                style={[
-                  theme.typography.BodyLargeBold,
-                  {
-                    color: theme.colors.night,
-                  },
-                ]}
-              >
-                {leadInitials}
-              </Text>
-            </View>
-
-            {/* Company and Contact */}
-            <View style={styles.leadTextInfo}>
-              <Text
-                style={[
-                  theme.typography.BodyBold,
-                  {
-                    color: theme.colors.night,
-                  },
-                ]}
-                numberOfLines={1}
-              >
-                {dealData.leadCompany}
-              </Text>
-              <Text
-                style={[
-                  theme.typography.BodyMedium,
-                  {
-                    color: theme.colors.davysgrey,
-                    marginTop: 2,
-                  },
-                ]}
-                numberOfLines={1}
-              >
-                {dealData.leadContact}
-              </Text>
-            </View>
-
-            {/* Chevron */}
-            <CustomIcon
-              name="nav-arrow-right"
-              width={20}
-              height={20}
-              tintColour={theme.colors.night}
-            />
-          </View>
-        </Pressable>
-
-        {/* Talking Points Section */}
-        <View style={styles.talkingPointsSection}>
-          {/* Header Row */}
-          <View style={styles.talkingPointsHeader}>
+            {/* Label */}
             <Text
               style={[
-                theme.typography.BodyLargeMedium,
+                theme.typography.BodyBold,
                 {
                   color: theme.colors.night,
+                  marginBottom: 16,
                 },
               ]}
             >
-              Talking points
+              Lead
             </Text>
 
-            {/* Dictate Button */}
-            <Pressable
-              style={({ pressed }) => [
-                styles.dictateButton,
-                {
-                  borderColor: theme.colors.davysgrey,
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-              onPress={handleDictatePress}
-            >
+            {/* Lead Info Row */}
+            <View style={styles.leadInfoRow}>
+              {/* Avatar */}
+              <View style={styles.leadAvatar}>
+                <Text
+                  style={[
+                    theme.typography.BodyLargeBold,
+                    {
+                      color: theme.colors.night,
+                    },
+                  ]}
+                >
+                  {leadInitials}
+                </Text>
+              </View>
+
+              {/* Company and Contact */}
+              <View style={styles.leadTextInfo}>
+                <Text
+                  style={[
+                    theme.typography.BodyBold,
+                    {
+                      color: theme.colors.night,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {dealData.leadCompany}
+                </Text>
+                <Text
+                  style={[
+                    theme.typography.BodyMedium,
+                    {
+                      color: theme.colors.davysgrey,
+                      marginTop: 2,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {dealData.leadContact}
+                </Text>
+              </View>
+
+              {/* Chevron */}
               <CustomIcon
-                name="microphone"
-                width={16}
-                height={16}
+                name="nav-arrow-right"
+                width={20}
+                height={20}
                 tintColour={theme.colors.night}
               />
-              <Text
-                style={[
-                  theme.typography.BodyMedium,
-                  {
-                    color: theme.colors.night,
-                    marginLeft: 6,
-                  },
-                ]}
-              >
-                Dictate
-              </Text>
-            </Pressable>
-          </View>
-
-          {/* From Last Call */}
-          <Text
-            style={[
-              theme.typography.BodySmallMedium,
-              {
-                color: theme.colors.davysgrey,
-                marginTop: 8,
-              },
-            ]}
-          >
-            <Text style={[theme.typography.BodySmallBold]}>From last call : </Text>{dealData.talkingPoints?.fromLastCall || 'N/A'}
-          </Text>
-
-          {/* Talking Points Content */}
-          <Text
-            style={[
-              theme.typography.BodySmallMedium,
-              {
-                color: theme.colors.davysgrey,
-                lineHeight: 22,
-                marginTop: 12,
-              },
-            ]}
-          >
-            {dealData.talkingPoints?.notes || 'No notes available'}
-          </Text>
-
-          {/* Bullet Points */}
-          {dealData.talkingPoints?.bulletPoints && (
-            <View style={styles.bulletList}>
-              {dealData.talkingPoints.bulletPoints.map((point, index) => (
-                <View key={index} style={styles.bulletItem}>
-                  <Text
-                    style={[
-                      theme.typography.BodySmallMedium,
-                      {
-                        color: theme.colors.night,
-                        marginRight: 8,
-                      },
-                    ]}
-                  >
-                    •
-                  </Text>
-                  <Text
-                    style={[
-                      theme.typography.BodySmallMedium,
-                      {
-                        color: theme.colors.night,
-                        lineHeight: 22,
-                        flex: 1,
-                      },
-                    ]}
-                  >
-                    {point}
-                  </Text>
-                </View>
-              ))}
             </View>
-          )}
-        </View>
+          </Pressable>
 
-        {/* Tab Bar */}
-        <TabBar
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-
-        {/* Tab Content */}
-        {activeTab === 'Activity timeline' && (
-          <View style={styles.tabContent}>
-            {/* Section Header */}
-            <View style={styles.sectionHeader}>
-              <CustomIcon
-                name="activity"
-                width={16}
-                height={16}
-                tintColour={theme.colors.night}
-              />
+          {/* Talking Points Section */}
+          <View style={styles.talkingPointsSection}>
+            {/* Header Row */}
+            <View style={styles.talkingPointsHeader}>
               <Text
                 style={[
                   theme.typography.BodyLargeMedium,
                   {
                     color: theme.colors.night,
-                    marginLeft: 8,
                   },
                 ]}
               >
-                Activity Timeline
+                Talking points
               </Text>
-            </View>
 
-            {/* Timeline Items */}
-            <View style={styles.timeline}>
-              {dealData.activityTimeline?.length > 0 ? (
-                dealData.activityTimeline.map((item, index) => (
-                  <TimelineItem
-                    key={item.id}
-                    activity={item.activity}
-                    timestamp={item.timestamp}
-                    duration={item.duration}
-                    status={item.status}
-                    isLast={index === dealData.activityTimeline.length - 1}
-                  />
-                ))
-              ) : (
-                <Text style={[theme.typography.BodyMedium, { color: theme.colors.davysgrey, textAlign: 'center', marginTop: 20 }]}>
-                  No activity yet
+              {/* Dictate Button */}
+              <Pressable
+                style={({ pressed }) => [
+                  styles.dictateButton,
+                  {
+                    borderColor: theme.colors.davysgrey,
+                    opacity: pressed ? 0.7 : 1,
+                  },
+                ]}
+                onPress={handleDictatePress}
+              >
+                <CustomIcon
+                  name="microphone"
+                  width={16}
+                  height={16}
+                  tintColour={theme.colors.night}
+                />
+                <Text
+                  style={[
+                    theme.typography.BodyMedium,
+                    {
+                      color: theme.colors.night,
+                      marginLeft: 6,
+                    },
+                  ]}
+                >
+                  Dictate
                 </Text>
-              )}
+              </Pressable>
             </View>
-          </View>
-        )}
 
-        {activeTab === 'Lead information' && (
-          <View style={styles.tabContent}>
+            {/* From Last Call */}
             <Text
               style={[
-                theme.typography.BodyMedium,
+                theme.typography.BodySmallMedium,
                 {
                   color: theme.colors.davysgrey,
-                  textAlign: 'center',
-                  marginTop: 40,
+                  marginTop: 8,
                 },
               ]}
             >
-              Lead information content coming soon...
+              <Text style={[theme.typography.BodySmallBold]}>From last call : </Text>{dealData.talkingPoints?.fromLastCall || 'N/A'}
             </Text>
-          </View>
-        )}
 
-        {activeTab === 'Notes' && (
-          <View style={styles.tabContent}>
+            {/* Talking Points Content */}
             <Text
               style={[
-                theme.typography.BodyMedium,
+                theme.typography.BodySmallMedium,
                 {
                   color: theme.colors.davysgrey,
-                  textAlign: 'center',
-                  marginTop: 40,
+                  lineHeight: 22,
+                  marginTop: 12,
                 },
               ]}
             >
-              Notes content coming soon...
+              {dealData.talkingPoints?.notes || 'No notes available'}
             </Text>
-          </View>
-        )}
 
-        {/* Bottom spacing for fixed buttons */}
-        <View style={{ height: 100 }} />
-      </ScrollView>
+            {/* Bullet Points */}
+            {dealData.talkingPoints?.bulletPoints && (
+              <View style={styles.bulletList}>
+                {dealData.talkingPoints.bulletPoints.map((point, index) => (
+                  <View key={index} style={styles.bulletItem}>
+                    <Text
+                      style={[
+                        theme.typography.BodySmallMedium,
+                        {
+                          color: theme.colors.night,
+                          marginRight: 8,
+                        },
+                      ]}
+                    >
+                      •
+                    </Text>
+                    <Text
+                      style={[
+                        theme.typography.BodySmallMedium,
+                        {
+                          color: theme.colors.night,
+                          lineHeight: 22,
+                          flex: 1,
+                        },
+                      ]}
+                    >
+                      {point}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+
+          {/* Tab Bar */}
+          <TabBar
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
+
+          {/* Tab Content */}
+          {activeTab === 'Activity timeline' && (
+            <View style={styles.tabContent}>
+              {/* Section Header */}
+              <View style={styles.sectionHeader}>
+                <CustomIcon
+                  name="activity"
+                  width={16}
+                  height={16}
+                  tintColour={theme.colors.night}
+                />
+                <Text
+                  style={[
+                    theme.typography.BodyLargeMedium,
+                    {
+                      color: theme.colors.night,
+                      marginLeft: 8,
+                    },
+                  ]}
+                >
+                  Activity Timeline
+                </Text>
+              </View>
+
+              {/* Timeline Items */}
+              <View style={[styles.timeline]}>
+                {dealData.activityTimeline?.length > 0 ? (
+                  dealData.activityTimeline.map((item, index) => (
+                    <TimelineItem
+                      key={item.id}
+                      activity={item.activity}
+                      timestamp={item.timestamp}
+                      duration={item.duration}
+                      status={item.status}
+                      isLast={index === dealData.activityTimeline.length - 1}
+                    />
+                  ))
+                ) : (
+                  <Text style={[theme.typography.BodyMedium, { color: theme.colors.davysgrey, textAlign: 'center', marginTop: 20 }]}>
+                    No activity yet
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
+
+          {activeTab === 'Lead information' && (
+            <View style={styles.tabContent}>
+              {/* Section Header */}
+              <View style={[styles.sectionHeader, {}]}>
+                <CustomIcon
+                  name="info-circle"
+                  width={16}
+                  height={16}
+                  tintColour={theme.colors.night}
+                />
+                <Text style={[theme.typography.BodyLargeMedium, { color: theme.colors.night, marginLeft: 8 }]}>
+                  Lead information
+                </Text>
+              </View>
+
+              {/* Personal Information */}
+              <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginBottom: 12 }]}>
+                Personal information
+              </Text>
+
+              {/* Name Field */}
+              <View style={[
+                styles.infoField,
+                {
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  borderBottomWidth: 0,
+                }
+              ]}>
+                <Text style={[theme.typography.BodySmall, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                  Name
+                </Text>
+                <Text style={[theme.typography.BodyMedium, { color: theme.colors.night }]}>
+                  {dealData.leadContact}
+                </Text>
+              </View>
+
+              {/* Company Field */}
+              <View style={[
+                styles.infoField,
+                {
+                  borderBottomLeftRadius: 24,
+                  borderBottomRightRadius: 24,
+                  borderBottomWidth: 1,
+                }
+              ]}>
+                <Text style={[theme.typography.BodySmall, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                  Company
+                </Text>
+                <Text style={[theme.typography.BodyMedium, { color: theme.colors.night }]}>
+                  {dealData.leadCompany}
+                </Text>
+              </View>
+
+              {/* Communication Section */}
+              <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginTop: 24, marginBottom: 12 }]}>
+                Communication
+              </Text>
+
+              {/* Contact Pills - Reuse ContactPill component */}
+              <ContactPill
+                type="phone"
+                value={dealData.leadPhone || '+65 8234 2119'}
+                isPrimary={true}
+                onRemove={null}
+                isFirst={true}
+                isLast={false}
+              />
+              <ContactPill
+                type="email"
+                value={dealData.leadEmail || 'emma.rodriguez@creativepixel.com'}
+                isPrimary={true}
+                onRemove={null}
+                isFirst={false}
+                isLast={false}
+              />
+              <ContactPill
+                type="whatsapp"
+                value={dealData.leadWhatsApp || '+65 8234 2119'}
+                isPrimary={false}
+                onRemove={null}
+                isFirst={false}
+                isLast={false}
+              />
+              <ContactPill
+                type="linkedin"
+                value={dealData.leadLinkedIn || 'linkedin.com/in/emmarodriguezux'}
+                isPrimary={false}
+                onRemove={null}
+                isFirst={false}
+                isLast={true}
+              />
+
+              {/* Communication Preference Note */}
+              <View style={styles.preferenceNote}>
+                <Text style={[theme.typography.BodyMedium, { color: theme.colors.davysgrey, lineHeight: 20 }]}>
+                  {dealData.communicationPreference || 'Client prefers quick WhatsApp check-ins after meetings; formal updates over email.'}
+                </Text>
+              </View>
+
+              {/* Company Details */}
+              <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginTop: 24, marginBottom: 12 }]}>
+                Company Details
+              </Text>
+
+              {/* Company Name */}
+              <View style={[
+                styles.infoField,
+                {
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  borderBottomWidth: 0,
+                }
+              ]}>
+                <Text style={[theme.typography.BodySmall, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                  Company Name
+                </Text>
+                <Text style={[theme.typography.BodyMedium, { color: theme.colors.night }]}>
+                  {dealData.leadCompany}
+                </Text>
+              </View>
+
+              {/* Address */}
+              <View style={[
+                styles.infoField,
+                {
+                  borderBottomWidth: 0,
+                }
+              ]}>
+                <Text style={[theme.typography.BodySmall, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                  Address
+                </Text>
+                <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, lineHeight: 20 }]}>
+                  {dealData.companyAddress || '22B Upper Circular Rd, #04-01 The Workspace, Singapore 058416'}
+                </Text>
+              </View>
+
+              {/* Website */}
+              <View style={[
+                styles.infoField,
+                {
+                  borderBottomWidth: 0,
+                }
+              ]}>
+                <Text style={[theme.typography.BodySmall, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                  Website
+                </Text>
+                <Text style={[theme.typography.BodyMedium, { color: theme.colors.night }]}>
+                  {dealData.companyWebsite || 'www.creativepixel.com'}
+                </Text>
+              </View>
+
+              {/* Industry */}
+              <View style={[
+                styles.infoField,
+                {
+                  borderBottomLeftRadius: 24,
+                  borderBottomRightRadius: 24,
+                  borderBottomWidth: 1,
+                }
+              ]}>
+                <Text style={[theme.typography.BodySmall, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                  Industry
+                </Text>
+                <Text style={[theme.typography.BodyMedium, { color: theme.colors.night }]}>
+                  {dealData.industry || 'Design & Branding'}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {activeTab === 'Notes' && (
+            <View style={styles.tabContent}>
+              {/* Section Header */}
+              <View style={styles.notesHeader}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <CustomIcon name="notes" width={16} height={16} tintColour={theme.colors.night} />
+                  <Text style={[theme.typography.BodyLargeMedium, { color: theme.colors.night, marginLeft: 8 }]}>
+                    Notes
+                  </Text>
+                </View>
+
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.newNoteButton,
+                    {
+                      borderColor: theme.colors.night10,
+                      opacity: pressed ? 0.7 : 1,
+                    }
+                  ]}
+                  onPress={handleNewNote}
+                >
+                  <Text style={[theme.typography.BodyMedium, { color: theme.colors.night }]}>
+                    New note
+                  </Text>
+                  <CustomIcon name="plus" width={16} height={16} tintColour={theme.colors.night} style={{ marginLeft: 6 }} />
+                </Pressable>
+              </View>
+
+              {/* Notes Grid - 2 Columns */}
+              <View style={styles.notesGrid}>
+                {dealData.notes?.map((note, index) => (
+                  <Pressable
+                    key={note.id}
+                    style={({ pressed }) => [
+                      styles.noteCard,
+                      {
+                        backgroundColor: theme.colors.white,
+                        borderColor: theme.colors.night10,
+                        opacity: pressed ? 0.8 : 1,
+                      }
+                    ]}
+                    onPress={() => handleNotePress(note)}
+                  >
+                    {/* Note Content */}
+                    <Text
+                      style={[
+                        theme.typography.BodySmallMedium,
+                        { color: theme.colors.night, lineHeight: 20, marginBottom: 8 }
+                      ]}
+                      numberOfLines={5}
+                    >
+                      {note.content}
+                    </Text>
+
+                    {/* Timestamp */}
+                    <Text
+                      style={[
+                        theme.typography.BodySmallMedium,
+                        { color: theme.colors.davysgrey, marginTop: 8 }
+                      ]}
+                    >
+                      {note.timestamp}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {activeTab === 'Products' && (
+            <View style={styles.tabContent}>
+              {/* Section Header */}
+              <View style={styles.productsHeader}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <CustomIcon name="google-docs" width={16} height={16} tintColour={theme.colors.night} />
+                  <Text style={[theme.typography.BodyLargeMedium, { color: theme.colors.night, marginLeft: 8 }]}>
+                    Products
+                  </Text>
+                </View>
+
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.addProductButton,
+                    {
+                      borderColor: theme.colors.night10,
+                      opacity: pressed ? 0.7 : 1,
+                    }
+                  ]}
+                  onPress={handleAddProductToDeal}
+                >
+                  <Text style={[theme.typography.BodyMedium, { color: theme.colors.night }]}>
+                    Add new product
+                  </Text>
+                  <CustomIcon name="plus" width={16} height={16} tintColour={theme.colors.night} style={{ marginLeft: 6 }} />
+                </Pressable>
+              </View>
+
+              {/* Stats Cards Row */}
+              <View style={styles.productStatsRow}>
+                {/* Total Deal Value Card - Dark */}
+                <View style={[styles.productStatCard, { backgroundColor: theme.colors.night, flex: 1 }]}>
+                  <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.white, marginBottom: 8 }]}>
+                    Total deal value
+                  </Text>
+                  <Text style={[theme.typography.heading1Medium, { color: theme.colors.white }]}>
+                    {formatCurrency(calculateTotalDealValue())}
+                  </Text>
+                </View>
+
+                {/* Total Commission Card - Light */}
+                <View style={[styles.productStatCard, { backgroundColor: theme.colors.white, borderWidth: 1, borderColor: theme.colors.night10, flex: 1 }]}>
+                  <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.night, marginBottom: 8 }]}>
+                    Total commission
+                  </Text>
+                  <Text style={[theme.typography.heading1Medium, { color: theme.colors.night }]}>
+                    {formatCurrency(calculateTotalCommission())}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Products List */}
+              {dealData.products?.map((product) => (
+                <Pressable
+                  key={product.id}
+                  style={({ pressed }) => [
+                    styles.productItemCard,
+                    {
+                      backgroundColor: theme.colors.white,
+                      borderColor: theme.colors.night10,
+                      opacity: pressed ? 0.8 : 1,
+                    }
+                  ]}
+                  onPress={() => handleProductPress(product)}
+                >
+                  {/* Product Name */}
+                  <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginBottom: 8 }]}>
+                    {product.name}
+                  </Text>
+
+                  {/* Description */}
+                  <Text
+                    style={[
+                      theme.typography.BodySmallMedium,
+                      { color: theme.colors.davysgrey, lineHeight: 18, marginBottom: 12 }
+                    ]}
+                    numberOfLines={2}
+                  >
+                    {product.description}
+                  </Text>
+
+                  {/* Financial Row */}
+                  <View style={styles.productFinancialRow}>
+                    {/* Total Deal */}
+                    <View style={styles.productFinancialItem}>
+                      <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                        Total deal
+                      </Text>
+                      <Text style={[theme.typography.BodyBold, { color: theme.colors.midnightgreen }]}>
+                        {formatCurrency(product.totalDeal)}
+                      </Text>
+                    </View>
+
+                    {/* Separator */}
+                    <View style={styles.financialSeparator} />
+
+                    {/* Commission */}
+                    <View style={styles.productFinancialItem}>
+                      <Text style={[theme.typography.BodySmallMedium, { color: theme.colors.davysgrey, marginBottom: 4 }]}>
+                        Commission
+                      </Text>
+                      <Text style={[theme.typography.BodyBold, { color: theme.colors.midnightgreen }]}>
+                        {formatCurrency(product.commission)}
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          )}
+
+          {/* Bottom spacing for fixed buttons */}
+          <View style={{ height: 20 }} />
+        </ScrollView>
+      </View>
 
       {/* Bottom Action Buttons - Fixed */}
       <View
@@ -718,6 +1130,57 @@ const DealDetailsScreen = ({ navigation, route }) => {
           />
         </Pressable>
       </View>
+
+      {/* Sales Agents Modal */}
+      <SalesAgentsBottomSheet
+        visible={showSalesAgentsModal}
+        onClose={() => setShowSalesAgentsModal(false)}
+        salesReps={dealData.salesReps || []}
+        onManage={handleManageSalesAgents}
+      />
+
+      {/* Add Note Modal */}
+      <AddNoteBottomSheet
+        visible={showAddNoteModal}
+        onClose={() => setShowAddNoteModal(false)}
+        onSave={handleSaveNote}
+        dealProducts={dealData.products || []}
+        salesAgents={dealData.salesReps || []}
+      />
+
+      {/* View Note Modal */}
+      <ViewNoteBottomSheet
+        visible={showViewNoteModal}
+        onClose={() => {
+          setShowViewNoteModal(false);
+          setSelectedNote(null);
+        }}
+        note={selectedNote}
+        onEdit={handleEditNote}
+      />
+
+      {/* Lead Info Modal */}
+      <LeadInfoBottomSheet
+        visible={showLeadInfoModal}
+        onClose={() => setShowLeadInfoModal(false)}
+        leadData={{
+          companyName: dealData.leadCompany,
+          contactName: dealData.leadContact,
+          dealCount: 8,
+          totalValue: 39000,
+          totalProducts: 25,
+          criticalAction: {
+            text: 'Call **John Smith** – follow up on pricing discussion',
+            time: '10:00AM',
+          },
+          lastEmailDays: 3,
+          lastCallDays: 1,
+        }}
+        onShowEmails={handleShowEmails}
+        onOpenCallLogs={handleOpenCallLogs}
+        onShowActionItems={handleShowActionItems}
+        onShowDeals={handleShowDeals}
+      />
     </SafeAreaView>
   );
 };
@@ -735,11 +1198,37 @@ const getSampleDealData = () => ({
   commissionPercent: 5.80,
   leadId: '1',
   leadCompany: 'CreativePixel Agency',
-  leadContact: 'John Smith',
+  leadContact: 'Emma Rodriguez',
+  leadPhone: '+65 8234 2119',
+  leadEmail: 'emma.rodriguez@creativepixel.com',
+  leadWhatsApp: '+65 8234 2119',
+  leadLinkedIn: 'linkedin.com/in/emmarodriguezux',
+  communicationPreference: 'Client prefers quick WhatsApp check-ins after meetings; formal updates over email.',
+  companyAddress: '22B Upper Circular Rd, #04-01 The Workspace, Singapore 058416',
+  companyWebsite: 'www.creativepixel.com',
+  industry: 'Design & Branding',
   salesReps: [
-    { id: '1', name: 'James Nick', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { id: '2', name: 'Sarah Lee', avatar: 'https://i.pravatar.cc/150?img=5' },
-    { id: '3', name: 'Mike Torel', avatar: 'https://i.pravatar.cc/150?img=8' },
+    {
+      id: '1',
+      name: 'James Nick',
+      email: 'james.nick@agenticcrm.com',
+      role: 'Primary',
+      avatar: 'https://i.pravatar.cc/150?img=1',
+    },
+    {
+      id: '2',
+      name: 'Sarah Lee',
+      email: 'sarah.lee@agenticcrm.com',
+      role: 'Co-Primary',
+      avatar: 'https://i.pravatar.cc/150?img=5',
+    },
+    {
+      id: '3',
+      name: 'Mike Torel',
+      email: 'mike.torel@agenticcrm.com',
+      role: 'Consultant',
+      avatar: 'https://i.pravatar.cc/150?img=8',
+    },
   ],
   talkingPoints: {
     fromLastCall: '24th Thursday',
@@ -781,6 +1270,80 @@ const getSampleDealData = () => ({
       status: 'sent',
     },
   ],
+  notes: [
+    {
+      id: 'n1',
+      title: 'Check-in call with Emma',
+      content: 'Had quick check-in call with Emma (Head of Design). She confirmed the UX workshop kickoff for next Monday.\n\nAsked if we can share the final schedule deck before EOD.\n\nMentioned they might want a follow-up "Design System Implementation" workshop for Q1 next year.',
+      timestamp: '9/29/2025 at 08:19 PM',
+      taggedProduct: {
+        name: 'Wireframing & Prototyping in Figma',
+        value: 400,
+        commission: 34,
+      },
+      taggedAgent: 'James Nick',
+    },
+    {
+      id: 'n2',
+      title: 'Follow-up email sent',
+      content: 'Follow-up email sent with workshop agenda and participant checklist. Client appreciated the pre-session quiz idea. Asked if we can inclu...',
+      timestamp: '9/27/2025 at 06:40 PM',
+    },
+    {
+      id: 'n3',
+      title: 'Finance team invoice request',
+      content: 'Finance team requested a split invoice for each course module. Emma suggested we assign separate POs for "Research" and "Prototyping" sessions....',
+      timestamp: '9/28/2025 at 03:15 PM',
+    },
+    {
+      id: 'n4',
+      title: 'Emma\'s quarterly feedback',
+      content: 'Emma shared feedback from last quarter\'s UI Refresh Project:\n• Team struggled to communicate resea...',
+      timestamp: '9/26/2025 at 11:05 AM',
+    },
+    {
+      id: 'n5',
+      title: 'Procurement call',
+      content: 'Call with Procurement. They requested project summary with expected outcomes and number of deliverables per cou...',
+      timestamp: '9/25/2025 at 04:25 PM',
+    },
+    {
+      id: 'n6',
+      title: 'Initial discovery call',
+      content: 'Initial discovery call with CreativePixel team.\n• Company has 6 designers\n• Strong visual design skills, weak in UX research & usability...',
+      timestamp: '9/24/2025 at 09:00 AM',
+    },
+  ],
+  products: [
+    {
+      id: 'p1',
+      name: 'Usability Testing Bootcamp',
+      description: 'Practice-led session with real user tests, observation frameworks, and UX performance metrics.',
+      totalDeal: 14593,
+      commission: 358,
+    },
+    {
+      id: 'p2',
+      name: 'UX Design Audit Certification',
+      description: '1-day assessment and certification based on internal case studies. Includes personalized feedback report.',
+      totalDeal: 58321,
+      commission: 123,
+    },
+    {
+      id: 'p3',
+      name: 'Wireframing & Prototyping in Figma',
+      description: 'Hands-on Figma session covering low- to high-fidelity wireframes, components, and collaboration workflows.',
+      totalDeal: 21431,
+      commission: 123,
+    },
+    {
+      id: 'p4',
+      name: 'User Research Fundamentals',
+      description: '2-day workshop on qualitative and quantitative user research methods.',
+      totalDeal: 8435,
+      commission: 78,
+    },
+  ],
 });
 
 const styles = StyleSheet.create({
@@ -805,7 +1368,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 24,
+    paddingBottom: 100,
   },
   productCountRow: {
     flexDirection: 'row',
@@ -816,7 +1379,7 @@ const styles = StyleSheet.create({
   valueSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'centerh',
+    alignItems: 'center',
     marginHorizontal: 16,
     marginTop: 20,
   },
@@ -899,6 +1462,101 @@ const styles = StyleSheet.create({
   },
   timeline: {
     // Timeline items handle their own spacing
+  },
+  infoField: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'rgba(15,16,16,0.1)',
+    padding: 16,
+    borderBottomWidth: 0,
+  },
+  preferenceNote: {
+    backgroundColor: '#F5F5F5',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  notesHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  newNoteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 6,
+  },
+  notesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  noteCard: {
+    width: '48%', // 2 columns with gap
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 16,
+    minHeight: 120,
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    // Elevation for Android
+    elevation: 2,
+  },
+  productsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  addProductButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 6,
+  },
+  productStatsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  productStatCard: {
+    borderRadius: 12,
+    padding: 16,
+  },
+  productItemCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  productFinancialRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  productFinancialItem: {
+    flex: 1,
+  },
+  financialSeparator: {
+    width: 1,
+    height: 40,
+    backgroundColor: 'rgba(15,16,16,0.1)',
   },
   bottomButtons: {
     position: 'absolute',
