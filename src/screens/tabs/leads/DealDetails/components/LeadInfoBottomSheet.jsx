@@ -93,7 +93,7 @@ const LeadInfoBottomSheet = ({
 
     return (
       <Text style={[
-        theme.typography.BodyMedium,
+        theme.typography.BodyLargeMedium,
         {
           color: theme.colors.night,
           lineHeight: 20,
@@ -103,7 +103,7 @@ const LeadInfoBottomSheet = ({
           // Odd indexes are bold (between ** markers)
           if (index % 2 === 1) {
             return (
-              <Text key={index} style={[theme.typography.BodyBold]}>
+              <Text key={index} style={[theme.typography.BodyLargeBold]}>
                 {part}
               </Text>
             );
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   criticalCard: {
     marginTop: 16,
     borderRadius: 8,
-    borderWidth: 1,
+    // borderWidth: 1,
     padding: 12,
   },
   criticalBadge: {

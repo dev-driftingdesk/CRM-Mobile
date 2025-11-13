@@ -6,6 +6,7 @@ import AllActionItemsScreen from '../../screens/tabs/home/ActionItems/AllActionI
 import ActionItemDetailsScreen from '../../screens/tabs/home/ActionItems/ActionItemDetailsScreen';
 import AllLeadsScreen from '../../screens/tabs/home/Leads/AllLeadsScreen';
 import LeadDetailsScreen from '../../screens/tabs/leads/LeadDetails/LeadDetailsScreen';
+import DealDetailsScreen from '../../screens/tabs/leads/DealDetails/DealDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ const HomeStack = () => {
       <Stack.Screen name="ActionItemDetails" component={ActionItemDetailsScreen} />
       <Stack.Screen name="AllLeads" component={AllLeadsScreen} />
       <Stack.Screen name="LeadDetails" component={LeadDetailsScreen} />
+      <Stack.Screen name="DealDetails" component={DealDetailsScreen} />
     </Stack.Navigator>
   );
 };

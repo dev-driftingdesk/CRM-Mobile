@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useAppTheme } from '../../../context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import HomeHeader from './HomeHeader/HomeHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ActionItemWidgets from './ActionItemWidget/ActionItemWidgets';
 import ActionItemsList from './ActionItems/ActionItemsList';
 import { sampleActionItems } from './ActionItems/sampleData';
 import LeadsList from './Leads/LeadsList';
-import { sampleLeads } from './Leads/sampleData';
+import LoadingSpinner from '../../../components/common/LoadingSpinner';
+import { fetchLeads } from '../../../store/slices/leads/leadsThunks';
 
 const HomeScreen = () => {
   const { theme } = useAppTheme();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  // Get leads from Redux store
+  const { leads, loading } = useSelector(state => state.leads);
+
+  // Fetch leads on component mount
+  useEffect(() => {
+    console.log('🏠 HomeScreen mounted - Fetching leads...');
+    dispatch(fetchLeads());
+  }, [dispatch]);
 
   // Handler for "Show all" button
   const handleShowAll = () => {
@@ -54,11 +66,15 @@ const HomeScreen = () => {
             />
           </View>
           <View style={[{ paddingHorizontal: 16, marginTop: theme.spacings.spacing7 }]}>
-            <LeadsList
-              leads={sampleLeads}
-              onShowAll={handleShowAllLeads}
-              onLeadPress={handleLeadPress}
-            />
+            {loading ? (
+              <LoadingSpinner message="Loading leads..." size="small" />
+            ) : (
+              <LeadsList
+                leads={leads?.slice(0, 5) || []}
+                onShowAll={handleShowAllLeads}
+                onLeadPress={handleLeadPress}
+              />
+            )}
           </View>
         </SafeAreaView>
       </ScrollView>
