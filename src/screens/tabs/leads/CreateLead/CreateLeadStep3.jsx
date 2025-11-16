@@ -174,7 +174,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
         communication,
         platform,
         contactNumber,
-        dealId: '4c144ac6-9eb1-410d-9b3c-f5853930bbd2',
+        // dealId: '4c144ac6-9eb1-410d-9b3c-f5853930bbd2',
       };
       console.log('Creating lead with backend format:', leadData);
       // API call to create lead
