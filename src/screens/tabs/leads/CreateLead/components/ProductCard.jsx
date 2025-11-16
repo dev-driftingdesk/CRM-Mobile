@@ -13,15 +13,15 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * - Optional "Potential upsell" badge (orange, bottom right)
  * - Conditional border radius for stacked effect (isFirst/isLast)
  *
- * @param {string} name - Product name
- * @param {number} value - Product value
- * @param {number} commission - Commission amount
- * @param {boolean} isUpsell - Whether product is marked as upsell
+ * @param {string} productName - Product name (from API)
+ * @param {number} productValue - Product value (from API)
+ * @param {number} commission - Commission amount (TODO: Not in API - needs backend implementation)
+ * @param {boolean} isUpsell - Whether product is marked as upsell (TODO: Not in API - needs backend implementation)
  * @param {function} onRemove - Callback when remove button pressed
  * @param {boolean} isFirst - Whether this is the first item (rounded top)
  * @param {boolean} isLast - Whether this is the last item (rounded bottom)
  */
-const ProductCard = ({ name, value, commission, isUpsell, onRemove, isFirst = false, isLast = false }) => {
+const ProductCard = ({ productName, productValue, commission, isUpsell, onRemove, isFirst = false, isLast = false }) => {
   const { theme } = useAppTheme();
 
   return (
@@ -47,7 +47,7 @@ const ProductCard = ({ name, value, commission, isUpsell, onRemove, isFirst = fa
           ]}
           numberOfLines={2}
         >
-          {name}
+          {productName}
         </Text>
         <TouchableOpacity
           onPress={onRemove}
@@ -81,7 +81,7 @@ const ProductCard = ({ name, value, commission, isUpsell, onRemove, isFirst = fa
                 { color: theme.colors.midnightgreen, marginTop: 4 },
               ]}
             >
-              ${value}
+              ${productValue}
             </Text>
           </View>
           <View style={{ borderLeftWidth: 1, marginLeft: 16, paddingLeft: 16, borderLeftColor: theme.colors.isabelline }}>

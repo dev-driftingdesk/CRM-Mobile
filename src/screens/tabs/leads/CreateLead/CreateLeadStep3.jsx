@@ -70,30 +70,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
     { id: '4', name: 'Olivia Carter', role: 'Consultant' },
   ]);
 
-  // Products State
-  const [products, setProducts] = useState([
-    {
-      id: '1',
-      name: 'User Research Fundamentals',
-      value: 400,
-      commission: 34,
-      isUpsell: false,
-    },
-    {
-      id: '2',
-      name: 'Wireframing & Prototyping in Figma',
-      value: 400,
-      commission: 34,
-      isUpsell: false,
-    },
-    {
-      id: '3',
-      name: 'Usability Testing Bootcamp',
-      value: 400,
-      commission: 34,
-      isUpsell: true,
-    },
-  ]);
+  // Products State (now using selected products from Redux)
+  const [products, setProducts] = useState([]);
 
   // Modal visibility state
   const [showSalesRepModal, setShowSalesRepModal] = useState(false);
@@ -374,8 +352,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
               {products.map((product, index) => (
                 <ProductCard
                   key={product.id}
-                  name={product.name}
-                  value={product.value}
+                  productName={product.productName}
+                  productValue={product.productValue}
                   commission={product.commission}
                   isUpsell={product.isUpsell}
                   onRemove={() => handleRemoveProduct(product.id)}
