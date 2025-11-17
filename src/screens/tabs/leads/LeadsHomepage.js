@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,6 +50,7 @@ const LeadsHomepage = ({ navigation }) => {
 
   // Redux state
   const { leads, loading, error } = useSelector(state => state.leads);
+  const { error: productsError } = useSelector(state => state.products);
 
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,6 +70,25 @@ const LeadsHomepage = ({ navigation }) => {
     console.log('🏠 LeadsHomepage mounted - Fetching leads...');
     dispatch(fetchLeads());
   }, [dispatch]);
+
+  /**
+   * Show alert if products fetch fails
+   * Products are fetched in LeadsStack navigator
+   */
+  useEffect(() => {
+    if (productsError) {
+      Alert.alert(
+        'Products Load Error',
+        productsError?.message || 'Failed to load products. Some features may be limited.',
+        [
+          {
+            text: 'OK',
+            style: 'default',
+          },
+        ]
+      );
+    }
+  }, [productsError]);
 
   /**
    * Filter leads by search query

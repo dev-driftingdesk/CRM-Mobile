@@ -1,0 +1,506 @@
+{
+	"info": {
+		"_postman_id": "53b95d7c-a004-4bdf-a98c-e009ec2bbefc",
+		"name": "CeedPods API Collection",
+		"description": "Complete API collection for CeedPods CRM system with leads, deals, and products management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20980572",
+		"_collection_link": "https://dark-trinity-665998.postman.co/workspace/Drifting-Desk~dbb80972-d495-4575-bf95-0d91097edfe2/collection/20980572-53b95d7c-a004-4bdf-a98c-e009ec2bbefc?action=share&source=collection_link&creator=20980572"
+	},
+	"item": [
+		{
+			"name": "Leads Management",
+			"item": [
+				{
+					"name": "Create Lead",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"originatedFrom\": \"facebook\",\n  \"leadName\": \"John Doe - Tech Solutions\",\n  \"company\": \"Tech Solutions Inc\",\n  \"companyAddress\": \"123 Tech Street, Silicon Valley, CA 94025\",\n  \"companyWebsite\": \"https://techsolutions.example.com\",\n  \"communication\": [\n    {\"phone\": \"987987987\"},\n    {\"email\": \"john.doe@techsolutions.com\"}\n  ],\n  \"platform\": \"Enterprise\",\n  \"contactNumber\": \"987987987\",\n  \"dealId\": \"4c144ac6-9eb1-410d-9b3c-f5853930bbd2\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/leads",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"leads"
+							]
+						},
+						"description": "Creates a new lead in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Leads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/leads",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"leads"
+							]
+						},
+						"description": "Retrieves a list of all leads in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lead by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/leads/{{lead_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"leads",
+								"{{lead_id}}"
+							],
+							"variable": [
+								{
+									"key": "lead_id",
+									"value": "30778482-73fd-431b-ac20-e19ed11d7ff9",
+									"description": "UUID of the lead"
+								}
+							]
+						},
+						"description": "Retrieves a specific lead by its unique identifier"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Lead",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"originatedFrom\": \"facebook\",\n  \"leadName\": \"John Doe Updated\",\n  \"company\": \"Updated Company Inc\",\n  \"companyAddress\": \"123 Updated Street, City\",\n  \"companyWebsite\": \"https://updated-company.com\",\n  \"communication\": [\n    {\"phone\": \"1234567890\"},\n    {\"email\": \"john@updated.com\"}\n  ],\n  \"platform\": \"Web Platform\",\n  \"contactNumber\": \"+1234567890\",\n  \"dealId\": \"1d6e7078-1643-4c1a-8800-5e6ce60e5ac1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/leads/{{lead_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"leads",
+								"{{lead_id}}"
+							],
+							"variable": [
+								{
+									"key": "lead_id",
+									"value": "4fed8952-c943-454b-9e46-2215ce6706de",
+									"description": "UUID of the lead to update"
+								}
+							]
+						},
+						"description": "Updates an existing lead's information"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Lead",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/leads/{{lead_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"leads",
+								"{{lead_id}}"
+							],
+							"variable": [
+								{
+									"key": "lead_id",
+									"value": "4183c84f-5fb6-4c6b-b9d0-d0bb1513c1fd",
+									"description": "UUID of the lead to delete"
+								}
+							]
+						},
+						"description": "Permanently removes a lead from the system"
+					},
+					"response": []
+				}
+			],
+			"description": "All endpoints related to leads management"
+		},
+		{
+			"name": "Deals Management",
+			"item": [
+				{
+					"name": "Create Deal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dealName\": \"Enterprise Software Deal\",\n  \"productIds\": [\"6905837cb6819009a16e97ec\"],\n  \"salesReps\": [\"7f3e18ab-3827-41df-89d7-e65da14505ef\"],\n  \"leadId\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/deals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deals"
+							]
+						},
+						"description": "Creates a new deal in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Deals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deals"
+							]
+						},
+						"description": "Retrieves a list of all deals in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deal by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deals/{{deal_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deals",
+								"{{deal_id}}"
+							],
+							"variable": [
+								{
+									"key": "deal_id",
+									"value": "1d357094-9ab2-4492-bd3a-b839d1da75dd",
+									"description": "UUID of the deal"
+								}
+							]
+						},
+						"description": "Retrieves a specific deal by its unique identifier"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Deal",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dealName\": \"Enterprise Software Deal - Updated\",\n  \"productIds\": [\"6905837cb6819009a16e97ec\"],\n  \"salesReps\": [\"7f3e18ab-3827-41df-89d7-e65da14505ef\"],\n  \"leadId\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/deals/{{deal_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deals",
+								"{{deal_id}}"
+							],
+							"variable": [
+								{
+									"key": "deal_id",
+									"value": "1d357094-9ab2-4492-bd3a-b839d1da75dd",
+									"description": "UUID of the deal to update"
+								}
+							]
+						},
+						"description": "Updates an existing deal's information"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Deal",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/deals/{{deal_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"deals",
+								"{{deal_id}}"
+							],
+							"variable": [
+								{
+									"key": "deal_id",
+									"value": "1d357094-9ab2-4492-bd3a-b839d1da75dd",
+									"description": "UUID of the deal to delete"
+								}
+							]
+						},
+						"description": "Permanently removes a deal from the system"
+					},
+					"response": []
+				}
+			],
+			"description": "All endpoints related to deals management"
+		},
+		{
+			"name": "Products Management",
+			"item": [
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": \"PRD-006\",\n  \"productName\": \"Test Product\",\n  \"productValue\": 100.00,\n  \"productDescription\": \"Product description\",\n  \"productSubDescription\": \"Product sub-description\",\n  \"productStatus\": \"Active\"\n}"
+						},
+						"url": {
+							"raw": "{{alt_base_url}}/api/products",
+							"host": [
+								"{{alt_base_url}}"
+							],
+							"path": [
+								"api",
+								"products"
+							]
+						},
+						"description": "Creates a new product in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{alt_base_url}}/products",
+							"host": [
+								"{{alt_base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "Retrieves a list of all products in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{alt_base_url}}/api/products/{{product_id}}",
+							"host": [
+								"{{alt_base_url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"{{product_id}}"
+							],
+							"variable": [
+								{
+									"key": "product_id",
+									"value": "6905837cb6819009a16e97ec",
+									"description": "MongoDB ObjectId of the product"
+								}
+							]
+						},
+						"description": "Retrieves a specific product by its unique identifier"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productName\": \"Updated Product Name\",\n  \"productValue\": 150.00,\n  \"productDescription\": \"Updated product description\",\n  \"productStatus\": \"Active\"\n}"
+						},
+						"url": {
+							"raw": "{{alt_base_url}}/products/{{product_id}}",
+							"host": [
+								"{{alt_base_url}}"
+							],
+							"path": [
+								"products",
+								"{{product_id}}"
+							],
+							"variable": [
+								{
+									"key": "product_id",
+									"value": "690a224bac7d0554d0ddf8d3",
+									"description": "MongoDB ObjectId of the product to update"
+								}
+							]
+						},
+						"description": "Updates an existing product's information"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{alt_base_url}}/products/search?query={{search_term}}",
+							"host": [
+								"{{alt_base_url}}"
+							],
+							"path": [
+								"products",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "{{search_term}}",
+									"description": "Search term to match against product fields"
+								}
+							],
+							"variable": [
+								{
+									"key": "search_term",
+									"value": "updated",
+									"description": "Search term"
+								}
+							]
+						},
+						"description": "Searches for products based on a query string"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{alt_base_url}}/products/count",
+							"host": [
+								"{{alt_base_url}}"
+							],
+							"path": [
+								"products",
+								"count"
+							]
+						},
+						"description": "Retrieves the total count of products in the system"
+					},
+					"response": []
+				}
+			],
+			"description": "All endpoints related to products management (uses alternative base URL)"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					"// You can add pre-request scripts here if needed",
+					"// For example, to generate timestamps or process data"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"requests": {},
+				"exec": [
+					"// Global test scripts can be added here",
+					"pm.test(\"Status code is successful\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://ceedpodservice.wittycliff-5b88c7b4.westus2.azurecontainerapps.io/api/v1"
+		},
+		{
+			"key": "alt_base_url",
+			"value": "https://api.teamhandle.com/api/v1"
+		},
+		{
+			"key": "bearer_token",
+			"value": "your_jwt_token_here"
+		}
+	]
+}
