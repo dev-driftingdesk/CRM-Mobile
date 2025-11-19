@@ -7,6 +7,7 @@ import ActionItemDetailsScreen from '../../screens/tabs/home/ActionItems/ActionI
 import AllLeadsScreen from '../../screens/tabs/home/Leads/AllLeadsScreen';
 import LeadDetailsScreen from '../../screens/tabs/leads/LeadDetails/LeadDetailsScreen';
 import DealDetailsScreen from '../../screens/tabs/leads/DealDetails/DealDetailsScreen';
+import SearchScreen from '../../screens/search/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ const HomeStack = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="HomeDetails" component={HomeDetails} />
+      <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="AllActionItems" component={AllActionItemsScreen} />
       <Stack.Screen name="ActionItemDetails" component={ActionItemDetailsScreen} />
       <Stack.Screen name="AllLeads" component={AllLeadsScreen} />
