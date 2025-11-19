@@ -1,13 +1,20 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
 import IconComponent from '../../../../assets/icons/CustomIcon'
 import { useAppTheme } from '../../../../context/ThemeContext'
 
 const HomeHeader = () => {
 
     const { theme } = useAppTheme();
+    const navigation = useNavigation();
 
     const [profPicUrl, setProfPicUrl] = useState('https://lirp.cdn-website.com/18180652/dms3rep/multi/opt/online-dating-KevinBrookim-Onlinedating-82-640w.jpg');
+
+    const handleSearchPress = () => {
+        navigation.navigate('Search');
+    };
+
     return (
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
             <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -20,7 +27,7 @@ const HomeHeader = () => {
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-                <TouchableOpacity onPress={() => { console.log("search") }}>
+                <TouchableOpacity onPress={handleSearchPress}>
                     <IconComponent name={'search'} width={25} height={25} tintColour={theme.colors.night} />
                 </TouchableOpacity>
 
