@@ -6,62 +6,12 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
+import { useSelector } from 'react-redux';
 import { useAppTheme } from '../../../../../context/ThemeContext';
 import CustomIcon from '../../../../../assets/icons/CustomIcon';
-
-// Available products (mock data)
-const availableProducts = [
-  {
-    id: '1',
-    name: 'User Research Fundamentals',
-    value: 400,
-    commission: 34,
-  },
-  {
-    id: '2',
-    name: 'Wireframing & Prototyping in Figma',
-    value: 400,
-    commission: 34,
-  },
-  {
-    id: '3',
-    name: 'Usability Testing Bootcamp',
-    value: 400,
-    commission: 34,
-  },
-  {
-    id: '4',
-    name: 'Front-End Developer Bootcamp Package',
-    value: 600,
-    commission: 50,
-  },
-  {
-    id: '5',
-    name: 'Project Management Essentials',
-    value: 350,
-    commission: 28,
-  },
-  {
-    id: '6',
-    name: 'Creative Director Accelerator',
-    value: 750,
-    commission: 65,
-  },
-  {
-    id: '7',
-    name: 'Advanced CSS & Styling Techniques',
-    value: 450,
-    commission: 38,
-  },
-  {
-    id: '8',
-    name: 'JavaScript for Designers',
-    value: 500,
-    commission: 42,
-  },
-];
 
 /**
  * ProductSelectorBottomSheet - Product Selection Modal
@@ -72,6 +22,8 @@ const availableProducts = [
  * - Multi-select product list with radio buttons
  * - Position assignment: Primary product / Potential upsell
  * - Confirm/Cancel actions
+ * - Uses Redux products state
+ * - Error handling for product fetch failures
  *
  * @param {boolean} visible - Modal visibility state
  * @param {function} onClose - Callback when modal closes
@@ -86,6 +38,9 @@ const ProductSelectorBottomSheet = ({
 }) => {
   const { theme } = useAppTheme();
 
+  // Get products from Redux store
+  const { products, loading, error } = useSelector((state) => state.products);
+
   // Initialize selected products from current products
   const [selectedProducts, setSelectedProducts] = useState(
     currentProducts.map((prod) => ({
@@ -96,15 +51,16 @@ const ProductSelectorBottomSheet = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   console.log('Component render - selectedProducts count:', selectedProducts.length);
+  console.log('Products from Redux:', products.length);
 
   // Filter products by search query
   const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return availableProducts;
+    if (!searchQuery.trim()) return products;
     const query = searchQuery.toLowerCase();
-    return availableProducts.filter((product) =>
-      product.name.toLowerCase().includes(query)
+    return products.filter((product) =>
+      product.productName.toLowerCase().includes(query)
     );
-  }, [searchQuery]);
+  }, [searchQuery, products]);
 
   // Check if product is selected
   const isProductSelected = (productId) => {
@@ -144,10 +100,10 @@ const ProductSelectorBottomSheet = ({
   const handleConfirm = () => {
     const productsToAdd = selectedProducts.map((prod) => ({
       id: prod.id,
-      name: prod.name,
-      value: prod.value,
-      commission: prod.commission,
-      isUpsell: prod.position === 'Potential upsell',
+      productName: prod.productName,
+      productValue: prod.productValue,
+      commission: prod.commission, // TODO: Not in API - needs backend implementation
+      isUpsell: prod.position === 'Potential upsell', // TODO: Not in API - needs backend implementation
     }));
     onConfirm(productsToAdd);
     onClose();
@@ -175,11 +131,11 @@ const ProductSelectorBottomSheet = ({
   const renderSelectedPill = (product) => {
     // Truncate name if too long
     const displayName =
-      product.name.length > 25
-        ? product.name.substring(0, 25) + '...'
-        : product.name;
+      product.productName.length > 25
+        ? product.productName.substring(0, 25) + '...'
+        : product.productName;
 
-    console.log('Rendering pill for product:', product.name, 'displayName:', displayName);
+    console.log('Rendering pill for product:', product.productName, 'displayName:', displayName);
 
     return (
       <View
@@ -308,7 +264,7 @@ const ProductSelectorBottomSheet = ({
               { color: theme.colors.night, marginBottom: 8 },
             ]}
           >
-            {product.name}
+            {product.productName}
           </Text>
 
           {/* Value and Commission Row */}
@@ -328,9 +284,9 @@ const ProductSelectorBottomSheet = ({
                   { color: theme.colors.midnightgreen, marginTop: 2 },
                 ]}
               >
-                ${product.value}
+                ${product.productValue}
               </Text>
-            </View>16
+            </View>
             <View style={{ marginLeft: 16, borderLeftWidth: 1, borderLeftColor: theme.colors.night10, paddingLeft: 16 }}>
               <Text
                 style={[
@@ -346,7 +302,7 @@ const ProductSelectorBottomSheet = ({
                   { color: theme.colors.midnightgreen, marginTop: 2 },
                 ]}
               >
-                ${product.commission}
+                ${product.commission || 0}
               </Text>
             </View>
           </View>
@@ -479,7 +435,36 @@ const ProductSelectorBottomSheet = ({
           showsVerticalScrollIndicator={true}
           nestedScrollEnabled={true}
         >
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            <View style={{ padding: 32, alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={theme.colors.midnightgreen} />
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.davysgrey, marginTop: 16 },
+                ]}
+              >
+                Loading products...
+              </Text>
+            </View>
+          ) : error ? (
+            <View style={{ padding: 32, alignItems: 'center' }}>
+              <CustomIcon
+                name="activity"
+                width={48}
+                height={48}
+                tintColour={theme.colors.davysgrey}
+              />
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.davysgrey, marginTop: 16, textAlign: 'center' },
+                ]}
+              >
+                {error?.message || 'Failed to load products'}
+              </Text>
+            </View>
+          ) : filteredProducts.length > 0 ? (
             filteredProducts.map((product) => renderProductItem(product))
           ) : (
             <View style={{ padding: 32, alignItems: 'center' }}>

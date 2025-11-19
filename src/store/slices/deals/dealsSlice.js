@@ -1,23 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
-  fetchLeads,
-  fetchLeadById,
-  createLead,
-  updateLead,
-  deleteLead,
-} from './leadsThunks';
+  fetchDeals,
+  fetchDealById,
+  createDeal,
+  updateDeal,
+  deleteDeal,
+} from './dealsThunks';
 
 /**
- * Leads Slice
+ * Deals Slice
  *
- * Redux slice for managing leads state.
- * Follows the same pattern as auth slice.
+ * Redux slice for managing deals state.
+ * Follows the same pattern as leads slice.
  */
 
 const initialState = {
-  // Leads data
-  leads: [],
-  selectedLead: null,
+  // Deals data
+  deals: [],
+  selectedDeal: null,
 
   // Loading states
   loading: false,
@@ -40,8 +40,8 @@ const initialState = {
   totalCount: 0,
 };
 
-const leadsSlice = createSlice({
-  name: 'leads',
+const dealsSlice = createSlice({
+  name: 'deals',
   initialState,
   reducers: {
     /**
@@ -62,141 +62,143 @@ const leadsSlice = createSlice({
     },
 
     /**
-     * Clear selected lead
+     * Clear selected deal
      */
-    clearSelectedLead: state => {
-      state.selectedLead = null;
+    clearSelectedDeal: state => {
+      state.selectedDeal = null;
       state.errorById = null;
     },
 
     /**
-     * Reset leads state
+     * Reset deals state
      */
-    resetLeadsState: state => {
+    resetDealsState: state => {
       return initialState;
     },
   },
   extraReducers: builder => {
-    // FETCH ALL LEADS
-    builder.addCase(fetchLeads.pending, state => {
+    // ============================================
+    // FETCH ALL DEALS
+    // ============================================
+    builder.addCase(fetchDeals.pending, state => {
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(fetchLeads.fulfilled, (state, action) => {
+    builder.addCase(fetchDeals.fulfilled, (state, action) => {
       state.loading = false;
-      state.leads = action?.payload?.data;
+      state.deals = action?.payload?.data;
       state.totalCount = action?.payload?.length;
       state.lastFetch = new Date().toISOString();
       state.error = null;
     });
-    builder.addCase(fetchLeads.rejected, (state, action) => {
+    builder.addCase(fetchDeals.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || {
-        message: 'Failed to fetch leads',
+        message: 'Failed to fetch deals',
         status: 0,
       };
     });
 
     // ============================================
-    // FETCH LEAD BY ID
+    // FETCH DEAL BY ID
     // ============================================
-    builder.addCase(fetchLeadById.pending, state => {
+    builder.addCase(fetchDealById.pending, state => {
       state.loadingById = true;
       state.errorById = null;
     });
-    builder.addCase(fetchLeadById.fulfilled, (state, action) => {
+    builder.addCase(fetchDealById.fulfilled, (state, action) => {
       state.loadingById = false;
-      state.selectedLead = action.payload;
+      state.selectedDeal = action.payload;
       state.errorById = null;
     });
-    builder.addCase(fetchLeadById.rejected, (state, action) => {
+    builder.addCase(fetchDealById.rejected, (state, action) => {
       state.loadingById = false;
       state.errorById = action.payload || {
-        message: 'Failed to fetch lead details',
+        message: 'Failed to fetch deal details',
         status: 0,
       };
     });
 
     // ============================================
-    // CREATE LEAD
+    // CREATE DEAL
     // ============================================
-    builder.addCase(createLead.pending, state => {
+    builder.addCase(createDeal.pending, state => {
       state.creating = true;
       state.error = null;
       state.createSuccess = false;
     });
-    builder.addCase(createLead.fulfilled, (state, action) => {
+    builder.addCase(createDeal.fulfilled, (state, action) => {
       state.creating = false;
       state.createSuccess = true;
       state.error = null;
     });
-    builder.addCase(createLead.rejected, (state, action) => {
+    builder.addCase(createDeal.rejected, (state, action) => {
       state.creating = false;
       state.createSuccess = false;
       state.error = action.payload || {
-        message: 'Failed to create lead',
+        message: 'Failed to create deal',
         status: 0,
       };
     });
 
     // ============================================
-    // UPDATE LEAD
+    // UPDATE DEAL
     // ============================================
-    builder.addCase(updateLead.pending, state => {
+    builder.addCase(updateDeal.pending, state => {
       state.updating = true;
       state.error = null;
       state.updateSuccess = false;
     });
-    builder.addCase(updateLead.fulfilled, (state, action) => {
+    builder.addCase(updateDeal.fulfilled, (state, action) => {
       state.updating = false;
-      // Update lead in array
-      const index = state.leads.findIndex(
-        lead => lead.id === action.payload.id,
+      // Update deal in array
+      const index = state.deals.findIndex(
+        deal => deal.id === action.payload.id,
       );
       if (index !== -1) {
-        state.leads[index] = action.payload;
+        state.deals[index] = action.payload;
       }
-      // Update selected lead if it's the same one
-      if (state.selectedLead?.id === action.payload.id) {
-        state.selectedLead = action.payload;
+      // Update selected deal if it's the same one
+      if (state.selectedDeal?.id === action.payload.id) {
+        state.selectedDeal = action.payload;
       }
       state.updateSuccess = true;
       state.error = null;
     });
-    builder.addCase(updateLead.rejected, (state, action) => {
+    builder.addCase(updateDeal.rejected, (state, action) => {
       state.updating = false;
       state.updateSuccess = false;
       state.error = action.payload || {
-        message: 'Failed to update lead',
+        message: 'Failed to update deal',
         status: 0,
       };
     });
 
     // ============================================
-    // DELETE LEAD
+    // DELETE DEAL
     // ============================================
-    builder.addCase(deleteLead.pending, state => {
+    builder.addCase(deleteDeal.pending, state => {
       state.deleting = true;
       state.error = null;
       state.deleteSuccess = false;
     });
-    builder.addCase(deleteLead.fulfilled, (state, action) => {
+    builder.addCase(deleteDeal.fulfilled, (state, action) => {
       state.deleting = false;
-      // Remove lead from array
-      state.leads = state.leads.filter(lead => lead.id !== action.payload);
+      // Remove deal from array
+      state.deals = state.deals.filter(deal => deal.id !== action.payload);
       state.totalCount -= 1;
-      // Clear selected lead if it was deleted
-      if (state.selectedLead?.id === action.payload) {
-        state.selectedLead = null;
+      // Clear selected deal if it was deleted
+      if (state.selectedDeal?.id === action.payload) {
+        state.selectedDeal = null;
       }
       state.deleteSuccess = true;
       state.error = null;
     });
-    builder.addCase(deleteLead.rejected, (state, action) => {
+    builder.addCase(deleteDeal.rejected, (state, action) => {
       state.deleting = false;
       state.deleteSuccess = false;
       state.error = action.payload || {
-        message: 'Failed to delete lead',
+        message: 'Failed to delete deal',
         status: 0,
       };
     });
@@ -207,9 +209,9 @@ const leadsSlice = createSlice({
 export const {
   clearError,
   clearSuccessFlags,
-  clearSelectedLead,
-  resetLeadsState,
-} = leadsSlice.actions;
+  clearSelectedDeal,
+  resetDealsState,
+} = dealsSlice.actions;
 
 // Export reducer
-export default leadsSlice.reducer;
+export default dealsSlice.reducer;

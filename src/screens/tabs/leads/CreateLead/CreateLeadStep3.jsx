@@ -23,7 +23,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   createLead,
   fetchLeads,
+  updateLead,
 } from '../../../../store/slices/leads/leadsThunks';
+import { createDeal } from '../../../../store/slices/deals/dealsThunks';
 import leadsService from '../../../../services/lead-service/leadsService';
 
 /**
@@ -34,19 +36,38 @@ import leadsService from '../../../../services/lead-service/leadsService';
  *
  * Features:
  * - Deal information form
- * - Sales representatives management
- * - Products selection and management
+ * - Dynamic sales representatives selection (fetched from API)
+ * - Dynamic products selection (fetched from Redux)
  * - Upsell marking for products
- * - Complete lead creation button
+ * - Complete lead + deal creation button
+ * - Automatic deal creation after lead is created
+ * - Automatic lead update with deal ID
  * - Success feedback and navigation back
+ *
+ * Flow:
+ * 1. User fills deal name
+ * 2. User selects sales reps from API
+ * 3. User selects products from Redux store
+ * 4. On Complete:
+ *    a) Creates lead (POST /leads)
+ *    b) Creates deal with lead ID (POST /deals)
+ *    c) Updates lead with deal ID (PUT /leads/:id)
  *
  * Navigation:
  * - Back: Returns to CreateLeadStep2 (preserves data)
- * - Complete: Creates lead and returns to LeadsHomepage with success
+ * - Complete: Creates lead + deal, links them, returns to LeadsHomepage with success
+ *
+ * Data Flow:
+ * - No hardcoded data
+ * - Sales reps fetched from users API
+ * - Products fetched from Redux products state
+ * - Deal payload includes: dealName, productIds[], salesReps[], leadId
+ * - Lead update payload includes: dealId
  */
 const CreateLeadStep3 = ({ navigation, route }) => {
   const { theme } = useAppTheme();
-  const { creating } = useSelector(state => state.leads);
+  const { creating, updating } = useSelector(state => state.leads);
+  const { creating: isDealCreating } = useSelector(state => state.deals);
   // Destructure using backend field names
   const {
     originatedFrom,
@@ -62,38 +83,12 @@ const CreateLeadStep3 = ({ navigation, route }) => {
   // Deal Information State
   const [dealName, setDealName] = useState('');
   const dispatch = useDispatch();
-  // Sales Representatives State
-  const [salesReps, setSalesReps] = useState([
-    { id: '1', name: 'James Nick', role: 'Primary' },
-    { id: '2', name: 'Sarah Lee', role: 'Co-Primary' },
-    { id: '3', name: 'Marcus Tan', role: 'Consultant' },
-    { id: '4', name: 'Olivia Carter', role: 'Consultant' },
-  ]);
 
-  // Products State
-  const [products, setProducts] = useState([
-    {
-      id: '1',
-      name: 'User Research Fundamentals',
-      value: 400,
-      commission: 34,
-      isUpsell: false,
-    },
-    {
-      id: '2',
-      name: 'Wireframing & Prototyping in Figma',
-      value: 400,
-      commission: 34,
-      isUpsell: false,
-    },
-    {
-      id: '3',
-      name: 'Usability Testing Bootcamp',
-      value: 400,
-      commission: 34,
-      isUpsell: true,
-    },
-  ]);
+  // Sales Representatives State - Start with empty array
+  const [salesReps, setSalesReps] = useState([]);
+
+  // Products State - Start with empty array
+  const [products, setProducts] = useState([]);
 
   // Modal visibility state
   const [showSalesRepModal, setShowSalesRepModal] = useState(false);
@@ -160,47 +155,154 @@ const CreateLeadStep3 = ({ navigation, route }) => {
 
   /**
    * Handle Complete button press
-   * Creates lead and navigates back with success
+   *
+   * Complete flow:
+   * 1. Create lead (POST /leads)
+   * 2. Create deal with lead ID (POST /deals)
+   * 3. Update lead with deal ID (PUT /leads/:id)
+   *
    * Data is already in backend format (no mapping needed)
    */
   const handleComplete = async () => {
     if (isFormValid()) {
-      const leadData = {
-        originatedFrom,
-        leadName,
-        company,
-        companyAddress,
-        companyWebsite,
-        communication,
-        platform,
-        contactNumber,
-        dealId: '4c144ac6-9eb1-410d-9b3c-f5853930bbd2',
-      };
-      console.log('Creating lead with backend format:', leadData);
-      // API call to create lead
-      const response = await dispatch(createLead(leadData));
-      if (
-        response?.payload?.status === 201 &&
-        response?.payload?.data?.success
-      ) {
-        setShowSuccessModal(true);
-        dispatch(fetchLeads());
-        //  Back to LeadsHomepage handled in success modal close
-      } else {
-        // Show error alert
-        const errorMessage =
-          response?.payload?.data?.message ||
-          response?.error?.message ||
-          'Failed to create lead. Please try again.';
+      try {
+        // Step 1: Create the lead
+        const leadData = {
+          originatedFrom,
+          leadName,
+          company,
+          companyAddress,
+          companyWebsite,
+          communication,
+          platform,
+          contactNumber,
+        };
+        console.log('📝 Creating lead with backend format:', leadData);
 
-        Alert.alert('Error', errorMessage, [
-          {
-            text: 'OK',
-            style: 'default',
-          },
-        ]);
+        const leadResponse = await dispatch(createLead(leadData));
+
+        if (
+          leadResponse?.payload?.status === 201 &&
+          leadResponse?.payload?.data?.success
+        ) {
+          // Extract the newly created lead ID from response
+          const newLeadId = leadResponse?.payload?.data?.data?.id;
+          console.log('✅ Lead created successfully with ID:', newLeadId);
+
+          // Step 2: Create the deal with the new lead ID
+          if (newLeadId) {
+            const dealData = {
+              dealName: dealName,
+              productIds: products.map(product => product.id),
+              salesReps: salesReps.map(rep => rep.id),
+              leadId: newLeadId,
+            };
+            console.log('📝 Creating deal with data:', dealData);
+
+            const dealResponse = await dispatch(createDeal(dealData));
+
+            if (
+              dealResponse?.payload?.status === 201 &&
+              dealResponse?.payload?.data?.success
+            ) {
+              // Extract the newly created deal ID from response
+              const newDealId = dealResponse?.payload?.data?.data?.id;
+              console.log('✅ Deal created successfully with ID:', newDealId);
+
+              // Step 3: Update the lead with the deal ID
+              if (newDealId) {
+                const updateLeadData = {
+                  dealId: newDealId,
+                };
+                console.log('📝 Updating lead with deal ID:', updateLeadData);
+
+                const updateResponse = await dispatch(
+                  updateLead({ leadId: newLeadId, leadData: updateLeadData }),
+                );
+
+                if (
+                  updateResponse?.payload?.status === 200 ||
+                  updateResponse?.payload?.data?.success
+                ) {
+                  console.log('✅ Lead updated successfully with deal ID');
+                  setShowSuccessModal(true);
+                  dispatch(fetchLeads());
+                } else {
+                  // Lead update failed but deal was created
+                  console.warn('⚠️ Failed to update lead with deal ID');
+                  // Still show success since both lead and deal were created
+                  setShowSuccessModal(true);
+                  dispatch(fetchLeads());
+                }
+              } else {
+                // No deal ID returned, but deal was created
+                console.warn('⚠️ No deal ID returned from deal creation');
+                setShowSuccessModal(true);
+                dispatch(fetchLeads());
+              }
+            } else {
+              // Deal creation failed
+              const dealErrorMessage =
+                dealResponse?.payload?.data?.message ||
+                dealResponse?.error?.message ||
+                'Lead created but failed to create deal. You can add a deal later.';
+
+              Alert.alert('Partial Success', dealErrorMessage, [
+                {
+                  text: 'OK',
+                  style: 'default',
+                  onPress: () => {
+                    // Still show success and navigate since lead was created
+                    setShowSuccessModal(true);
+                    dispatch(fetchLeads());
+                  },
+                },
+              ]);
+            }
+          } else {
+            // No lead ID returned, show warning
+            Alert.alert(
+              'Warning',
+              'Lead created but could not create associated deal. Please add a deal manually.',
+              [
+                {
+                  text: 'OK',
+                  style: 'default',
+                  onPress: () => {
+                    setShowSuccessModal(true);
+                    dispatch(fetchLeads());
+                  },
+                },
+              ],
+            );
+          }
+        } else {
+          // Lead creation failed
+          const errorMessage =
+            leadResponse?.payload?.data?.message ||
+            leadResponse?.error?.message ||
+            'Failed to create lead. Please try again.';
+
+          Alert.alert('Error', errorMessage, [
+            {
+              text: 'OK',
+              style: 'default',
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error('❌ Error in handleComplete:', error);
+        Alert.alert(
+          'Error',
+          'An unexpected error occurred. Please try again.',
+          [
+            {
+              text: 'OK',
+              style: 'default',
+            },
+          ],
+        );
       }
-      console.log(response);
     }
   };
 
@@ -374,8 +476,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
               {products.map((product, index) => (
                 <ProductCard
                   key={product.id}
-                  name={product.name}
-                  value={product.value}
+                  productName={product.productName}
+                  productValue={product.productValue}
                   commission={product.commission}
                   isUpsell={product.isUpsell}
                   onRemove={() => handleRemoveProduct(product.id)}
@@ -432,7 +534,7 @@ const CreateLeadStep3 = ({ navigation, route }) => {
           disabled={!isFormValid() || creating}
           activeOpacity={0.8}
         >
-          {creating ? (
+          {creating || isDealCreating || updating ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator color={theme.colors.white} size="small" />
               <Text
@@ -476,8 +578,8 @@ const CreateLeadStep3 = ({ navigation, route }) => {
       {/* Success Modal */}
       <SuccessModal
         visible={showSuccessModal}
-        title="Lead Created!"
-        message="Your lead has been created successfully and added to your leads list."
+        title="Lead & Deal Created!"
+        message="Your lead and associated deal have been created successfully."
         buttonText="View Leads"
         onClose={handleSuccessClose}
       />

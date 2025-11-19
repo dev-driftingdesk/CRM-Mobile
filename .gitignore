@@ -1,6 +1,7 @@
 # OSX
 #
 .DS_Store
+.CeedPods_API_Collection.postman_collection.json
 
 # Xcode
 #
