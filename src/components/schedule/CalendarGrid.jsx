@@ -110,13 +110,13 @@ const CalendarGrid = ({
     <View style={styles.container}>
       {/* Month/Year Header with Navigation */}
       <View style={styles.header}>
-        <Text style={[theme.typography.BodyLargeBold, { color: theme.colors.night }]}>
+        <Text style={[theme.typography.BodyLargeBold, { color: theme.colors.night, }]}>
           {monthYear}
         </Text>
         <View style={styles.navigationButtons}>
           <TouchableOpacity
             onPress={handlePrevMonth}
-            style={[styles.navButton, { backgroundColor: 'rgba(223,216,215,0.5)' }]}
+            style={[styles.navButton, { backgroundColor: theme.colors.white, borderColor:theme.colors.timberwolf }]}
             activeOpacity={0.7}
           >
             <CustomIcon
@@ -128,7 +128,7 @@ const CalendarGrid = ({
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleNextMonth}
-            style={[styles.navButton, { backgroundColor: 'rgba(223,216,215,0.5)' }]}
+            style={[styles.navButton, { backgroundColor: theme.colors.white, borderColor:theme.colors.timberwolf }]}
             activeOpacity={0.7}
           >
             <CustomIcon
@@ -204,7 +204,7 @@ const CalendarGrid = ({
                   <View
                     style={[
                       styles.eventDot,
-                      { backgroundColor: isSelected ? theme.colors.white : theme.colors.midnightgreen },
+                      { backgroundColor: isSelected ? theme.colors.white : "#1BB476" },
                     ]}
                   />
                 )}
@@ -236,6 +236,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -265,9 +266,9 @@ const styles = StyleSheet.create({
   eventDot: {
     position: 'absolute',
     bottom: 4,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+    width: 6,
+    height: 6,
+    borderRadius: 100,
   },
 });
 

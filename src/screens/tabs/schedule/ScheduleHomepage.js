@@ -144,8 +144,8 @@ const ScheduleHomepage = ({ navigation }) => {
                           : theme.colors.davysgrey,
                       fontFamily:
                         viewMode === mode
-                          ? theme.fonts.bold
-                          : theme.fonts.medium,
+                          ? theme.typography.BodySmallMedium
+                          : theme.typography.BodySmallMedium
                     },
                   ]}
                 >
@@ -192,7 +192,7 @@ const ScheduleHomepage = ({ navigation }) => {
         <View style={styles.selectedDateContainer}>
           <Text
             style={[
-              theme.typography.BodyMedium,
+              theme.typography.BodyLargeMedium,
               { color: theme.colors.night },
             ]}
           >
