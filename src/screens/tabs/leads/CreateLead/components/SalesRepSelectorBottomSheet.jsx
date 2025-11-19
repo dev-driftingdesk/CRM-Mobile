@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,13 @@ import {
   TextInput,
   Image,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
+import { useDispatch, useSelector } from 'react-redux';
 import { useAppTheme } from '../../../../../context/ThemeContext';
 import CustomIcon from '../../../../../assets/icons/CustomIcon';
+import { fetchUsers } from '../../../../../store/slices/users/usersThunks';
 
 /**
  * SalesRepSelectorBottomSheet - Sales Representative Selection Modal
@@ -35,114 +38,85 @@ const SalesRepSelectorBottomSheet = ({
   currentSalesReps = [],
 }) => {
   const { theme } = useAppTheme();
+  const dispatch = useDispatch();
+
+  // Get users from Redux store
+  const { users, loading, error } = useSelector(state => state.users);
+  console.log(users);
 
   // Initialize selected reps from current sales reps
   const [selectedReps, setSelectedReps] = useState(() =>
-    currentSalesReps.map((rep) => ({
+    currentSalesReps.map(rep => ({
       ...rep,
       position: rep.role || 'Consultant',
-      email: rep.email || `${rep.name.toLowerCase().replace(' ', '.')}@agenticcrm.com`,
+      email: rep.email || rep.userEmail || '',
       avatar: rep.avatar || `https://i.pravatar.cc/150?u=${rep.id}`,
-    }))
+    })),
   );
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Available sales reps (mock data)
-  const availableReps = [
-    {
-      id: '1',
-      name: 'James Nick',
-      email: 'james.nick@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-    },
-    {
-      id: '2',
-      name: 'Sarah Lee',
-      email: 'sarah.lee@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=5',
-    },
-    {
-      id: '3',
-      name: 'Marcus Tan',
-      email: 'marcus.tan@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=12',
-    },
-    {
-      id: '4',
-      name: 'Olivia Carter',
-      email: 'olivia.carter@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=9',
-    },
-    {
-      id: '5',
-      name: 'Daniel Wright',
-      email: 'daniel.wright@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=13',
-    },
-    {
-      id: '6',
-      name: 'Rick Wiggins',
-      email: 'rick.wiggins@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=33',
-    },
-    {
-      id: '7',
-      name: 'Col. Roderick',
-      email: 'col.roderick@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=14',
-    },
-    {
-      id: '8',
-      name: 'Mike Torel',
-      email: 'mike.torel@agenticcrm.com',
-      avatar: 'https://i.pravatar.cc/150?img=15',
-    },
-  ];
+  /**
+   * Fetch users when modal becomes visible
+   */
+  useEffect(() => {
+    if (visible && users.length === 0) {
+      console.log('📋 Fetching users for sales rep selection...');
+      dispatch(fetchUsers());
+    }
+  }, [visible, dispatch, users.length]);
+
+  // Map users from Redux to availableReps format
+  const availableReps = useMemo(() => {
+    return users.map(user => ({
+      id: user.id || user._id,
+      name: user.fullName || 'Unknown User',
+      email: user.userEmail || user.email || '',
+      avatar:
+        user.avatar || `https://i.pravatar.cc/150?u=${user.id || user._id}`,
+    }));
+  }, [users]);
 
   // Filter reps by search query
   const filteredReps = useMemo(() => {
     if (!searchQuery.trim()) return availableReps;
     const query = searchQuery.toLowerCase();
     return availableReps.filter(
-      (rep) =>
+      rep =>
         rep.name.toLowerCase().includes(query) ||
-        rep.email.toLowerCase().includes(query)
+        rep.email.toLowerCase().includes(query),
     );
   }, [searchQuery]);
 
   // Check if rep is selected
-  const isRepSelected = (repId) => {
-    return selectedReps.some((r) => r.id === repId);
+  const isRepSelected = repId => {
+    return selectedReps.some(r => r.id === repId);
   };
 
   // Get selected rep data
-  const getSelectedRep = (repId) => {
-    return selectedReps.find((r) => r.id === repId);
+  const getSelectedRep = repId => {
+    return selectedReps.find(r => r.id === repId);
   };
 
   // Toggle rep selection
-  const toggleRepSelection = (rep) => {
+  const toggleRepSelection = rep => {
     const isSelected = isRepSelected(rep.id);
     if (isSelected) {
-      setSelectedReps((prev) => prev.filter((r) => r.id !== rep.id));
+      setSelectedReps(prev => prev.filter(r => r.id !== rep.id));
     } else {
-      setSelectedReps((prev) => [
-        ...prev,
-        { ...rep, position: 'Consultant' },
-      ]);
+      setSelectedReps(prev => [...prev, { ...rep, position: 'Consultant' }]);
     }
   };
 
   // Update rep position
   const updateRepPosition = (repId, position) => {
-    setSelectedReps((prev) =>
-      prev.map((rep) => (rep.id === repId ? { ...rep, position } : rep))
+    setSelectedReps(prev =>
+      prev.map(rep => (rep.id === repId ? { ...rep, position } : rep)),
     );
   };
 
   // Handle confirm
   const handleConfirm = () => {
-    const repsToAdd = selectedReps.map((rep) => ({
+    const repsToAdd = selectedReps.map(rep => ({
       id: rep.id,
       name: rep.name,
       email: rep.email,
@@ -157,19 +131,21 @@ const SalesRepSelectorBottomSheet = ({
   const handleCancel = () => {
     // Reset to current reps
     setSelectedReps(
-      currentSalesReps.map((rep) => ({
+      currentSalesReps.map(rep => ({
         ...rep,
         position: rep.role || 'Consultant',
-        email: rep.email || `${rep.name.toLowerCase().replace(' ', '.')}@agenticcrm.com`,
+        email:
+          rep.email ||
+          `${rep.name.toLowerCase().replace(' ', '.')}@agenticcrm.com`,
         avatar: rep.avatar || `https://i.pravatar.cc/150?u=${rep.id}`,
-      }))
+      })),
     );
     setSearchQuery('');
     onClose();
   };
 
   // Render position pills for selected rep
-  const renderPositionPills = (rep) => {
+  const renderPositionPills = rep => {
     const positions = ['Primary', 'Co-Primary', 'Consultant'];
     return (
       <View style={styles.positionPillsContainer}>
@@ -182,7 +158,7 @@ const SalesRepSelectorBottomSheet = ({
           Position
         </Text>
         <View style={styles.pillsRow}>
-          {positions.map((position) => {
+          {positions.map(position => {
             const isSelected = rep.position === position;
             const isPrimary = position === 'Primary';
 
@@ -191,14 +167,16 @@ const SalesRepSelectorBottomSheet = ({
                 key={position}
                 style={[
                   styles.positionPill,
-                  isPrimary && isSelected && {
-                    backgroundColor: theme.colors.night, // Black background for Primary
-                  },
-                  !isPrimary && isSelected && {
-                    borderColor: '#D0D0D0',
-                    borderWidth: 1,
-                    backgroundColor: theme.colors.night,
-                  },
+                  isPrimary &&
+                    isSelected && {
+                      backgroundColor: theme.colors.night, // Black background for Primary
+                    },
+                  !isPrimary &&
+                    isSelected && {
+                      borderColor: '#D0D0D0',
+                      borderWidth: 1,
+                      backgroundColor: theme.colors.night,
+                    },
                   !isSelected && {
                     borderColor: '#D0D0D0',
                     borderWidth: 1,
@@ -227,7 +205,8 @@ const SalesRepSelectorBottomSheet = ({
   };
 
   // Render agent list item
-  const renderAgentItem = (rep) => {
+  const renderAgentItem = rep => {
+    console.log(rep);
     const isSelected = isRepSelected(rep.id);
     const selectedRep = getSelectedRep(rep.id);
 
@@ -248,7 +227,10 @@ const SalesRepSelectorBottomSheet = ({
         {/* Info Container */}
         <View style={styles.agentInfo}>
           <Text
-            style={[theme.typography.BodyLargeMedium, { color: theme.colors.night }]}
+            style={[
+              theme.typography.BodyLargeMedium,
+              { color: theme.colors.night },
+            ]}
           >
             {rep.name}
           </Text>
@@ -292,7 +274,7 @@ const SalesRepSelectorBottomSheet = ({
   };
 
   // Render selected avatar with remove button
-  const renderSelectedAvatar = (rep) => {
+  const renderSelectedAvatar = rep => {
     // Truncate name to first name + last initial
     const nameParts = rep.name.split(' ');
     const displayName =
@@ -310,7 +292,12 @@ const SalesRepSelectorBottomSheet = ({
             onPress={() => toggleRepSelection(rep)}
             activeOpacity={0.7}
           >
-            <View style={[styles.removeAvatarCircle, { backgroundColor: theme.colors.isabelline }]}>
+            <View
+              style={[
+                styles.removeAvatarCircle,
+                { backgroundColor: theme.colors.isabelline },
+              ]}
+            >
               <CustomIcon
                 name="xmark"
                 width={12}
@@ -350,10 +337,7 @@ const SalesRepSelectorBottomSheet = ({
       hideModalContentWhileAnimating
     >
       <View
-        style={[
-          styles.modalContent,
-          { backgroundColor: theme.colors.white, },
-        ]}
+        style={[styles.modalContent, { backgroundColor: theme.colors.white }]}
       >
         {/* Header */}
         <View style={[styles.header, { borderBottomColor: '#E0E0E0' }]}>
@@ -380,12 +364,7 @@ const SalesRepSelectorBottomSheet = ({
         </View>
 
         {/* Search Bar */}
-        <View
-          style={[
-            styles.searchBar,
-            { borderColor: '#E0E0E0' },
-          ]}
-        >
+        <View style={[styles.searchBar, { borderColor: '#E0E0E0' }]}>
           <CustomIcon
             name="search"
             width={20}
@@ -407,8 +386,18 @@ const SalesRepSelectorBottomSheet = ({
 
         {/* Selected Sales Agents Avatars */}
         {selectedReps.length > 0 && (
-          <View style={[styles.selectedSection,{borderColor:theme.colors.night10, paddingBottom:16}]}>
-            <Text style={[theme.typography.BodyMedium, { color: theme.colors.night, marginBottom: 12 }]}>
+          <View
+            style={[
+              styles.selectedSection,
+              { borderColor: theme.colors.night10, paddingBottom: 16 },
+            ]}
+          >
+            <Text
+              style={[
+                theme.typography.BodyMedium,
+                { color: theme.colors.night, marginBottom: 12 },
+              ]}
+            >
               Selected ({selectedReps.length})
             </Text>
             <ScrollView
@@ -416,7 +405,7 @@ const SalesRepSelectorBottomSheet = ({
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.quickSelectContent}
             >
-              {selectedReps.map((rep) => renderSelectedAvatar(rep))}
+              {selectedReps.map(rep => renderSelectedAvatar(rep))}
             </ScrollView>
           </View>
         )}
@@ -427,11 +416,52 @@ const SalesRepSelectorBottomSheet = ({
           showsVerticalScrollIndicator={true}
           nestedScrollEnabled={true}
         >
-          {filteredReps.length > 0 ? (
-            filteredReps.map((rep) => renderAgentItem(rep))
+          {loading ? (
+            <View style={{ padding: 32, alignItems: 'center' }}>
+              <ActivityIndicator
+                size="large"
+                color={theme.colors.midnightgreen}
+              />
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.davysgrey, marginTop: 16 },
+                ]}
+              >
+                Loading sales agents...
+              </Text>
+            </View>
+          ) : error ? (
+            <View style={{ padding: 32, alignItems: 'center' }}>
+              <CustomIcon
+                name="activity"
+                width={48}
+                height={48}
+                tintColour={theme.colors.davysgrey}
+              />
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  {
+                    color: theme.colors.davysgrey,
+                    marginTop: 16,
+                    textAlign: 'center',
+                  },
+                ]}
+              >
+                {error?.message || 'Failed to load users'}
+              </Text>
+            </View>
+          ) : filteredReps?.length > 0 ? (
+            filteredReps?.map(rep => renderAgentItem(rep))
           ) : (
             <View style={{ padding: 32, alignItems: 'center' }}>
-              <Text style={[theme.typography.BodyMedium, { color: theme.colors.davysgrey }]}>
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.davysgrey },
+                ]}
+              >
                 No results found
               </Text>
             </View>
