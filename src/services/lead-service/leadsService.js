@@ -13,7 +13,7 @@ const leadsService = {
    * @returns {Promise} Array of lead objects
    */
   getAllLeads: async () => {
-    const response = await api.get('/api/leads');
+    const response = await api.get('/leads');
     console.log(response);
     return response.data;
   },
@@ -34,7 +34,7 @@ const leadsService = {
    * @returns {Promise} Created lead object
    */
   createLead: async leadData => {
-    const response = await api.post('/api/leads', leadData);
+    const response = await api.post('/leads', leadData);
     return response;
   },
 
