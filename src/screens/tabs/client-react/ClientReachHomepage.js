@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { useDispatch } from 'react-redux';
-import { clearAuth } from '../../../store/slices/auth/authSlice';
+import { logoutUser } from '../../../store/slices/auth/thunk';
 
 const ClientReachHomepage = ({ navigation }) => {
   const dispatch = useDispatch();
   const handleLogout = async () => {
-    dispatch(clearAuth());
+    await dispatch(logoutUser());
   };
 
   return (

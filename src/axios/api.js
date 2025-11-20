@@ -12,13 +12,18 @@ const api = axios.create({
   },
 });
 
+// Store reference for handling 401 errors
+let storeRef = null;
+export const setStoreRef = store => {
+  storeRef = store;
+};
+
 // Request interceptor - Add auth token to requests
 api.interceptors.request.use(
   async config => {
     try {
       // Get token from AsyncStorage
-      // Using 'accessToken' to match the key used in auth thunk
-      const token = await AsyncStorage.getItem('accessToken');
+      const token = await AsyncStorage.getItem('ACCESS_TOKEN');
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -45,16 +50,24 @@ api.interceptors.response.use(
     return response;
   },
   async error => {
-    // Special handling for 401 - clear tokens
+    // Special handling for 401 - clear tokens and logout
     if (error.response?.status === 401) {
-      await AsyncStorage.removeItem('accessToken');
-      await AsyncStorage.removeItem('refreshToken');
-      console.log('🔐 Unauthorized - Tokens cleared');
-      // You can add navigation logic here if needed
+      console.log('🔐 Unauthorized (401) - Clearing session');
+
+      // Clear tokens from AsyncStorage
+      await AsyncStorage.removeItem('ACCESS_TOKEN');
+      await AsyncStorage.removeItem('REFRESH_TOKEN');
+
+      // Dispatch logout action to Redux if store is available
+      if (storeRef) {
+        const { logoutUser } = require('../store/slices/auth/thunk');
+        await storeRef.dispatch(logoutUser());
+        console.log('🔐 User logged out due to 401 error');
+      }
     }
 
-    // Return the error response directly
-    return error;
+    // Return rejected promise so the calling code can handle the error
+    return Promise.reject(error);
   },
 );
 

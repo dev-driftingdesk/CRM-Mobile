@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, ActivityIndicator } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { restoreSession } from '../store/slices/auth/thunk';
 
 const RootNavigator = () => {
-  const [loading, setLoading] = useState(true);
-  // const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const { isAuthenticated } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const { isAuthenticated, loading: authLoading } = useSelector(state => state.auth);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = await AsyncStorage.getItem('ACCESS_TOKEN');
-        // setIsAuthenticated(!!token);
-      } catch (e) {
-        console.log('Auth check failed:', e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
+    // Try to restore session from AsyncStorage on app launch
+    dispatch(restoreSession());
+  }, [dispatch]);
 
-  if (loading) {
+  if (authLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#00C2FF" />
@@ -33,7 +23,6 @@ const RootNavigator = () => {
   }
 
   return isAuthenticated ? <AppStack /> : <AuthStack />;
-  // return isAuthenticated ? <AuthStack />  : <AppStack />;
 };
 
 export default RootNavigator;

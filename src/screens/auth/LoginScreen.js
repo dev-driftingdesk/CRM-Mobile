@@ -20,7 +20,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../store/slices/auth/thunk';
 import { clearError } from '../../store/slices/auth/authSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const { theme } = useAppTheme();
@@ -70,17 +69,8 @@ const LoginScreen = () => {
     console.log('Login result:', result);
 
     if (loginUser.fulfilled.match(result)) {
-      try {
-        await AsyncStorage.setItem('ACCESS_TOKEN', result.payload.accessToken);
-        console.log('Login successful, tokens saved');
-
-        // nav.navigate('HomeStack', {
-        //   screen: 'HomeScreen',
-        // });
-      } catch (err) {
-        console.log('Error saving tokens:', err);
-        setErrorMsg('Error saving login information');
-      }
+      console.log('Login successful, tokens saved');
+      // Navigation is handled automatically by RootNavigator based on isAuthenticated state
     } else {
       setErrorMsg(result.payload || 'Login failed. Please try again.');
     }

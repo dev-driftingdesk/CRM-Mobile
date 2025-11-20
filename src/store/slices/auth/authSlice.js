@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { loginUser } from './thunk';
+import { loginUser, restoreSession, logoutUser } from './thunk';
 
 const initialState = {
   user: null,
@@ -47,6 +47,31 @@ const authSlice = createSlice({
       state.loading = false;
       state.isAuthenticated = false;
       state.error = action.payload;
+    });
+
+    // Restore session
+    builder.addCase(restoreSession.pending, state => {
+      state.loading = true;
+    });
+    builder.addCase(restoreSession.fulfilled, (state, action) => {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+    });
+    builder.addCase(restoreSession.rejected, state => {
+      state.loading = false;
+      state.isAuthenticated = false;
+    });
+
+    // Logout
+    builder.addCase(logoutUser.fulfilled, state => {
+      state.user = null;
+      state.userEmail = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.isAuthenticated = false;
+      state.error = null;
     });
   },
 });
