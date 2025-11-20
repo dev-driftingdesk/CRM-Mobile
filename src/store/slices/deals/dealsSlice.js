@@ -5,6 +5,7 @@ import {
   createDeal,
   updateDeal,
   deleteDeal,
+  fetchDealsByLeadId,
 } from './dealsThunks';
 
 /**
@@ -18,10 +19,12 @@ const initialState = {
   // Deals data
   deals: [],
   selectedDeal: null,
+  leadDeals: [],
 
   // Loading states
   loading: false,
   loadingById: false,
+  loadingLeadDeals: false,
   creating: false,
   updating: false,
   deleting: false,
@@ -29,6 +32,7 @@ const initialState = {
   // Error states
   error: null,
   errorById: null,
+  errorLeadDeals: null,
 
   // Success flags
   createSuccess: false,
@@ -50,6 +54,15 @@ const dealsSlice = createSlice({
     clearError: state => {
       state.error = null;
       state.errorById = null;
+      state.errorLeadDeals = null;
+    },
+
+    /**
+     * Clear lead deals
+     */
+    clearLeadDeals: state => {
+      state.leadDeals = [];
+      state.errorLeadDeals = null;
     },
 
     /**
@@ -202,6 +215,27 @@ const dealsSlice = createSlice({
         status: 0,
       };
     });
+
+    // ============================================
+    // FETCH DEALS BY LEAD ID
+    // ============================================
+    builder.addCase(fetchDealsByLeadId.pending, state => {
+      state.loadingLeadDeals = true;
+      state.errorLeadDeals = null;
+    });
+    builder.addCase(fetchDealsByLeadId.fulfilled, (state, action) => {
+      state.loadingLeadDeals = false;
+      state.leadDeals = action?.payload?.data || action.payload || [];
+      state.errorLeadDeals = null;
+    });
+    builder.addCase(fetchDealsByLeadId.rejected, (state, action) => {
+      state.loadingLeadDeals = false;
+      state.leadDeals = [];
+      state.errorLeadDeals = action.payload || {
+        message: 'Failed to fetch deals for lead',
+        status: 0,
+      };
+    });
   },
 });
 
@@ -210,6 +244,7 @@ export const {
   clearError,
   clearSuccessFlags,
   clearSelectedDeal,
+  clearLeadDeals,
   resetDealsState,
 } = dealsSlice.actions;
 

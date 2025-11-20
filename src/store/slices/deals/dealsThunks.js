@@ -136,3 +136,38 @@ export const deleteDeal = createAsyncThunk(
     }
   },
 );
+
+/**
+ * Fetch deals by lead ID
+ * GET /leads/{leadId}/deals
+ */
+export const fetchDealsByLeadId = createAsyncThunk(
+  'deals/fetchByLeadId',
+  async (leadId, { rejectWithValue }) => {
+    try {
+      console.log('📋 Fetching deals for lead:', leadId);
+      const response = await dealsService.getDealsByLeadId(leadId);
+      console.log('📋 Deals fetched for lead:', leadId);
+      console.log(response);
+      return response;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue({
+          message:
+            error.response.data.message || 'Failed to fetch deals for lead',
+          status: error.response.status,
+        });
+      } else if (error.request) {
+        return rejectWithValue({
+          message: 'Network error. Please check your connection.',
+          status: 0,
+        });
+      } else {
+        return rejectWithValue({
+          message: error.message || 'An unexpected error occurred',
+          status: 0,
+        });
+      }
+    }
+  },
+);

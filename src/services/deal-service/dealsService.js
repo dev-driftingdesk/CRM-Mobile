@@ -58,6 +58,16 @@ const dealsService = {
     const response = await api.delete(`/deals/${dealId}`);
     return response.data;
   },
+
+  /**
+   * Get deals by lead ID
+   * @param {string} leadId - Lead UUID
+   * @returns {Promise} Array of deal objects associated with the lead
+   */
+  getDealsByLeadId: async leadId => {
+    const response = await api.get(`/leads/${leadId}/deals`);
+    return response.data;
+  },
 };
 
 export default dealsService;
