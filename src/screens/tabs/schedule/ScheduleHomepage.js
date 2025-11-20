@@ -9,6 +9,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../context/ThemeContext';
 import CalendarGrid from '../../../components/schedule/CalendarGrid';
+import WeekView from '../../../components/schedule/WeekView';
+import OverviewList from '../../../components/schedule/OverviewList';
 import ScheduleItemCard from '../../../components/schedule/ScheduleItemCard';
 import {
   sampleScheduleItems,
@@ -47,6 +49,9 @@ const ScheduleHomepage = ({ navigation }) => {
   // Current month being displayed in calendar
   const [currentMonth, setCurrentMonth] = useState(new Date(2025, 3, 1)); // April 2025
 
+  // Current week being displayed (for Week view)
+  const [currentWeek, setCurrentWeek] = useState(new Date(2025, 3, 9)); // April 9, 2025
+
   // Selected date (YYYY-MM-DD format)
   const [selectedDate, setSelectedDate] = useState('2025-04-09');
 
@@ -81,6 +86,11 @@ const ScheduleHomepage = ({ navigation }) => {
   // Handle month change
   const handleMonthChange = (newMonth) => {
     setCurrentMonth(newMonth);
+  };
+
+  // Handle week change
+  const handleWeekChange = (newWeek) => {
+    setCurrentWeek(newWeek);
   };
 
   // Handle schedule item press
@@ -188,52 +198,75 @@ const ScheduleHomepage = ({ navigation }) => {
           />
         )}
 
-        {/* Selected Date Display */}
-        <View style={styles.selectedDateContainer}>
-          <Text
-            style={[
-              theme.typography.BodyLargeMedium,
-              { color: theme.colors.night },
-            ]}
-          >
-            {selectedDateDisplay}
-          </Text>
-        </View>
-      </View>
+        {/* Week View */}
+        {viewMode === 'Week' && (
+          <WeekView
+            currentWeek={currentWeek}
+            selectedDate={selectedDate}
+            eventsMap={eventsMap}
+            onDateSelect={handleDateSelect}
+            onWeekChange={handleWeekChange}
+          />
+        )}
 
-      {/* Scrollable Schedule Items List */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {scheduleItems.length > 0 ? (
-          scheduleItems.map((item) => (
-            <ScheduleItemCard
-              key={item.id}
-              time={item.time}
-              date={formatCardDate(item.date)}
-              type={item.type}
-              title={item.title}
-              deal={item.deal}
-              contact={item.contact}
-              onPress={() => handleScheduleItemPress(item)}
-            />
-          ))
-        ) : (
-          // Empty State
-          <View style={styles.emptyState}>
+        {/* Selected Date Display - Hidden in Overview mode */}
+        {viewMode !== 'Overview' && (
+          <View style={styles.selectedDateContainer}>
             <Text
               style={[
-                theme.typography.BodyMedium,
-                { color: theme.colors.davysgrey, textAlign: 'center' },
+                theme.typography.BodyLargeMedium,
+                { color: theme.colors.night },
               ]}
             >
-              No schedule items for this date
+              {selectedDateDisplay}
             </Text>
           </View>
         )}
-      </ScrollView>
+      </View>
+
+      {/* Overview List - Replaces calendar and schedule items list */}
+      {viewMode === 'Overview' && (
+        <OverviewList
+          scheduleItems={sampleScheduleItems}
+          onItemPress={handleScheduleItemPress}
+        />
+      )}
+
+      {/* Scrollable Schedule Items List - Hidden in Overview mode */}
+      {viewMode !== 'Overview' && (
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {scheduleItems.length > 0 ? (
+            scheduleItems.map((item) => (
+              <ScheduleItemCard
+                key={item.id}
+                time={item.time}
+                date={formatCardDate(item.date)}
+                type={item.type}
+                title={item.title}
+                deal={item.deal}
+                contact={item.contact}
+                onPress={() => handleScheduleItemPress(item)}
+              />
+            ))
+          ) : (
+            // Empty State
+            <View style={styles.emptyState}>
+              <Text
+                style={[
+                  theme.typography.BodyMedium,
+                  { color: theme.colors.davysgrey, textAlign: 'center' },
+                ]}
+              >
+                No schedule items for this date
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

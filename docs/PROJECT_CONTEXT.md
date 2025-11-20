@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT.md
 
-> Last Updated: 2025-11-19
+> Last Updated: 2025-11-19 (Schedule components review)
 > Purpose: Comprehensive reference for understanding this codebase
 
 ---
@@ -64,6 +64,7 @@ CRMBuild/
 │   │   ├── leadcard/           # LeadCard component
 │   │   ├── logo/               # Logo component
 │   │   ├── modal/              # Modal components
+│   │   ├── schedule/           # CalendarGrid, ScheduleItemCard
 │   │   ├── switch/             # Switch components
 │   │   └── widgets/            # ActionItemWidget, etc.
 │   ├── context/
@@ -174,7 +175,11 @@ const { theme } = useAppTheme();
 - Leads management (list, search, filter, create)
 - Multi-step lead creation wizard (3 steps)
 - Deal details with tabs and bottom sheets
-- Schedule calendar with view modes
+- **Schedule system** - Componentized with:
+  - CalendarGrid (month navigation, event indicators, date selection)
+  - ScheduleItemCard (time, type badge, deal/contact sections)
+  - View modes (Month/Week/Overview)
+  - Helper functions for date formatting and event mapping
 - Search with recent searches/visited
 
 ### Stub/Placeholder Screens
@@ -238,7 +243,12 @@ const { theme } = useAppTheme();
 - `src/screens/auth/LoginScreen.js` - Authentication (225 lines)
 - `src/screens/tabs/home/HomeScreen.js` - Dashboard (93 lines)
 - `src/screens/tabs/leads/LeadsHomepage.js` - Leads list (358 lines)
-- `src/screens/tabs/schedule/ScheduleHomepage.js` - Calendar (298 lines)
+- `src/screens/tabs/schedule/ScheduleHomepage.js` - Calendar (299 lines)
+
+### Schedule Components
+- `src/components/schedule/CalendarGrid.jsx` - Monthly calendar with navigation (276 lines)
+- `src/components/schedule/ScheduleItemCard.jsx` - Schedule item display card (221 lines)
+- `src/data/scheduleData.js` - Sample data and helper functions (303 lines)
 
 ### State Management
 - `src/store/slices/auth/authSlice.js` - Auth reducer

@@ -29,6 +29,7 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-CRMBuild.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CRMBuild.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CRMBuild/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CRMBuild/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8ED0D2DC2ECEF5CC00D791E2 /* CRMBuild.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = CRMBuild.entitlements; path = CRMBuild/CRMBuild.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EE53179B036447CDAD73E9EC /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../src/assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -48,6 +49,7 @@
 		13B07FAE1A68108700A75B9A /* CRMBuild */ = {
 			isa = PBXGroup;
 			children = (
+				8ED0D2DC2ECEF5CC00D791E2 /* CRMBuild.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -279,8 +281,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = CRMBuild/CRMBuild.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 624AHKX632;
+				DEVELOPMENT_TEAM = Q37PMB923Y;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = CRMBuild/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CeedPods;
@@ -298,6 +303,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceedpods.app;
 				PRODUCT_NAME = CRMBuild;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -310,8 +316,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = CRMBuild/CRMBuild.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 624AHKX632;
+				DEVELOPMENT_TEAM = Q37PMB923Y;
 				INFOPLIST_FILE = CRMBuild/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = CeedPods;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -328,6 +337,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceedpods.app;
 				PRODUCT_NAME = CRMBuild;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

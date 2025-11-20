@@ -5,6 +5,50 @@
  */
 
 export const sampleScheduleItems = [
+  // April 1, 2025 (Thursday)
+  {
+    id: 's101',
+    date: '2025-04-01',
+    time: '9:00 PM',
+    type: 'Lead call',
+    title: 'Client Call with CreativePixel Agency',
+    deal: {
+      name: 'UX Team Skill Upgrade Program',
+      productCount: 4,
+      value: 9800,
+    },
+    contact: null,
+    leadCompany: 'CreativePixel Agency',
+  },
+
+  // April 2, 2025 (Tuesday)
+  {
+    id: 's102',
+    date: '2025-04-02',
+    time: '2:00 PM',
+    type: 'Reminder',
+    title: 'Send Contract to DazzleCo Inc.',
+    deal: null,
+    contact: {
+      name: 'DazzleCo Inc.',
+      phone: '+65 8765 4321',
+    },
+  },
+  {
+    id: 's103',
+    date: '2025-04-02',
+    time: '3:00 PM',
+    type: 'Lead call',
+    title: 'Meeting with Stellaris Corp',
+    deal: {
+      name: 'Corporate Training Package',
+      productCount: 3,
+      value: 7500,
+    },
+    contact: null,
+    leadCompany: 'Stellaris Corp',
+  },
+
   // April 9, 2025
   {
     id: 's1',
@@ -56,20 +100,34 @@ export const sampleScheduleItems = [
     leadCompany: 'Vista Project Partners',
   },
 
-  // April 3, 2025
+  // April 3, 2025 (Wednesday)
   {
     id: 's5',
     date: '2025-04-03',
     time: '11:00 AM',
     type: 'Lead call',
-    title: 'Discovery Call with TechCorp',
+    title: 'Call with AquaTech Solutions',
     deal: {
-      name: 'Enterprise Software Solution',
-      productCount: 6,
-      value: 15000,
+      name: 'Water Management System',
+      productCount: 5,
+      value: 12000,
     },
     contact: null,
-    leadCompany: 'TechCorp',
+    leadCompany: 'AquaTech Solutions',
+  },
+
+  // April 4, 2025 (Thursday)
+  {
+    id: 's104',
+    date: '2025-04-04',
+    time: '10:00 AM',
+    type: 'Reminder',
+    title: 'Follow up with NovaGrade Industries',
+    deal: null,
+    contact: {
+      name: 'NovaGrade Industries',
+      phone: '+65 9123 4567',
+    },
   },
 
   // April 7, 2025
@@ -211,6 +269,67 @@ export const sampleScheduleItems = [
     },
     contact: null,
     leadCompany: 'Digital Agency Pro',
+  },
+
+  // May 5, 2025 (Friday)
+  {
+    id: 's201',
+    date: '2025-05-05',
+    time: '1:00 PM',
+    type: 'Lead call',
+    title: 'Demo with Zenith Dynamics',
+    deal: {
+      name: 'Enterprise Solution Demo',
+      productCount: 6,
+      value: 18000,
+    },
+    contact: null,
+    leadCompany: 'Zenith Dynamics',
+  },
+
+  // May 6, 2025 (Saturday)
+  {
+    id: 's202',
+    date: '2025-05-06',
+    time: '10:00 AM',
+    type: 'Internal meeting',
+    title: 'Internal Training Session',
+    deal: null,
+    contact: null,
+  },
+  {
+    id: 's203',
+    date: '2025-05-06',
+    time: '1:00 PM',
+    type: 'Internal meeting',
+    title: 'Team Lunch at The Spice Route',
+    deal: null,
+    contact: null,
+  },
+
+  // May 7, 2025 (Sunday)
+  {
+    id: 's204',
+    date: '2025-05-07',
+    time: '2:00 PM',
+    type: 'Reminder',
+    title: 'Review Sales Pipeline',
+    deal: null,
+    contact: {
+      name: 'Sales Team',
+      phone: 'N/A',
+    },
+  },
+
+  // May 8, 2025 (Monday)
+  {
+    id: 's205',
+    date: '2025-05-08',
+    time: '9:30 AM',
+    type: 'Internal meeting',
+    title: 'Strategy Meeting with Management',
+    deal: null,
+    contact: null,
   },
 ];
 
