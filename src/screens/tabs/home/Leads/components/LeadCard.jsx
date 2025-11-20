@@ -28,7 +28,6 @@ import CustomIcon from '../../../../../assets/icons/CustomIcon';
  * @param {boolean} props.isLast - Whether this is the last card (for border radius)
  */
 const LeadCard = ({ lead, onPress, isFirst = false, isLast = false }) => {
-  console.log('Rendering LeadCard for:', lead);
   const { theme } = useAppTheme();
 
   /**

@@ -1,17 +1,14 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../../context/ThemeContext';
 import CustomIcon from '../../../../assets/icons/CustomIcon';
 import StatCard from './components/StatCard';
 import DealCard from './components/DealCard';
 import { getLeadWithDealsById } from '../../../tabs/home/Leads/sampleDataWithDeals';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDealsByLeadId } from '../../../../store/slices/deals/dealsThunks';
 
 /**
  * LeadDetailsScreen
@@ -41,11 +38,23 @@ import { getLeadWithDealsById } from '../../../tabs/home/Leads/sampleDataWithDea
  */
 const LeadDetailsScreen = ({ navigation, route }) => {
   const { theme } = useAppTheme();
-
+  const dispatch = useDispatch();
+  const { leadDeals, loadingLeadDeals } = useSelector(state => state.deals);
+  console.log('LeadDetailsScreen - leadDeals from Redux:', leadDeals);
   // Get lead data from navigation params or use sample data
   const leadId = route?.params?.leadId;
   const leadFromParams = route?.params?.lead;
 
+  useEffect(() => {
+    // Get Deals by the lead id
+    console.log('running');
+    dispatch(fetchDealsByLeadId(leadId));
+  }, [leadId, leadFromParams, dispatch]);
+
+  console.log('LeadDetailsScreen - leadId:', leadId);
+  console.log('LeadDetailsScreen - leadFromParams:', leadFromParams);
+
+  console.log(loadingLeadDeals);
   // Try to get full lead data with deals
   let leadData = leadFromParams;
   if (leadId && !leadFromParams?.deals) {
@@ -62,7 +71,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
    * @param {Array} deals - Array of deal objects
    * @returns {number} Sum of all deal values
    */
-  const calculateTotalValue = (deals) => {
+  const calculateTotalValue = deals => {
     return deals.reduce((sum, deal) => sum + deal.totalValue, 0);
   };
 
@@ -72,7 +81,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
    * @param {number} totalValue - Total lead value
    * @returns {number} Total commission amount
    */
-  const calculateTotalCommission = (totalValue) => {
+  const calculateTotalCommission = totalValue => {
     const commissionRate = 0.058; // 5.8%
     return totalValue * commissionRate;
   };
@@ -82,7 +91,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
    * @param {number} value - Dollar amount
    * @returns {string} Formatted currency string (e.g., "$39,567.00")
    */
-  const formatCurrency = (value) => {
+  const formatCurrency = value => {
     return `$${value.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -95,10 +104,13 @@ const LeadDetailsScreen = ({ navigation, route }) => {
    * @param {string} companyName - Company name
    * @returns {string} Two-letter initials
    */
-  const getInitials = (companyName) => {
+  const getInitials = companyName => {
     if (!companyName) return 'LD';
 
-    const words = companyName.trim().split(' ').filter(word => word.length > 0);
+    const words = companyName
+      .trim()
+      .split(' ')
+      .filter(word => word.length > 0);
 
     if (words.length >= 2) {
       return (words[0][0] + words[1][0]).toUpperCase();
@@ -117,7 +129,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
   const commissionPercentage = 5.8;
 
   // Generate initials
-  const initials = getInitials(leadData.companyName);
+  const initials = getInitials(leadFromParams?.leadName);
 
   /**
    * Handle back button press
@@ -137,22 +149,26 @@ const LeadDetailsScreen = ({ navigation, route }) => {
    * Handle stat card press
    * @param {string} statType - Type of stat ('value' or 'commission')
    */
-  const handleStatCardPress = (statType) => {
-    console.log(`Stat card pressed: ${statType} - future: navigate to filtered view`);
+  const handleStatCardPress = statType => {
+    console.log(
+      `Stat card pressed: ${statType} - future: navigate to filtered view`,
+    );
   };
 
   /**
    * Handle create new deal button press
    */
   const handleCreateDeal = () => {
-    console.log('Create new deal pressed - future: navigate to create deal flow');
+    console.log(
+      'Create new deal pressed - future: navigate to create deal flow',
+    );
   };
 
   /**
    * Handle deal card press
    * @param {Object} deal - Deal object
    */
-  const handleDealPress = (deal) => {
+  const handleDealPress = deal => {
     console.log('Deal pressed:', deal.id, deal.name);
     navigation.navigate('DealDetails', { deal });
   };
@@ -177,7 +193,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
           style={({ pressed }) => [
             styles.backButton,
             {
-              backgroundColor:theme.colors.white,
+              backgroundColor: theme.colors.white,
               borderColor: theme.colors.night10,
               opacity: pressed ? 0.6 : 1,
             },
@@ -247,7 +263,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
               ]}
               numberOfLines={1}
             >
-              {leadData.companyName}
+              {leadFromParams?.leadName}
             </Text>
 
             {/* Contact Name */}
@@ -261,6 +277,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
               ]}
               numberOfLines={1}
             >
+              {/* !! TODO need to have to created user name */}
               {leadData.contactName}
             </Text>
           </View>
@@ -299,7 +316,9 @@ const LeadDetailsScreen = ({ navigation, route }) => {
           <StatCard
             label="Total commission"
             value={formatCurrency(totalCommission)}
-            subtitle={`${commissionPercentage.toFixed(2)}% of ${formatCurrency(totalValue)}`}
+            subtitle={`${commissionPercentage.toFixed(2)}% of ${formatCurrency(
+              totalValue,
+            )}`}
             isDark={false}
             onPress={() => handleStatCardPress('commission')}
           />
@@ -332,7 +351,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
                 styles.countBadge,
                 {
                   backgroundColor: theme.colors.white,
-                  borderColor:theme.colors.timberwolf
+                  borderColor: theme.colors.timberwolf,
                 },
               ]}
             >
@@ -383,7 +402,7 @@ const LeadDetailsScreen = ({ navigation, route }) => {
 
         {/* Deal Cards List */}
         <View style={styles.dealsListContainer}>
-          {leadData.deals.map((deal) => (
+          {leadData.deals.map(deal => (
             <DealCard
               key={deal.id}
               dealName={deal.name}
@@ -414,22 +433,35 @@ const getSampleLeadData = () => ({
       id: 'd1',
       name: 'UX Team Skill Upgrade Program',
       productCount: 4,
-      totalValue: 39567.00,
-      commission: 2436.00,
-      commissionPercent: 5.80,
+      totalValue: 39567.0,
+      commission: 2436.0,
+      commissionPercent: 5.8,
       lastActivity: 'Client called to confirm order details',
       timestamp: '9/29/2025 at 08:19 PM',
       leadId: '1',
       leadCompany: 'CreativePixel Agency',
       leadContact: 'John Smith',
       salesReps: [
-        { id: '1', name: 'James Nick', avatar: 'https://i.pravatar.cc/150?img=1' },
-        { id: '2', name: 'Sarah Lee', avatar: 'https://i.pravatar.cc/150?img=5' },
-        { id: '3', name: 'Mike Torel', avatar: 'https://i.pravatar.cc/150?img=8' },
+        {
+          id: '1',
+          name: 'James Nick',
+          avatar: 'https://i.pravatar.cc/150?img=1',
+        },
+        {
+          id: '2',
+          name: 'Sarah Lee',
+          avatar: 'https://i.pravatar.cc/150?img=5',
+        },
+        {
+          id: '3',
+          name: 'Mike Torel',
+          avatar: 'https://i.pravatar.cc/150?img=8',
+        },
       ],
       talkingPoints: {
         fromLastCall: '24th Thursday',
-        notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        notes:
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         bulletPoints: [
           'Ut enim ad minim veniam, quis nostrud',
           'exercitation ullamco laboris nisi ut aliquip',
@@ -440,7 +472,8 @@ const getSampleLeadData = () => ({
       activityTimeline: [
         {
           id: 'a1',
-          activity: 'Agent added a note tagging the product "Wireframing & Prototyping in Figma"',
+          activity:
+            'Agent added a note tagging the product "Wireframing & Prototyping in Figma"',
           timestamp: '9/29/2025 at 08:19 PM',
           duration: '15 min',
           status: 'confirmed',
@@ -473,8 +506,8 @@ const getSampleLeadData = () => ({
       name: 'Design & Branding Program for Marketing Team',
       productCount: 3,
       totalValue: 7200,
-      commission: 417.60,
-      commissionPercent: 5.80,
+      commission: 417.6,
+      commissionPercent: 5.8,
       lastActivity: 'Client called to confirm order details',
       timestamp: '9/29/2025 at 08:19 PM',
       leadId: '1',
@@ -508,8 +541,8 @@ const getSampleLeadData = () => ({
       name: 'Front-End Developer Bootcamp Package',
       productCount: 5,
       totalValue: 12400,
-      commission: 719.20,
-      commissionPercent: 5.80,
+      commission: 719.2,
+      commissionPercent: 5.8,
       lastActivity: 'Client called to confirm order details',
       timestamp: '9/29/2025 at 08:19 PM',
       leadId: '1',
@@ -543,23 +576,18 @@ const getSampleLeadData = () => ({
       name: 'Project Management Certification Series',
       productCount: 1,
       totalValue: 8600,
-      commission: 498.80,
-      commissionPercent: 5.80,
+      commission: 498.8,
+      commissionPercent: 5.8,
       lastActivity: 'Client called to confirm order details',
       timestamp: '9/29/2025 at 08:19 PM',
       leadId: '1',
       leadCompany: 'CreativePixel Agency',
       leadContact: 'John Smith',
-      salesReps: [
-        { id: '1', name: 'James Nick', avatar: null },
-      ],
+      salesReps: [{ id: '1', name: 'James Nick', avatar: null }],
       talkingPoints: {
         fromLastCall: '18th Saturday',
         notes: 'Certification program enrollment and schedule.',
-        bulletPoints: [
-          'Review certification requirements',
-          'Setup exam dates',
-        ],
+        bulletPoints: ['Review certification requirements', 'Setup exam dates'],
       },
       activityTimeline: [
         {
@@ -605,7 +633,7 @@ const styles = StyleSheet.create({
     // padding: 16,
     marginHorizontal: 16,
     marginTop: 16,
-    marginBottom:14,
+    marginBottom: 14,
     // Subtle shadow
     shadowColor: '#000',
     shadowOffset: {
