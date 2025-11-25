@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1072416740164",
+    "project_id": "ceedpods-2085a",
+    "storage_bucket": "ceedpods-2085a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072416740164:android:2e3e0e5f022599b366fd11",
+        "android_client_info": {
+          "package_name": "com.crmbuild"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu9sMFOuhy9XTxUD0Pi8NogJCpreTpArc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
