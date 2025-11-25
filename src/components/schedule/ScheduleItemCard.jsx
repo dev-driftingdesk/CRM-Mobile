@@ -52,13 +52,13 @@ const ScheduleItemCard = ({ time, date, type, title, deal, contact, onPress }) =
     >
       {/* Left Column: Time + Date */}
       <View style={styles.timeColumn}>
-        <Text style={[theme.typography.heading2Bold, { color: theme.colors.night }]}>
+        <Text style={[theme.typography.BodyLargeBold, { color: theme.colors.night }]}>
           {time}
         </Text>
         <Text
           style={[
             theme.typography.BodySmallMedium,
-            { color: theme.colors.davysgrey, marginTop: 4 },
+            { color: theme.colors.davysgrey, marginTop: 8 },
           ]}
         >
           {date}
@@ -82,7 +82,7 @@ const ScheduleItemCard = ({ time, date, type, title, deal, contact, onPress }) =
         {/* Title */}
         <Text
           style={[
-            theme.typography.BodyBold,
+            theme.typography.BodyLargeMedium,
             { color: theme.colors.night, marginTop: 8 },
           ]}
         >
@@ -119,7 +119,7 @@ const ScheduleItemCard = ({ time, date, type, title, deal, contact, onPress }) =
               </Text>
               <Text
                 style={[
-                  theme.typography.BodyBold,
+                  theme.typography.BodySmallMedium,
                   { color: theme.colors.midnightgreen },
                 ]}
               >
@@ -192,14 +192,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 100,
   },
   dealSection: {
     marginTop: 8,
   },
   dealInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'baseline',
     marginBottom: 4,
   },
   dealBottomRow: {
