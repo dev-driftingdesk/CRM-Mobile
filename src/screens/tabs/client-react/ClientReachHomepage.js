@@ -267,40 +267,56 @@ const RecentCommunicationItem = ({ item, onPress }) => {
 
   return (
     <View style={styles.communicationItem}>
-      {/* Left Side: Circle + Details */}
+      {/* Left: Initial Circle */}
       <InitialCircle
         initials={item.initials}
         size={40}
         backgroundColor="#E8E8E8"
         textColor={theme.colors.night}
       />
-      <View style={styles.communicationLeft}>
-        <View style={styles.communicationDetails}>
-          <Text
-            numberOfLines={1}
-            style={[
-              theme.typography.BodyLargeMedium,
-              {
-                color: theme.colors.night,
-                // fontFamily: theme.fonts.bold,
-              },
-            ]}
-          >
-            {item.company}
-          </Text>
-          <Text
-            style={[
-              theme.typography.BodySmallMedium,
-              { color: theme.colors.davysgrey },
-            ]}
-          >
-            {item.phone}
-          </Text>
-        </View>
+
+      {/* Middle: Company + Phone (Stacked) */}
+      <View style={styles.communicationMiddle}>
+        <Text
+          numberOfLines={1}
+          style={[
+            theme.typography.BodyMedium,
+            {
+              color: theme.colors.night,
+              marginBottom: 4,
+            },
+          ]}
+        >
+          {item.company}
+        </Text>
+        <Text
+          numberOfLines={1}
+          style={[
+            theme.typography.BodySmallMedium,
+            {
+              color: theme.colors.davysgrey,
+            },
+          ]}
+        >
+          {item.phone}
+        </Text>
       </View>
 
-      {/* Right Side: Timestamp + Info Icon */}
+      {/* Right: Timestamp + Icon (Same Row) */}
       <View style={styles.communicationRight}>
+        <Text
+          numberOfLines={1}
+          style={[
+            theme.typography.BodySmallMedium,
+            {
+              color: theme.colors.davysgrey,
+              fontSize: 11,
+              marginRight: 8,
+            },
+          ]}
+        >
+          {item.timestamp}
+        </Text>
         <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
           <IconComponent
             name="info-circle"
@@ -309,14 +325,6 @@ const RecentCommunicationItem = ({ item, onPress }) => {
             tintColour={theme.colors.night}
           />
         </TouchableOpacity>
-        <Text
-          style={[
-            theme.typography.BodySmallMedium,
-            { color: theme.colors.davysgrey, fontSize: 11 },
-          ]}
-        >
-          {item.timestamp}
-        </Text>
       </View>
     </View>
   );
@@ -343,11 +351,8 @@ const RecentCommunicationItem = ({ item, onPress }) => {
  * - Recent communications section with toggle pills
  * - White card containing communications list
  * - Scrollable content
- *
- * @param {object} props - Component props
- * @param {object} props.navigation - React Navigation navigation object
  */
-const ClientReachHomepage = ({ navigation }) => {
+const ClientReachHomepage = () => {
   const { theme } = useAppTheme();
 
   // View mode state: 'Calls' or 'Messages'
@@ -787,25 +792,19 @@ const styles = StyleSheet.create({
 
   communicationItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
   },
 
-  communicationLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  communicationMiddle: {
     flex: 1,
-  },
-
-  communicationDetails: {
     marginLeft: 12,
-    flex: 1,
+    marginRight: 8,
   },
 
   communicationRight: {
-    alignItems: 'flex-end',
-    gap: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
   separator: {
